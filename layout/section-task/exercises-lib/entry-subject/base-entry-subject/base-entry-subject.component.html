@@ -1,0 +1,38 @@
+<div class="question-list">
+  <div class="list-item" *ngFor="let item of exerciseData.myAnswer;let idx=index;">
+
+    <div class="top" nz-row>
+      <div  nz-col nzSpan="4">选择借贷</div>
+      <div  nz-col nzSpan="8">科目</div>
+      <div  nz-col nzSpan="8">金额</div>
+      <div  nz-col nzSpan="4"></div>
+    </div>
+    <div class="middle" nz-row>
+      <div  nz-col nzSpan="4">
+        <nz-switch [ngModel]="item.jd === '1'" 
+        [nzDisabled]="['finish', 'selfEvalute'].includes(this.exerciseData.status)" 
+        (ngModelChange)="changeRelation($event, item)" 
+        nzCheckedChildren="借" nzUnCheckedChildren="贷">
+      </nz-switch>
+      </div>
+      <div  nz-col nzSpan="8" class="subject" [ngClass]="statusClass()">
+        <input nz-input 
+        [disabled]="['finish', 'selfEvalute'].includes(this.exerciseData.status)" 
+        [(ngModel)]="item.subject" />
+      </div>
+      <div  nz-col nzSpan="8" class="answer" [ngClass]="statusClass()">
+        <nz-input-number  class="input-number" placeholder="请输入金额…"
+         [disabled]="['finish', 'selfEvalute'].includes(this.exerciseData.status)" 
+         [(ngModel)]="item.answer" >
+        </nz-input-number>
+      </div>
+      <div  nz-col nzSpan="4" *ngIf="!['finish', 'selfEvalute'].includes(this.exerciseData.status)">
+        <a (click)="del(idx)"> <i nz-icon nzType="close-circle" nzTheme="fill" style="color: #FF7674;"></i> </a>
+      </div>
+    </div>
+  </div>
+  <div class="bottom add-footer" *ngIf="!['finish', 'selfEvalute'].includes(this.exerciseData.status)">
+    <button nz-button style="margin-right: 10px;" nzType="link" (click)="add('1')"><i nz-icon nzType="plus-circle" nzTheme="fill"></i>  新增借</button>
+    <button nz-button nzType="link" (click)="add('-1')"><i nz-icon nzType="plus-circle" nzTheme="fill"></i> 新增贷</button>
+  </div>
+</div>

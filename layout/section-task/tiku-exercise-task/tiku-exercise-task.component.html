@@ -1,0 +1,49 @@
+<nz-layout class="l-main live-container">
+  <nz-header class="white-bg">
+    <div class="header-box">
+      <div class="header-left">
+        <button nz-button nzType="link" class="gray-text" (click)="goBack()">
+          <i nz-icon nzType="left" nzTheme="outline"></i>
+          返回
+        </button>
+      </div>
+      <div class="header-tilte">{{ pageTitle }}</div>
+      <div class="header-status">
+      </div>
+    </div>
+  </nz-header>
+
+  <nz-layout class="l-main padding gray-bg"  style="flex-direction: row;">
+    <ng-container *ngIf="tikuType === 1">
+      <!-- 收缩按钮 -->
+      <div class="hide-btn" *ngIf="!hideBtn" (click)="hideBtn=true;"><i nz-icon nzType="left" nzTheme="outline"></i></div>
+      <div class="hide-btn" *ngIf="hideBtn" (click)="hideBtn=false;"><i nz-icon nzType="right"></i></div>
+  
+      <nz-sider class="white-bg" 
+        [nzWidth]="hideBtn ? 0 :360"
+        [class]="{'tiku-sider': hideBtn }"
+        [style]="{ opacity: hideBtn ? '0' : '1'}">
+        <app-tiku-task-item [qcData]="taskInfo"></app-tiku-task-item>
+        <div class="task-remark">
+          <i nz-icon nzType="info-circle" nzTheme="outline"></i>
+          <span style="margin-left: 5px;">作业任务有效期内重新交卷会覆盖之前的成绩</span>
+        </div>
+      </nz-sider>
+    </ng-container>
+    
+    <nz-content  class="l-main" style="position: relative;">
+      <nz-spin class="spin" nzSimple  nzTip="加载中..." [nzSpinning]="isLoading"></nz-spin>
+      <ng-container>
+        <app-exercise-task
+          *ngIf="!isLoading"
+          [curTask]="taskInfo"
+          [tikuType]="tikuType"
+          [tikuTaskStatus]="tikuTaskStatus"
+          [data]="taskInfo.selectedItem"
+          (finishTaskCallBack)="finishTask($event)">
+        </app-exercise-task>
+      </ng-container>
+    </nz-content>
+  </nz-layout>
+</nz-layout>
+

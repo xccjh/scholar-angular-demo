@@ -1,0 +1,182 @@
+
+发布位置：scholar，
+发布时间：2019-11-11 21:58:14，
+发布branch: master，
+发布commitId: fddd85b53555f5c55df34e2f6a1ed25fb176fa3a，
+发布commit信息: “增加版本发布记录历史”，
+发布人:“zoujiahe”
+
+发布位置：scholar，
+发布时间：2019-11-16 12:13:55，
+发布branch: master，
+发布commitId: 249a92330790a897bd9ab21c95bd2fbc3bab722e，
+发布commit信息: “隐藏课包分组”，
+发布人:“zoujiahe”
+
+发布位置：scholar，
+发布时间：2019-11-17 18:15:44，
+发布branch: master，
+发布commitId: 2adc9b67874cae23c052fa5113188adae719210e，
+发布commit信息: “隐藏课包分组”，
+发布人:“zoujiahe”
+
+发布位置：scholar，
+发布时间：2019-11-19 19:23:53，
+发布branch: master，
+发布commitId: 5e0b661e77d26a2478d85cd27fd8ae3f2c495119，
+发布commit信息: “Merge branch 'dev' into test”，
+发布人:zoujiahe
+
+发布位置：scholar，
+发布时间：2019-11-19 20:02:16，
+发布branch: master，
+发布commitId: 3b1e0e609f99d559ee40ac3e92cd54378ff79b3f，
+发布commit信息: “课程保利威预览更换公共”，
+发布人:zoujiahe
+
+发布位置：scholar，
+发布时间：2019-11-25 18:16:56，
+发布branch: dev，
+发布commitId: 0742d99f660dfe41f02274511144c8c031ec7c24，
+发布commit信息: “还原hash模式”，
+发布人:zoujiahe
+
+发布位置：scholar，
+发布时间：2019-11-25 19:28:27，
+发布branch: dev，
+发布commitId: 35fae320da750fa4efe4be612f505d43860d48a3，
+发布commit信息: “处理下载自动刷新”，
+发布人:zoujiahe
+
+发布位置：scholar，
+发布时间：2019-11-25 19:08:42，
+发布branch: master，
+发布commitId: 8f556c1178cb33232b163c4ac856ebab1acd7f84，
+发布commit信息: “Merge branch 'master' into dev”，
+发布人:zoujiahe
+
+发布位置：scholar，
+发布时间：2019-12-26 18:07:41，
+发布branch: dev，
+发布commitId: 976d0644c7d8d27b5bc8130859b263552db5d959，
+发布commit信息: “问卷地址题库更改”，
+发布人:zoujiahe
+
+发布位置：scholar，
+发布时间：2019-12-27 23:20:17，
+发布branch: dev，
+发布commitId: f507627a3e6e48e84f55a08e9b9688495ab2a27b，
+发布commit信息: “增加版本排序”，
+发布人:zoujiahe
+
+发布位置：html/scholar，
+发布时间：2019-12-30 16:50:44，
+发布branch: dev，
+发布commitId: 621c7c5405194269d5430a179981dfed0fe73108，
+发布commit信息: “增加生产回源发布”，
+发布人:zoujiahe
+
+发布位置：html/scholar，
+发布时间：2019-12-30 18:27:51，
+发布branch: dev，
+发布commitId: 47a862ecec32cea77d751bdaa9af97b06273300f，
+发布commit信息: “处理提示错误”，
+发布人:zoujiahe
+
+发布位置：html/scholar，
+发布时间：2019-12-31 15:59:54，
+发布branch: master，
+发布commitId: f967d900297284cba5cf89546671b2810d32cf66，
+发布commit信息: “Merge branch 'test'”，
+发布人:zoujiahe
+
+发布位置：html/scholar，
+发布时间：2020-01-09 12:08:15，
+发布branch: master，
+发布commitId: 9d53b89f3e74f80c9db0ea985767a8990e713561，
+发布commit信息: “处理学习计划必填控制”，
+发布人:zoujiahe
+
+发布位置：html/scholar，
+发布时间：2020-01-14 18:25:31，
+发布branch: master，
+发布commitId: 85a6c7a14c4bf87e71fd6c5d9162cfd5fb777a41，
+发布commit信息: “标准字模块禁用更改”，
+发布人:zoujiahe
+
+发布位置：html/scholar，
+发布时间：2020-03-04 12:27:28，
+发布branch: dev-v2.3，
+发布commitId: c553a154fdd995a6bca639f71d66b30b41bf6249，
+发布commit信息: “fix:指导讲师课程权限为全部”，
+发布人:zoujiahe
+
+发布位置：html/scholar，
+发布时间：2020-03-10 13:49:01，
+发布branch: dev，
+发布commitId: d7e179cd5e460544cb59f473a27d6e131a8e8c27，
+发布commit信息: “fix:优化定时发布脚本”，
+发布人:zoujiahe
+
+发布位置：html/scholar，
+发布时间：2020-03-24 09:13:57，
+发布branch: dev，
+发布commitId: fb84c4885069f4870c053c6babf86ede170dbff0，
+发布commit信息: “fix:忽略本地文件预览文件”，
+发布人:zoujiahe
+
+发布位置：html/scholar，
+发布时间：2020-03-26 17:58:18，
+发布branch: master，
+发布commitId: 6818c379a1f4197d700c99a7d861f9f140826b04，
+发布commit信息: “本次zoujiahe发版，时间:2020-03-26 17:54:45”，
+发布人:zoujiahe
+
+发布位置：html/scholar，
+发布时间：2020-03-30 12:10:00，
+发布branch: master，
+发布commitId: fe7332a45a7345a26f3a558300ea212eea7ee0ef，
+发布commit信息: “fix:回滚误删除”，
+发布人:zoujiahe
+
+发布位置：html/scholar，
+发布时间：2020-04-21 12:12:34，
+发布branch: master，
+发布commitId: 8ad6b36aa6ef750ca14cc4a7fc1c571926481a01，
+发布commit信息: “fix:指导讲师”，
+发布人:zoujiahe
+
+发布位置：html/scholar，
+发布时间：2020-04-21 12:31:57，
+发布branch: master，
+发布commitId: 06b25df59d1bd61de697722dc5dbac755618806b，
+发布commit信息: “alter:引用次数为0可删”，
+发布人:zoujiahe
+
+发布位置：html/scholar，
+发布时间：2020-05-07 12:10:25，
+发布branch: master，
+发布commitId: cd90ff9cd733d4426a998757230cb3380260d75b，
+发布commit信息: “录播隐藏押题宝”，
+发布人:zoujiahe
+
+发布位置：html/scholar，
+发布时间：2020-05-10 22:07:43，
+发布branch: master，
+发布commitId: f3c6a9b5100f73f92e9b8aeff9104d733b5036c2，
+发布commit信息: “fix:debugger”，
+发布人:zoujiahe
+
+发布位置：html/scholar，
+发布时间：2020-05-18 12:32:39，
+发布branch: master，
+发布commitId: 140ba3c679a3cafd274f03634be2f2ce8bed5360，
+发布commit信息: “完成批量审批对接”，
+发布人:zoujiahe
+
+发布位置：html/scholar，
+发布时间：2020-06-10 12:16:36，
+发布branch: master，
+发布commitId: a15707fed3efe659dc0a44126dd324bf21906129，
+发布commit信息: “alter:做题模式”，
+发布人:zoujiahe

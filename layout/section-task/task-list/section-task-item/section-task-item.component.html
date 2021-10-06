@@ -1,0 +1,21 @@
+<!-- 大纲讲义与任务 -->
+<div *ngIf="urlParams.OutlineData" class="box" [class]="{'selected' : qcData?.id === selectedId }" #taskBox>
+  <div class="title flex-title">
+    <p class="task-name" [title]="qcData?.name">
+      {{ qcData?.name }}
+    </p>
+    <p class="end-time" >
+      <span>进行中</span>
+    </p>
+  </div>
+  <!-- 资料任务除外 -->
+  <div class="desc" >
+    <div [class]="{'orange-text': qcData?.taskStatus !== '1'}">
+      <p style="padding-right: 24px;">
+        <span class="gray-text">{{taskTypeName[qcData?.taskType]}} • </span>
+        <span>{{getDaysDiffBetweenDates(qcData?.endTime)}}</span>
+<!--        <span style="float: right;font-size: 20px; color: red;">0</span>-->
+      </p>
+    </div>
+  </div>
+</div>

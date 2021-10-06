@@ -1,0 +1,51 @@
+ <!-- 题干 -->
+<div class="question-header">
+  <div class="green-bg" *ngIf="!isComplex">{{ exerciseData.exerciseKindName }}</div>
+  <div class="ques-num" *ngIf="quesNum">{{quesNum}}、</div>
+  <div class="question-title" [innerHTML]="exerciseData.content | safeHtml"></div>
+  <div *ngIf="['finish','selfEvalute'].includes(exerciseData.status)" class="question-score">
+    <div>
+      {{ exerciseData.evaluateExp }}/{{ exerciseData.originalExp }}&nbsp;分
+    </div>
+  </div>
+</div>
+ 
+<ng-container>
+  <app-base-entry-subject
+    *ngIf="exerciseData.mode !== 'collection'"
+    [answerModel]="false"
+    [exerciseData]="exerciseData">
+  </app-base-entry-subject>
+
+  <ng-container *ngIf="['finish','selfEvalute'].includes(exerciseData.status)">
+    <!-- 正确答案 -->
+    <div class="question-answer">
+      <span>正确答案</span>
+    </div>
+    <div class="list-item" *ngFor="let item of exerciseData.answer;let idx=index;">
+      <div class="middle" nz-row>
+        <div  nz-col nzSpan="4">
+          <a >{{item.jd === '1' ? '借' : '贷' }}</a>
+        </div>
+        <div  nz-col nzSpan="10" class="subject">
+          <p>{{getCaterysName(item.subject)}}</p>
+        </div>
+        <div  nz-col nzSpan="10" class="answer" >
+          <p>{{item.answer}}</p>
+        </div>
+      </div>
+    </div>
+    <!-- 解析 -->
+    <div class="question-analysis">
+      <p class="analysis-title">解析：</p>
+      <div class="analysis-content" [innerHTML]="exerciseData.analysis | safeHtml "></div>
+     
+      <a *ngIf="exerciseData.videoAnalysis" 
+        class="analysis-video-title" 
+        [href]="exerciseData.videoAnalysis" 
+        target="__blank">
+        点击视频观看解答
+      </a>
+    </div>
+  </ng-container>
+</ng-container>

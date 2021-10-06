@@ -1,0 +1,43 @@
+:host ::ng-deep .ant-table tfoot > tr > td,
+:host ::ng-deep .ant-table tfoot > tr > th,
+:host ::ng-deep .ant-table-tbody > tr > td,
+:host ::ng-deep .ant-table-thead > tr > th {
+  padding: 10px 5px;
+}
+
+.ant-table-tbody>tr.ant-table-row:hover>td {
+  background:#dde0df;
+}
+
+:host ::ng-deep .ant-table-pagination.ant-pagination {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: white;
+}
+
+:host ::ng-deep .ant-spin-container {
+  position: static;
+}
+
+:host ::ng-deep .ant-tree {
+  position: static !important;
+}
+
+nz-content {
+  flex: 1 !important;
+}
+
+.synopsis-text {
+  width: 100%;
+  display: -webkit-box !important;
+  word-break: break-all;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+
+::ng-deep .no-scoll .ant-table-body {
+  overflow: hidden!important;
+}

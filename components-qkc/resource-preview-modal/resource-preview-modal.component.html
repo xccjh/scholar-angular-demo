@@ -1,0 +1,26 @@
+<nz-modal [(nzVisible)]="(preview || title)&&!hidden" [nzFooter]='null'
+          [nzTitle]='(!fullscreen&&title)?title:null'
+          [nzClassName]='title&&fullscreen?"modal-wrap":undefined'
+          [nzWidth]='modalWidth' [nzBodyStyle]='modalBodyStyle' *ngIf='preview||title;'
+          (nzOnCancel)="cancelFullscreen()">
+  <iframe
+    id='iframeVideo'
+    allowfullscreen='true'
+    [src]="url"
+    style="width: 100%;border: none;height:100%">
+  </iframe>
+  <ng-container *ngIf='title'>
+    <i nz-icon nzType="fullscreen" nzTheme="outline" (click)='enterFullscreen(true)' *ngIf='!fullscreen'
+       class='icon-fullscreen'></i>
+    <i nz-icon nzType="fullscreen-exit" nzTheme="outline" (click)='enterFullscreen(false)' *ngIf='fullscreen'
+       class='icon-fullscreen'></i>
+  </ng-container>
+</nz-modal>
+<iframe
+  *ngIf='hidden'
+  id='iframePage'
+  allowfullscreen='true'
+  [src]="url"
+  [style.visibility]='hidden?"hidden":"visible"'
+  style="width: 100%;border: none;height:100%">
+</iframe>

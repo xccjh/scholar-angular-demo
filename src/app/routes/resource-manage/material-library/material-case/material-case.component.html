@@ -1,0 +1,190 @@
+<div class="container">
+  <section class="resource-container">
+    <section class="left-tree"
+             nz-resizable
+             [style.width.px]="width"
+             (nzResize)="onResize($event)">
+      <p style='margin-bottom:15px;font-size: 15px;'> 选择知识点(不支持跨学科知识点)</p>
+      <div #treeContainer style='display:inline-block;overflow:hidden;margin-right: 30px;'>
+        <qkc-tree-knowledgegraph
+          model="check"
+          [professionId]="professionId"
+          [defaultCheckedKeys]="defaultTreeKey"
+          (nodeChange)="nodeChange($event)"
+          [fullNode]='true'
+          [allNodes]='true'
+          #treeknowledge>
+        </qkc-tree-knowledgegraph>
+      </div>
+      <nz-resize-handle nzDirection="right">
+        <div class="right-wrap">
+          <i class="right" nz-icon nzType="more" nzTheme="outline"></i>
+        </div>
+      </nz-resize-handle>
+    </section>
+    <section class="right-resource">
+      <p class='right-title'>{{title}}</p>
+      <form nz-form [formGroup]="validateForm" class="case-form">
+        <nz-form-item>
+          <nz-form-label [nzSm]="3" [nzXs]="24" nzRequired style="text-align: left;max-width:100px;"
+                         nzFor="title">资源标题
+          </nz-form-label>
+          <nz-form-control [nzSm]="21" [nzXs]="24" [nzErrorTip]="titleTpl">
+            <input nz-input formControlName="title"
+                   id='title'
+                   placeholder="请输入标题..."
+                   style="width: calc(100% - 80px);"
+                   (keyup.enter)='submitForm()'
+                   (keydown)='stopPropagation($event)'
+            />
+            <span style="margin-left: 10px;">{{validateForm.value.title.length}}/30</span>
+            <ng-template #titleTpl let-control>
+              <ng-container *ngIf="control.hasError('maxlength')">资源标题不能超过30个字</ng-container>
+              <ng-container *ngIf="control.hasError('required')">资源标题不能为空</ng-container>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+        <div nz-row>
+          <div nz-col nzSpan="15" >
+            <nz-form-item>
+              <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired style="text-align: left; max-width: 100px;"
+                             nzFor="title">作者名称
+              </nz-form-label>
+              <nz-form-control [nzSm]="18" [nzXs]="24" [nzErrorTip]="titleTpl" nzHasFeedback>
+                <input nz-input formControlName="authorName"
+                       placeholder="请输入作者名称..."
+                       style="width: calc(100% - 80px);" (keyup.enter)='submitForm()'/>
+                <span style="margin-left: 10px;">{{validateForm.value.authorName?.length}}/30</span>
+                <ng-template #titleTpl let-control>
+                  <ng-container *ngIf="control.hasError('maxlength')">作者名称不能超过30个字</ng-container>
+                  <ng-container *ngIf="control.hasError('required')">作者名称不能为空</ng-container>
+                </ng-template>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div nz-row>
+          <div nz-col nzSpan="12">
+            <nz-form-item>
+              <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired style="text-align: left;max-width:100px;"
+              >学习目标
+              </nz-form-label>
+              <nz-form-control [nzSm]="18" [nzXs]="24" nzErrorTip="请选择学习目标">
+                <nz-select formControlName="learningGoalCode" nzAllowClear
+                           nzPlaceHolder="请选择学习目标">
+                  <nz-option *ngFor="let opt of learnTargetArr"
+                             [nzValue]="opt.id" [nzLabel]="opt.name"></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <nz-form-item>
+          <nz-form-label [nzSm]="3" [nzXs]="24" nzRequired style="text-align: left;max-width:100px;">案例背景
+          </nz-form-label>
+          <nz-form-control [nzSm]="21" [nzXs]="24" nzErrorTip="案例背景不能为空"
+                           style='max-width: calc(100% - 150px);position: relative'>
+            <nz-spin [nzSpinning]="isBackgroundLoading"  nzTip="文件上传中..."
+                     [nzDelay]="0">
+              <ckeditor [editor]="Editor" placeholder="请输入案例背景内容"
+                        [config]="backgroundConfig" formControlName='background' id='editor0'></ckeditor>
+              <span
+                style='float:right'
+                [style.color]='(getContentLength(validateForm.value.background)<5000)?"rgb(95, 95, 95)":"red"'>{{getContentLength(validateForm.value.background)}}
+                /5000</span>
+            </nz-spin>
+            <i nz-icon nzType="drag" [ngStyle]='{"visibility":dailDown0?"visible":"hidden"}' nzTheme="outline"
+               class='move-handler'
+               id='moveHandler0'></i>
+          </nz-form-control>
+          <i nz-icon nzType="login" id='editor-icon0' nzTheme="outline" class='editor-icon'
+             style='vertical-align: top;'
+             (click)="nailDown(0)" nz-tooltip nzTooltipTitle="钉住拖动"
+             [ngStyle]='{"visibility":dailDown0?"hidden":"visible"}'></i>
+          <i nz-icon nzType="logout" id='editor-icon-out0' nzTheme="outline" class='editor-icon'
+             style='vertical-align: top;'
+             (click)="nailDown(0)" nz-tooltip nzTooltipTitle="回到初始位置"
+             [ngStyle]='{"visibility":dailDown0?"visible":"hidden"}'></i>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSm]="3" [nzXs]="24" style="text-align: left;max-width:100px;">案例附件</nz-form-label>
+          <nz-form-control [nzSm]="21" [nzXs]="24"
+                           nzErrorTip="The input is not valid E-mail!"
+                           nzExtra="仅限4个，支持扩展名：pdf 、doc 、docx 、xls 、xlsx 、ppt 、pptx 、png 、jpg 、jpeg 、mp4 、zip 、rar">
+            <qkc-upload
+              listType="text"
+              acceptType="pdf ,doc ,docx ,xls ,xlsx ,ppt ,pptx ,png ,jpg ,jpeg ,mp4 ,zip ,rar"
+              limit="4"
+              [multiple]='true'
+              (percentReport)='percentReport($event)'
+              formControlName="caseAttanmentArr"
+            >
+              <button nz-button><i nz-icon nzType="upload"></i><span>上传文件</span></button>
+            </qkc-upload>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSm]="3" [nzXs]="24"
+                         style="text-align: left;max-width:100px;">案例解析
+          </nz-form-label>
+          <nz-form-control [nzSm]="21" [nzXs]="24" style='max-width: calc(100% - 150px);position: relative'>
+            <nz-spin [nzSpinning]="isAnalysisLoading"  nzTip="文件上传中..."
+                     [nzDelay]="0">
+              <ckeditor [editor]="Editor" placeholder="请输入案例解析"
+                        id='editor1'
+                        [config]="analysisConfig" formControlName='analysis'></ckeditor>
+              <span
+                style='float:right'
+                [style.color]='(getContentLength(validateForm.value.analysis)<5000)?"rgb(95, 95, 95)":"red"'>{{getContentLength(validateForm.value.analysis)}}
+                /5000</span>
+            </nz-spin>
+            <i nz-icon nzType="drag" [ngStyle]='{"visibility":dailDown1?"visible":"hidden"}' nzTheme="outline"
+               class='move-handler'
+               id='moveHandler1'></i>
+          </nz-form-control>
+          <i nz-icon nzType="login" id='editor-icon1' nzTheme="outline" class='editor-icon'
+             style='vertical-align: top;'
+             (click)="nailDown(1)" nz-tooltip nzTooltipTitle="钉住拖动"
+             [ngStyle]='{"visibility":dailDown1?"hidden":"visible"}'></i>
+          <i nz-icon nzType="logout" id='editor-icon-out1' nzTheme="outline" class='editor-icon'
+             style='vertical-align: top;'
+             (click)="nailDown(1)" nz-tooltip nzTooltipTitle="回到初始位置"
+             [ngStyle]='{"visibility":dailDown1?"visible":"hidden"}'></i>
+        </nz-form-item>
+        <nz-form-item style='margin-top: 40px;'>
+          <nz-form-label [nzSm]="3" [nzXs]="24" style="text-align: left;max-width:100px;">教学指导
+          </nz-form-label>
+          <nz-form-control [nzSm]="21" [nzXs]="24" style="max-width: calc(100% - 150px);position: relative">
+            <nz-spin [nzSpinning]="isGuideLoading"  nzTip="文件上传中..."
+                     [nzDelay]="0">
+              <ckeditor [editor]="Editor" placeholder="请输入教学指导"
+                        id='editor2'
+                        [config]="guideConfig" formControlName='guide'></ckeditor>
+              <span
+                style='float:right'
+                [style.color]='(getContentLength(validateForm.value.guide)<5000)?"rgb(95, 95, 95)":"red"'>{{getContentLength(validateForm.value.guide)}}
+                /5000</span>
+            </nz-spin>
+            <i nz-icon nzType="drag" nzTheme="outline" [ngStyle]='{"visibility":dailDown2?"visible":"hidden"}'
+               class='move-handler'
+               id='moveHandler2'></i>
+          </nz-form-control>
+          <i nz-icon nzType="login" id='editor-icon2' nzTheme="outline" class='editor-icon'
+             style='vertical-align: top;'
+             (click)="nailDown(2)" nz-tooltip nzTooltipTitle="钉住拖动"
+             [ngStyle]='{"visibility":dailDown2?"hidden":"visible"}'></i>
+          <i nz-icon nzType="logout" id='editor-icon-out2' nzTheme="outline" class='editor-icon'
+             style='vertical-align: top;'
+             (click)="nailDown(2)" nz-tooltip nzTooltipTitle="回到初始位置"
+             [ngStyle]='{"visibility":dailDown2?"visible":"hidden"}'></i>
+        </nz-form-item>
+      </form>
+      <div class="submit-footer">
+        <button nz-button nzType="default"
+                style="margin-right: 20px;" (click)="goBack()">返回
+        </button>
+        <button nz-button nzType="primary" (click)="submitForm()" [disabled]='percent===100?null:true' [nzLoading]='saveLoading'>保存</button>
+      </div>
+    </section>
+  </section>
+</div>

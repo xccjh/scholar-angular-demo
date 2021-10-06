@@ -1,0 +1,58 @@
+<div class='container'>
+  <div class="header">
+    <div class="title">
+      反馈统计
+      <button nz-button class="back-btn" nzType="default" (click)="goback()">返回</button>
+    </div>
+    <div class='search-content'>
+      <div class='search-item'>
+        <div class='search-label pt5'>
+          关键词搜索：
+        </div>
+        <input nz-input [placeholder]="'支持讲师姓名 /手机号码'" [(ngModel)]="searchWordVal" (ngModelChange)='storingData()'
+               (keyup.enter)='searchData("button")'
+               style='margin-right: 20px;'/>
+      </div>
+      <button nz-button class="notice-btn" nzType="primary" (click)="searchData('button')">查询</button>
+    </div>
+
+  </div>
+  <div class="table-container" id='tableScroll' [class.no-scoll]='!data.length'>
+    <nz-table #editRowTable
+              [nzFrontPagination]="false"
+              [nzData]="historys"
+              [nzShowSizeChanger]="true"
+              [nzScroll]='{y : height+"px"}'
+              [nzPageSizeOptions]='[15, 20, 30, 40, 50]'
+              [nzShowTotal]="totalTemplate"
+              [nzLoading]="isLoading"
+              [nzTotal]="total"
+              [(nzPageIndex)]="pageIndex"
+              [(nzPageSize)]="pageSize"
+              (nzPageIndexChange)="searchData()"
+              (nzPageSizeChange)="searchData()">
+      <thead>
+      <tr>
+        <th nzWidth='200px'>讲师姓名</th>
+        <th>手机号码</th>
+        <th>问题描述</th>
+        <th>图片</th>
+        <th>反馈时间</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of editRowTable.data; let idx = index">
+        <td>{{ data.seqFont }}</td>
+        <td>{{ data.name }}</td>
+        <td>{{ data.name}}</td>
+        <td>{{data.courseName }}</td>
+        <td>{{data.pkgNum }}</td>
+      </tr>
+      </tbody>
+    </nz-table>
+    <ng-template #totalTemplate let-total>共 {{ total }} 条记录</ng-template>
+  </div>
+</div>
+
+
+

@@ -1,0 +1,88 @@
+@import 'common';
+
+.container {
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+
+  .header {
+    height: 120px;
+
+    .title {
+      font-size: 18px;
+      position: relative;
+      padding: 0 20px;
+      height: 57px;
+      line-height: 60px;
+
+      .back-btn {
+        float: right;
+        margin-top: 20px;
+      }
+
+      &:after {
+        content: "";
+        position: absolute;
+        left: 10px;
+        width: 5px;
+        height: 24px;
+        top: 18px;
+        background-color: #2697ff;
+      }
+    }
+
+    .notice-btn {
+      margin-left: 20px;
+    }
+
+    .search-content {
+      margin: 0 0 16px;
+      display: flex;
+      padding: 0 20px;
+
+      .search-item {
+        flex: 1;
+        display: flex;
+        max-width: 300px;
+
+        .search-label {
+          &.pt5 {
+            padding-top: 5px;
+          }
+        }
+
+        input, .item-select {
+          width: 100%;
+          flex: 1;
+          max-width: 224px;
+          margin-left: 6px;
+        }
+      }
+    }
+  }
+
+  .table-container {
+    height: calc(100% - 180px);
+    overflow: hidden;
+    padding: 0 20px 0px;
+  }
+}
+
+.modal-footer {
+  overflow: hidden;
+
+  .modal-footer-button {
+    margin-right: 20px;
+    float: right;
+
+    &.mr0 {
+      margin-right: 0
+    }
+  }
+}
+
+nz-content {
+  padding: 10px;
+}
+
+

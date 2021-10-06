@@ -1,0 +1,93 @@
+@import "../less/public.less";
+p {
+  margin-bottom: 0;
+}
+.wrapper {
+  width: 100%;
+  height: calc(100% - 70px);
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  .remarks {
+    color: #fc3f4c;
+    text-align: center;
+  }
+  .wrapper-btn {
+    width: 300px;
+    margin: 50px auto;
+    button {
+      height: 48px;
+    }
+  }
+  .background {
+    width: 373px;
+    height: 346px;
+    margin: 0 auto;
+    position: relative;
+
+    &.fail {
+      background: url("../../../src/assets/images/fail.png");
+      .company-name {
+        color: #fff;
+      }
+    }
+    &.success {
+      background: url("../../../src/assets/images/success.png");
+      .company-name {
+        color: #CA7A26;
+      }
+    }
+    .company-name,
+    .score {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .score {
+      top: 53px;
+      line-height: 158px;
+      font-size: 120px;
+      font-weight: 400;
+      color: #fdef69;
+    }
+    .company-name {
+      top: 230px;
+    }
+  }
+  .statistics {
+    width: 540px;
+    height: 132px;
+    margin: 0 auto;
+    padding: 21px 0;
+    border: 1px solid #d2dae8;
+    box-shadow: 0px 3px 6px #f0f1f3;
+    border-radius: 6px;
+
+    & > div {
+      float: left;
+      width: 50%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: #3A3C42;
+      p:first-child{
+        font-size:36px;
+        line-height:47px;
+        height: 47px;
+        span{
+          font-size: 14px;
+        }
+      }
+      p:last-child{
+        font-size:18px;
+        line-height:24px;
+      }
+    }
+    .border-left {
+      border-left: 1px solid #f0f1f3;
+    }
+  }
+}

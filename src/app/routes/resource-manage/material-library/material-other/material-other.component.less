@@ -1,0 +1,98 @@
+.margin-btn {
+  margin-left: 15px;
+}
+
+.light-color {
+  color: red;
+}
+
+.container {
+  background-color: white;
+  padding: 10px;
+  height: 100%;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+
+    .title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 500;
+    }
+  }
+}
+
+.resource-container {
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  .left-tree {
+    min-width: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    .right-wrap {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .right {
+      background: #fff;
+      border: 1px solid #ddd;
+      text-align: center;
+      font-size: 12px;
+      height: 20px;
+      line-height: 20px;
+    }
+  }
+
+  .right-resource {
+    position:relative;
+    padding-left: 30px;
+    height: 100%;
+    flex: 1;
+    border-left: 1px solid #ddd;
+    overflow: hidden;
+    .case-form{
+      height: calc(100% - 88px);
+      overflow: hidden;
+      overflow-y: auto;
+    }
+  }
+}
+
+
+.source-header {
+  font-weight: bolder;
+}
+
+.submit-footer {
+  position:absolute;
+  top:0;
+  right:0;
+  text-align: center;
+}
+
+:host ::ng-deep .ant-upload.ant-upload-drag .ant-upload{
+      padding:20px;
+}
+
+:host ::ng-deep .ant-tree-title{
+  max-width:200px;
+  display:inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space:nowrap;
+}
+.font-question {
+  font-size: 20px;
+  cursor: pointer;
+  color: white;
+  background-color: rgb(24, 144, 255);
+  border-radius: 50%;
+}

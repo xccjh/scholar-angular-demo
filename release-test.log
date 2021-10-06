@@ -1,0 +1,55 @@
+
+发布位置：scholar，
+发布时间：2019-11-11 21:53:37，
+发布branch: test，
+发布commitId: 6ad65e1db8cc45ee76682635c32ded5d752660e5，
+发布commit信息: “Merge branch 'dev' into test”，
+发布人:“zoujiahe”
+
+发布位置：scholar，
+发布时间：2019-11-23 15:41:05，
+发布branch: test，
+发布commitId: f6ea8a5528e20122b075b474fc80e6b4f585af41，
+发布commit信息: “处理智适应报错”，
+
+发布位置：scholar，
+发布时间：2019-12-05 13:13:00，
+发布branch: dev-v2.1，
+发布commitId: 66321e1401152b2217a9835bed9acb851fe43e97，
+发布commit信息: “提前检测代码入库情况”，
+发布人:zoujiahe
+
+发布位置：scholar，
+发布时间：2019-12-25 14:38:10，
+发布branch: dev，
+发布commitId: 69db39f071ea54ddf2102744097367733c51e6b7，
+发布commit信息: “增加汇源脚本”，
+发布人:zoujiahe
+
+发布位置：html/scholar，
+发布时间：2019-12-25 14:49:45，
+发布branch: dev，
+发布commitId: 6ff2f7c53025c38e82f66cb047030a7f457ed360，
+发布commit信息: “更换bucket”，
+发布人:zoujiahe
+
+发布位置：html/scholar，
+发布时间：2020-02-23 17:41:25，
+发布branch: dev-v2.3，
+发布commitId: b5df62a49aef39ab01154cbd7397581ffacd9d74，
+发布commit信息: “feat:增加知识点导出”，
+发布人:zoujiahe
+
+发布位置：html/scholar，
+发布时间：2020-03-26 17:54:45，
+发布branch: master，
+发布commitId: de21011a70837b6ab4d5a869e3b9e9f390903455，
+发布commit信息: “Merge branch 'dev'”，
+发布人:zoujiahe
+
+发布位置：html/scholar，
+发布时间：2020-05-08 16:32:22，
+发布branch: master，
+发布commitId: cafea47b5a8cb5c0d32df48eeef4840057ce4077，
+发布commit信息: “alter:历史位置”，
+发布人:zoujiahe

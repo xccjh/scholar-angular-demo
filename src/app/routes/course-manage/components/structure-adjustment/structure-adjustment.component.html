@@ -1,0 +1,122 @@
+<div class="container">
+  <div *ngIf='preview==="1"&&!nodes.length' class='not-content'>
+    该课包尚未建立章节内容
+  </div>
+  <div class="operation-button">
+    <button nz-button nzType="primary" style='margin-right:20px;' (click)='chapterImport()'
+            *ngIf='(!isStandard)&&preview==="0"'>excel导入章节
+    </button>
+    <button nz-button nzType="primary" (click)='knowledgeGraph()' style='margin-right:20px;' [nzLoading]='knowledgeGraphLoading' *ngIf='(!isStandard)&&preview==="0"'>知识图谱导入章节</button>
+    <button nz-button nzType="primary" (click)='chapterExport()' [nzLoading]='chapterExportLoading' *ngIf='preview==="0"'>章节导出</button>
+  </div>
+  <nz-collapse
+    [style]="{ border: 'none', 'background-color': '#fff'}"
+    cdkDropList
+    [style.cursor]='(!isStandard)&&preview==="0"?"inherit":"not-allowed"'
+    (cdkDropListDropped)="chapterDrop($event)">
+    <nz-collapse-panel
+      *ngFor="let node of nodes;let idx=index;"
+      [style.cursor]='(!isStandard)&&preview==="0"?"inherit":"not-allowed"'
+      class="collapse-panel"
+      [(nzActive)]="node.active"
+      [nzHeader]="panelHeaderTpl"
+      [nzExtra]="panelExtraTpl"
+      (nzActiveChange)="sectionChange(node)"
+      cdkDrag
+    >
+      <ng-template #panelHeaderTpl>
+        <span [style.cursor]='(!isStandard)&&preview==="0"?"inherit":"not-allowed"'>
+              <span style="margin-right: 20px;">第{{ idx + 1}}章</span>
+              <span>{{ node.name}}</span>
+        </span>
+      </ng-template>
+      <ng-template #panelExtraTpl>
+        <a (click)="$event.stopPropagation();addChapter(node);" *ngIf="preview==='0'">
+          <i nz-icon nzType="edit" nzTheme="outline"></i>
+          重命名
+        </a>
+        <a [style]="{ color: '#f53131', 'margin-left': '20px'}" (click)="$event.stopPropagation();delChapter(node);"
+           *ngIf="(!isStandard)&&preview==='0'">
+          <i nz-icon nzType="delete" nzTheme="outline"></i>
+          删除
+        </a>
+      </ng-template>
+      <div class="list" cdkDropList (cdkDropListDropped)="sectionDrop($event)"
+           [style.cursor]='(!isStandard)&&preview==="0"?"inherit":"not-allowed"'>
+        <ng-container *ngFor="let item of node.children;let sectionIdx=index;">
+          <div class="list-item" cdkDrag [style.cursor]='(!isStandard)&&preview==="0"?"inherit":"not-allowed"'>
+            <div>
+              <span style="margin-right: 20px;">{{ idx + 1}}.{{ sectionIdx + 1 }}节</span><span>{{ item.name}}</span>
+            </div>
+            <div class="action-group">
+              <a nz-button nzType="link" (click)="addSection(node, item)" *ngIf="preview==='0'">
+                <i nz-icon nzType="edit" nzTheme="outline"></i>
+                重命名
+              </a>
+              <a nz-button nzType="link" [style]="{ color: '#f53131'}" (click)="delSection(node, item)"
+                 *ngIf="(!isStandard)&&preview==='0'">
+                <i nz-icon nzType="delete" nzTheme="outline"></i>
+                删除
+              </a>
+            </div>
+          </div>
+        </ng-container>
+        <div class="add-section" *ngIf="(!isStandard)&&preview==='0'">
+          <div>
+            <a nz-button nzType="link" (click)="addSection(node, null)">
+              <i nz-icon nzType="plus" nzTheme="outline"></i>
+              添加小节
+            </a>
+          </div>
+          <div></div>
+        </div>
+      </div>
+    </nz-collapse-panel>
+  </nz-collapse>
+  <button *ngIf="(!isStandard)&&preview==='0'" nz-button nzType="primary" nzBlock [nzSize]="'large'"
+          (click)="addChapter(null)">
+    <i nz-icon nzType="plus" nzTheme="outline"></i>
+    新增章
+  </button>
+</div>
+
+
+<ng-template #localuploadmodal>
+  <form nz-form [formGroup]="localUploadChapter">
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzRequired style='max-width:100px;'>章节结构</nz-form-label>
+      <nz-form-control style='position:relative;'>
+        <nz-spin [nzSpinning]="loading"
+                 [nzDelay]="0">
+          <nz-upload
+            class="upload-list-inline-strure"
+            nzListType="picture"
+            [nzShowUploadList]=' { showPreviewIcon: false, showRemoveIcon: true, showDownloadIcon: false }'
+            [nzFileList]="false"
+            [nzRemove]='removeFileSelf()'
+            [nzBeforeUpload]="beforeChapterUpload()"
+            [nzCustomRequest]="customChapterRequest()"
+            #qkcupload
+          >
+            <button nz-button [disabled]='this.localUploadChapter.value.chapterUrl===""?false:true'
+                    style='margin-bottom: 20px;'>
+                    <span><i nz-icon
+                             nzType="upload" style='font-size:20px;'></i>上传文件</span>
+            </button>
+          </nz-upload>
+          <div style='position: absolute;top: 35px;'>excel导入章节同时将会清除已有的章节结构！</div>
+          <button nz-button style='position:absolute;left:126px;top:0;' (click)='downTemplate()' [nzLoading]='downTemplateLoading'>
+                    <span><i nz-icon
+                             nzType="snippets" style='font-size:20px;margin-right:20px'
+                             nzTheme="outline"></i>模板下载</span>
+          </button>
+        </nz-spin>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</ng-template>
+
+
+
+
+

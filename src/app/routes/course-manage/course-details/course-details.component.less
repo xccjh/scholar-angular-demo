@@ -1,0 +1,372 @@
+[nz-form] {
+  padding: 10px;
+}
+
+:host ::ng-deep .ant-upload {
+}
+
+.uploadpic {
+  width: 104px;
+  height: 104px;
+  text-align: center;
+  line-height: 104px;
+  border: 1px solid #d9d9d9;
+  font-size: 20px;
+  position: relative;
+  cursor: pointer;
+  //&:hover {
+  //  &::before{
+  //    opacity: 1;
+  //  }
+  //}
+  //&::before {
+  //  position: absolute;
+  //  z-index: 1;
+  //  width: 100%;
+  //  height: 100%;
+  //  background-color: rgba(0,0,0,.5);
+  //  opacity: 0;
+  //  transition: all .3s;
+  //  content: ' ';
+  //  left:0
+  //}
+}
+
+.item-container {
+  min-width: calc(20% - 10px);
+  max-width: calc(20% - 10px);
+  height: 80px;
+  border: 1px solid #d9d9d9;
+  margin-top: 10px;
+  padding: 10px;
+  margin-right: 10px;
+
+  .move-container {
+    width: calc(100% - 38px);
+    float: left;
+
+    .item-preview {
+      float: left;
+      width: 60px;
+      height: 60px;
+      cursor: pointer;
+
+      img {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+    }
+
+    .item-name {
+      cursor: pointer;
+      vertical-align: middle;
+      max-width: calc(100% - 60px);
+      overflow: hidden;
+      float: left;
+      white-space: nowrap;
+      overflow: hidden;
+      -ms-text-overflow: ellipsis;
+      text-overflow: ellipsis;
+      height: 100%;
+      line-height: 60px;
+      padding-left: 8px;
+
+    }
+  }
+
+  .item-operating {
+    text-align: right;
+    float: right;
+    width: 38px;
+    height: 100%;
+    line-height: 60px;
+  }
+}
+
+
+.header-container {
+  height: 50px;
+  line-height: 50px;
+  box-sizing: content-box;
+  border-bottom: 1px solid #d9d9d9;
+
+  .title {
+    float: left;
+    font-size: 18px;
+    margin-left: 20px;
+  }
+}
+
+::ng-deep .doublevideo {
+  flex-direction: row;
+
+  .ant-form-item-control-input {
+    width: 100%;
+  }
+}
+
+
+.dynamic-delete-button {
+  cursor: pointer;
+  position: relative;
+  top: 4px;
+  font-size: 24px;
+  color: #999;
+  transition: all 0.3s;
+}
+
+.dynamic-delete-button:hover {
+  color: #777;
+}
+
+.passenger-input {
+  width: 60%;
+  margin-right: 8px;
+}
+
+
+.add-button {
+  width: 60%;
+}
+
+.item-contianer {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.item-member {
+  position: relative;
+  width: 72px;
+  height: 36px;
+  border: 1px solid #d9d9d9;
+  opacity: 1;
+  border-radius: 3px;
+  margin-right: 18px;
+  margin-bottom: 30px;
+  text-align: center;
+  line-height: 36px;
+  color: #999;
+  font-size: 14px;
+
+
+  .text-box {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+    padding: 0 10px;
+    font-size: 14px;
+  }
+
+
+  &.add-member {
+    //color: #D2DAE8;
+    //border: 1px solid #F0F1F3;
+
+    .add-member-icon {
+      font-size: 14px;
+      color: #999;
+    }
+
+    &:hover {
+      cursor: pointer;
+      border: 1px solid #40a9ff;
+
+      .add-member-icon {
+        color: #999;
+        cursor: pointer;
+      }
+
+    }
+  }
+
+  .cross {
+    cursor: pointer;
+    color: white;
+    text-align: center;
+    line-height: 20px;
+    font-size: 15px;
+    border-radius: 50%;
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    top: -12px;
+    right: -12px;
+    background: #FC3F4C;
+    opacity: 1;
+    transform: scale(0.5);
+
+    &:hover {
+      transform: scale(0.6);
+      box-shadow: 0 0 5px #FC3F4C;
+    }
+  }
+}
+
+
+::ng-deep .member-modal {
+  .button-operating {
+    padding: 27px 30px;
+    background: white;
+
+    .button-input {
+      background: #F8F8F8;
+      border: 1px solid #F1F1F1;
+      opacity: 1;
+      border-radius: 4px;
+      width: 300px;
+      height: 30px;
+      font-size: 14px;
+      font-family: MicrosoftYaHei;
+      line-height: 17px;
+      color: #A3ABB8;
+      opacity: 1;
+      margin: 0 12px 0 0;
+    }
+
+    .button-seach {
+      border-radius: 4px;
+    }
+  }
+
+  .item-member-container {
+    padding: 0 30px;
+    max-height: 408px;
+    overflow: auto;
+    display: flex;
+    flex-wrap: wrap;
+
+
+    .item-content {
+      display: flex;
+      flex-wrap: wrap;
+      width: 100%;
+
+      .item-label {
+        cursor: pointer;
+        width: 100%;
+        margin-bottom: 18px;
+        font-size: 14px;
+        font-family: Microsoft YaHei;
+        font-weight: 400;
+        line-height: 21px;
+        color: #3A3C42;
+        opacity: 1;
+
+        .label-text {
+          padding-right: 6px;
+        }
+
+        .up-icon, .down-icon {
+          cursor: pointer;
+          transform: scale(1, .7);
+          vertical-align: middle;
+        }
+      }
+
+    }
+
+    .item-member {
+      padding: 0 10px;
+      cursor: pointer;
+      position: relative;
+      width: 72px;
+      height: 36px;
+      border: 1px solid #d9d9d9;
+      opacity: 1;
+      border-radius: 3px;
+      margin-right: 18px;
+      text-align: center;
+      line-height: 36px;
+      font-size: 14px;
+      margin-bottom: 33px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      background: #f6f6f6;
+      opacity: 1;
+      border-radius: 3px;
+      font-family: MicrosoftYaHei;
+      color: #999;
+
+
+      .cross {
+        cursor: pointer;
+        color: white;
+        text-align: center;
+        line-height: 20px;
+        font-size: 15px;
+        border-radius: 50%;
+        position: absolute;
+        width: 24px;
+        height: 24px;
+        top: -12px;
+        right: -12px;
+        background: #FC3F4C;
+        opacity: 1;
+        transform: scale(0.5);
+
+        &:hover {
+          transform: scale(0.6);
+          box-shadow: 0 0 5px #FC3F4C;
+        }
+      }
+
+      &.select {
+        background: #e5efff;
+        opacity: 1;
+        border-radius: 3px;
+        color: #4389FF;
+        border: 1px solid #37a3ff;
+      }
+    }
+
+
+  }
+
+  .button-container {
+    width: 100%;
+    height: 90px;
+    line-height: 90px;
+    text-align: center;
+    background: #FFF;
+    box-shadow: 0px -3px 18px rgba(0, 0, 0, 0.12);
+    opacity: 1;
+
+    .cancel {
+      margin-right: 18px;
+      width: 114px;
+      height: 36px;
+      font-size: 16px;
+      font-family: Microsoft YaHei;
+      font-weight: 400;
+      line-height: 21px;
+      color: #4389FF;
+      opacity: 1;
+      border: 1px solid #4389FF;
+      opacity: 1;
+      border-radius: 4px;
+    }
+
+    .comfirm {
+      width: 114px;
+      border-radius: 4px;
+      background: #4389FF;
+      opacity: 1;
+      height: 36px;
+      font-size: 16px;
+      font-family: Microsoft YaHei;
+      font-weight: 400;
+      line-height: 21px;
+      color: #FFFFFF;
+      opacity: 1;
+    }
+  }
+
+}
+
+:host ::ng-deep .item-control-self .ant-form-item-explain {
+  transform: translateY(-20px);
+}

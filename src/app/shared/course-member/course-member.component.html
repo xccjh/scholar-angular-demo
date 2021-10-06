@@ -1,0 +1,38 @@
+<div class="container">
+  <div class="header">
+    <div class="title">
+      课程组成员设置
+    </div>
+
+    <div>
+      <qkc-role-member [(ngModel)]="memberId" role="ROLE-KECHENG" placeholder="请选择课程人员"
+        [ngStyle]="{width:'200px',marginRight:'8px',display:'inline-block'}"></qkc-role-member>
+
+      <button nz-button nzType="primary" (click)="add()">添加成员</button>
+    </div>
+	</div>
+	<div class="table-container">
+		<nz-table #basicTable [nzData]="data" [nzShowPagination]="false" [nzShowSizeChanger]="true"
+			[nzShowTotal]="totalTemplate" [nzLoading]="isLoading" [nzPageSize]="100" [nzTotal]="data.length">
+			<thead>
+				<tr>
+					<th>课程组成员</th>
+					<th>身份</th>
+					<th>加入时间</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let data of basicTable.data">
+					<td>{{ data?.memberName }}</td>
+					<td>{{ data?.memberType==='2'?'成员':'负责人'}}</td>
+					<td>{{ data?.lastModifiedTime | date:'yyyy-MM-dd HH:mm:ss':'GMT+08:00'}}</td>
+					<td>
+						<a style="color:red;" (click)="del(data.id)" *ngIf="data?.memberType==='2'&&curUser.id===data?.createrId">删除</a>
+					</td>
+				</tr>
+			</tbody>
+		</nz-table>
+		<ng-template #totalTemplate let-total>共 {{ total }} 条记录</ng-template>
+	</div>
+</div>

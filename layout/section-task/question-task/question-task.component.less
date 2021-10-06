@@ -1,0 +1,152 @@
+@import '../less/public.less';
+p{
+    margin-bottom: 0 !important;
+}
+.wrapper{
+    width: 100%;
+    height: calc(100% - 70px);
+    display: flex;
+    flex-direction: column;
+    background:#fff;
+    justify-content: center;
+    align-items: center;
+    .test-box{
+        width: 520px;
+        height: 465px;
+        background: #F4F7FD;
+        border-radius: 12px;
+        background: url(src/assets/images/custom-plan-header.png)no-repeat aliceblue;
+        background-position: top;
+        .test-title{
+            margin-top: 42px;
+            margin-left: 48px;
+            h3{
+                height: 45px;
+                font-size: 34px;
+                font-weight: bold;
+                line-height: 45px;
+                color: #FFFFFF;
+                margin: 0;
+            }
+            h5{
+                height: 29px;
+                font-size: 22px;
+                font-weight: 400;
+                line-height: 29px;
+                color: #FFFFFF;
+                margin: 0;
+            }
+        }
+        .test-info{
+            margin: 35px auto 0;
+            width: 472px;
+            height: 287px;
+            background: #FFFFFF;
+            border-radius: 12px;
+            ul{
+                padding: 42px 25px 47px;
+                margin: 0;
+                li{
+                    margin-bottom: 11px;
+                    display: flex;
+                    justify-content: space-between;
+                    span:first-child{
+                        font-size: 18px;
+                        font-family: PingFang SC;
+                        font-weight: 400;
+                        line-height: 25px;
+                        color: #3A3C42;
+                    }
+                    span:last-child{
+                        font-size: 16px;
+                        font-family: PingFang SC;
+                        font-weight: 400;
+                        line-height: 22px;
+                    }
+                    .red{
+                        color:#F6612F
+                    }
+                    .green{
+                        color: #00AB84;
+                    }
+                }
+                li:last-child{
+                    margin-bottom:0px;
+                }
+                li:last-child{
+                    span:last-child{
+                        color:#A3ABB8
+                    }
+                }
+            }
+            .test-operation{
+                border-top: 1px solid #EDEDED;
+                padding: 18px 25px;
+                .no-end{
+                    display: flex;
+                    justify-content: center;
+                    width: 100%;
+                    p{
+                        width: 203px;
+                        button{
+                            width: 100%;
+                            height: 42px;
+                            border-radius: 21px;
+                            text-align: center;
+                            color: #fff;
+                            font-size: 16px;
+                        }
+                    }
+                    p:first-child{
+                        text-align: center;
+                        button{
+                            background: #00AB84;
+                        }
+                        span{
+                            display: block;
+                            margin-top: 6px;
+                            font-size: 12px;
+                            font-family: MicrosoftYaHei;
+                            line-height: 16px;
+                            color: #AAB1BD;
+                        }
+                    }
+                    // p:last-child{
+                    //     button{
+                    //         border: 1px solid #00AB84;
+                    //         color: #00AB84;
+                    //         background: #fff;
+                    //     }
+                    // }
+                }
+                .end{
+                    text-align: center;
+                    margin: 0 auto;
+                    button{
+                        width: 203px;
+                        height: 42px;
+                        background: #A3ABB8;
+                        border-radius: 21px;
+                        color:#fff;
+                        font-size: 16px;
+                    }
+                    span{
+                        display: block;
+                        margin-top: 6px;
+                        font-size: 12px;
+                        font-family: MicrosoftYaHei;
+                        line-height: 16px;
+                        color: #AAB1BD;
+                    }
+                }
+            }
+            .check{
+                height: 100%;
+                display: flex;
+                align-items: center;
+            }
+        }
+     
+    }
+}
+

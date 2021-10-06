@@ -1,0 +1,262 @@
+<div class="container" style="padding: 10px 0 0 0;">
+  <div class="resource-container">
+    <section class="left-tree" nz-resizable [style.width.px]="width"
+             (nzResize)="onResize($event)">
+      <div class="header">
+        <div class="title-tree" style='text-align:left'>
+          负责的课程
+        </div>
+      </div>
+      <div #treeContainer style='display:inline-block;height: calc(100% - 50px); margin-right: 30px;'>
+        <app-pack-tree (courseChange)="courseChange($event)" style='position:relative;left:20px;'
+                       (chapterClick)='chapterClick($event)' *ngIf='packtree' [select]='selectdCourse'></app-pack-tree>
+      </div>
+      <nz-resize-handle nzDirection="right">
+        <div class="right-wrap">
+          <i class="right" nz-icon nzType="more" nzTheme="outline"></i>
+        </div>
+      </nz-resize-handle>
+    </section>
+    <section class="right-resource">
+      <div class="header">
+        <div class="title">
+          课包列表
+          <button nz-button class="notice-btn" nzType="primary" (click)="startAdd()" style="margin-right:20px;">新增课包
+          </button>
+          <button nz-button class="notice-btn" nzType="primary" (click)="enterSeriesManagement()">系列管理</button>
+        </div>
+        <div class='search-content'>
+          <div class='search-item'>
+            <div class='search-label pt5'>
+              关键词搜索：
+            </div>
+            <input nz-input placeholder="支持课包编号/名称" [(ngModel)]="searchWordVal" (ngModelChange)='storingData()'
+                   (keyup.enter)='searchData("button")'/>
+          </div>
+          <div class='search-item'>
+            <div class='search-label pt5'>
+              课包状态：
+            </div>
+            <nz-select class='item-select' [(ngModel)]="selectedVal" nzShowSearch (ngModelChange)='storingData()'>
+              <nz-option nzValue="" nzLabel="全部"></nz-option>
+              <nz-option nzValue="0" nzLabel="草稿"></nz-option>
+              <!--            <nz-option nzValue="1" nzLabel="待审批"></nz-option>-->
+              <nz-option nzValue="1" nzLabel="标准"></nz-option>
+              <!--            <nz-option nzValue="3" nzLabel="未通过"></nz-option>-->
+            </nz-select>
+          </div>
+          <button nz-button nzType="primary" (click)="searchData('button')" style='margin-left:20px;'>查询</button>
+          <button nz-button nzType="primary" style='margin:0 20px;' (click)="resetData()">重置</button>
+        </div>
+      </div>
+      <div class="table-container" id='tableScroll' [class.no-scoll]='!data.length'>
+        <nz-table #editRowTable [nzData]="listOfData"
+                  [nzFrontPagination]="false"
+                  [nzShowSizeChanger]="true"
+                  [nzScroll]='{x:"965px",y : height+"px"}'
+                  [nzPageSizeOptions]='[15, 20, 30, 40, 50]'
+                  [nzShowTotal]="totalTemplate" [nzLoading]="isLoading" [nzTotal]="total" [(nzPageIndex)]="pageIndex"
+                  [(nzPageSize)]="pageSize"
+                  (nzPageIndexChange)="searchData()" (nzPageSizeChange)="searchData()">
+          <thead>
+          <tr>
+            <th>课包编号</th>
+            <th>课包名称</th>
+            <th nzWidth="130px" [nzShowSort]='true' [nzSortOrder]='order' (nzSortOrderChange)='nzSortOtrderChange($event)'>系列名称
+            </th>
+            <th>类型</th>
+            <!--            <th style='"min-width":"40px"'>模式</th>-->
+            <th>创建人</th>
+            <th>更新时间</th>
+            <th style='"min-width":"70px"'>是否售卖</th>
+            <th style='"min-width":"120px"'>是否开启智适应</th>
+            <th style='"min-width":"70px"'>是否启用</th>
+            <th style='"min-width":"55px"'>状态</th>
+            <!--            <th style='"min-width":"70px"'>审核状态</th>-->
+            <th nzWidth='170px' nzRight>操作</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let data of editRowTable.data; let idx = index">
+            <td>{{ data.pcode }}</td>
+            <td>{{ data.name }}</td>
+            <td>{{ data.courseSeriesName ? data.courseSeriesName + (data.packetVer ? '-' + data.packetVer : '') : '--' }}</td>
+            <td>{{  getTeacheType(data.teachType)}}</td>
+            <!--            <td>{{ getPattern(data.pattern)}} </td>-->
+            <td>{{ data.nickName }}</td>
+            <td>{{ getDate(data?.lastModifiedTime)}}</td>
+            <td>{{ data.isSale === "1" ? "是" : "否" }}</td>
+            <td>{{ data.isSmart === "1" ? "是" : "否" }}</td>
+            <td>{{ data.isUsed === '0' ? '否' : '是'}}</td>
+            <!--            <td>{{ getStatus(data.status) }}</td>-->
+            <td>{{ getAuditStatus(data.auditStatus) }}</td>
+            <td nzRight>
+              <nz-button-group>
+                <a nz-button nzType="link" nzSize="small" (click)="preview(data)">预览</a>
+                <ng-container *ngIf='approvalling(data)'>
+                  <a nz-button nzType="link" nzSize="small" (click)="startEdit(idx)">编辑</a>
+                  <a nz-button nzType="link" nzSize="small" (click)="schoolDistrict(data)">校区授权</a>
+                  <a nz-button nzType="link" nzSize="small" (click)="copyPacket(data)">复制</a>
+                  <a nz-button nzType="link" nzSize="small" (click)="lessonBuy(data)"
+                     *ngIf="data?.status==='1'&&data.leaderId===userId">{{data.isSale === '1' ? '取消售卖' : '售卖'}}</a>
+                  <!--                <a nz-button nzType="link" nzSize="small" (click)="submitForApproval(data)">提交审批</a>-->
+                  <!--                <a nz-button nzType="link" nzSize="small" (click)="resubmit(data)">重新提交</a>-->
+                  <!--                <a nz-button nzType="link" nzSize="small" (click)="antiApproval(data)">反审批</a>-->
+                  <!--                <a nz-button nzType="link" nzSize="small" (click)="withdrawApproval(data)">撤销审批</a>-->
+                  <!--                <a nz-button nzType="link" nzSize="small" (click)="intellectualAdaptation(data)">智适应</a>-->
+                  <a nz-button *ngIf="data?.status==='1'&&data.leaderId===userId" nzType="link" nzSize="small"
+                     (click)="usePacket(data)">
+                    {{ data?.isUsed === '0' ? '启用' : '取消启用'}}
+                  </a>
+                  <a nz-button nzType="link" nzSize="small" (click)="grouping(data)"
+                     *ngIf="ifJoinTheSeries(data)">加入系列</a>
+                  <a nz-button nzType="link" nzSize="small" (click)="goPrepare(data)">课包建设</a>
+                  <a nz-button nzType="link" nzSize="small"
+                     [ngClass]='{"gray-color":!delIf(data),"light-color":delIf(data)}'
+                     [nz-tooltip]='!delIf(data)' [nzTooltipTitle]="getDelCompetence(data)"
+                     (click)="delPacketAction(data)">删除</a>
+                </ng-container>
+              </nz-button-group>
+            </td>
+          </tr>
+          </tbody>
+        </nz-table>
+        <ng-template #totalTemplate let-total>共 {{ total }} 条记录</ng-template>
+      </div>
+    </section>
+  </div>
+</div>
+<!-- 新增课包 -->
+<nz-modal [(nzVisible)]="isVisible" [nzMaskClosable]="false" [nzTitle]="formTitle" (nzOnCancel)="closeModal()" [nzBodyStyle]='{"paddingBottom":"0px"}'>
+  <form nz-form [formGroup]="coursePackForm">
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzRequired>课包名称</nz-form-label>
+      <nz-form-control [nzSpan]="18" nzHasFeedback [nzErrorTip]="nameTpl">
+        <input nz-input type="text" formControlName="name" placeholder="请输入" (keyup.enter)="saveCourse()"/>
+      </nz-form-control>
+      <span style="margin-left: 10px;"
+            [style.color]='coursePackForm.controls.name.hasError("maxlength")?"red":"inherit"'>
+          {{coursePackForm.value.name.length}}/25</span>
+      <ng-template #nameTpl let-control>
+        <div *ngIf="control.hasError('required')">
+          课包名称不能为空
+        </div>
+        <div *ngIf="control.hasError('maxlength')">{{'课包名称不能超过25个字符'}}</div>
+      </ng-template>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzRequired>课包类型</nz-form-label>
+      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="不能为空">
+        <nz-select formControlName="teachType"
+                   [nzDisabled]='ifCurrentStandard'>
+          <nz-option nzValue="11" nzLabel="线下面授"></nz-option>
+          <nz-option nzValue="12" nzLabel="线下双师"></nz-option>
+          <nz-option nzValue="21" nzLabel="线上直播"></nz-option>
+          <nz-option nzValue="22" nzLabel="线上录播"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <!--    <nz-form-item *ngIf='coursePackForm.value.teachType==="11"||coursePackForm.value.teachType==="12"'>-->
+    <!--      <nz-form-label [nzSpan]="5">教室类型</nz-form-label>-->
+    <!--      <nz-form-control [nzSpan]="18">-->
+    <!--        <nz-select [ngModel]="coursePackForm.value.roomType" formControlName="roomType">-->
+    <!--          <nz-option nzValue="1" nzLabel="理论教室"></nz-option>-->
+    <!--          <nz-option nzValue="2" nzLabel="电教室"></nz-option>-->
+    <!--        </nz-select>-->
+    <!--      </nz-form-control>-->
+    <!--    </nz-form-item>-->
+    <!--    <nz-form-item *ngIf='coursePackForm.value.teachType!=="22"'>-->
+    <!--      <nz-form-label [nzSpan]="5" nzRequired>课包模式</nz-form-label>-->
+    <!--      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="不能为空">-->
+    <!--        <nz-select [ngModel]="coursePackForm.value.pattern" formControlName="pattern">-->
+    <!--          <nz-option nzValue="1" nzLabel="2.5H"></nz-option>-->
+    <!--          <nz-option nzValue="2" nzLabel="3.0H"></nz-option>-->
+    <!--        </nz-select>-->
+    <!--      </nz-form-control>-->
+    <!--    </nz-form-item>-->
+  </form>
+  <div *nzModalFooter>
+    <button nz-button (click)="closeModal()">取消</button>
+    <button nz-button nzType="primary" (click)="saveCourse()">确定</button>
+  </div>
+</nz-modal>
+
+
+<!-- 系列管理 -->
+<!--<nz-modal [(nzVisible)]="seriesManagementVisibility" [nzMaskClosable]="false" nzTitle="系列管理"-->
+<!--          (nzOnCancel)="seriesManagementVisibility=false">-->
+<!--  <div class='list-item' *ngFor="let label of labels;let i=index;">-->
+<!--    <div class='item-left'>-->
+<!--      {{i + 1}}、{{label?.name}}-->
+<!--    </div>-->
+<!--    <div class='operating'>-->
+<!--      <a nz-button nzType="link" nzSize="small" (click)="labelEdit(label)">-->
+<!--        <i nz-icon nzType="edit" nzTheme="outline"></i>-->
+<!--        编辑</a>-->
+<!--      <a nz-button nzType="link" nzSize="small" (click)="labelDel(label)">-->
+<!--        <i nz-icon nzType="delete" nzTheme="outline"></i>-->
+<!--        删除</a>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--  <div *nzModalFooter>-->
+<!--    <button nz-button (click)="seriesManagementVisibility=false">取消</button>-->
+<!--    <button nz-button nzType="primary" (click)="addSeries()">添加</button>-->
+<!--  </div>-->
+<!--</nz-modal>-->
+
+
+<!--分组-->
+<nz-modal [(nzVisible)]="packSeriesVisibility" [nzMaskClosable]="false" nzTitle="加入系列"
+          (nzOnCancel)="packSeriesVisibility=false" [nzFooter]='null'>
+  <nz-spin [nzSpinning]="isSeriesFormLoading" [nzDelay]="0">
+    <form nz-form [formGroup]="fgGtoup" style='height:100%;'>
+      <nz-form-item>
+        <nz-form-label nzRequired>系列名称</nz-form-label>
+        <nz-form-control nzErrorTip="请选择系列名称">
+          <nz-spin [nzSpinning]="isSeriesNameLoading" [nzDelay]="0">
+            <nz-select nzShowSearch nzAllowClear nzPlaceHolder="请选择系列名称" formControlName='series'
+                       (ngModelChange)='seriesChange($event)'>
+              <nz-option [nzLabel]="label.name" [nzValue]="label.id"
+                         *ngFor="let label of labels ;let i=index;"></nz-option>
+            </nz-select>
+          </nz-spin>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired>课包版本</nz-form-label>
+        <nz-form-control nzErrorTip=请输入课包版本>
+          <nz-spin [nzSpinning]="isSeriesVersionLoading" [nzDelay]="0">
+            <nz-input-number formControlName="packetVer" (keyup.enter)='setSeries()' nzMin='1' nzstep='1'
+                             nzPrecisionMode='toFixed' [nzPrecision]='0'></nz-input-number>
+            <div style='margin-top:10px;'>课包版本是指同系列中不同版本，数字越大版本越高</div>
+          </nz-spin>
+        </nz-form-control>
+      </nz-form-item>
+      <div class="modal-footer">
+        <button nz-button class='modal-footer-button mr0' (click)="packSeriesVisibility=false">取消</button>
+        <button nz-button nzType="primary" class='modal-footer-button' (click)="setSeries()">保存</button>
+      </div>
+    </form>
+  </nz-spin>
+</nz-modal>
+
+
+<nz-drawer [nzClosable]="false" [nzVisible]="visible" nzPlacement="right" nzTitle="所属校区" (nzOnClose)="close()"
+           [nzWidth]='500'>
+  <nz-spin [nzSpinning]="isCampusLoading" [nzDelay]="0">
+    <form nz-form [formGroup]="fg" style='height:100%;'>
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="ocodes">所属校区</nz-form-label>
+        <nz-form-control nzErrorTip="请选择所属校区">
+          <app-school-zone formControlName="ocodes" (schoolZone)='schoolZone($event)'
+                           [checkAll]='checkAll'></app-school-zone>
+        </nz-form-control>
+      </nz-form-item>
+      <div class="submit-button">
+        <button nz-button (click)="close()" style='margin-right:10px'>取消</button>
+        <button nz-button nzType="primary" (click)="saveTheCampus()">保存</button>
+      </div>
+    </form>
+  </nz-spin>
+</nz-drawer>
+

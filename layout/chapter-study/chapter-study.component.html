@@ -1,0 +1,34 @@
+<nz-layout>
+    <nz-header>
+        <div>{{ pageType=='2'?data.sectionName:knowledgeData?.detail?.name }}</div>
+    </nz-header>
+    <nz-content>
+        <app-chapter-video [chapterStudyVideo]="chapterStudyVideo"></app-chapter-video>
+        <app-section-study-slide *ngIf="pageType=='2'" [studyVideo]="chapterStudyVideo" [isChapter]="pageType" [chapterStudyData]="data" (videoData)="videoTab($event)" (teacherTab)="teacherTab($event)"></app-section-study-slide>
+        <app-knowledge-study-slide *ngIf="pageType=='1'" [studyVideo]="chapterStudyVideo" [knowledge]="knowledgeData" (knowledgeTab)="knowledge()"></app-knowledge-study-slide>
+    </nz-content>
+</nz-layout>
+
+<nz-modal
+[(nzVisible)]="isVisible"
+[nzTitle]="null"
+[nzContent]="modalContent"
+[nzFooter]="null"
+nzClassName="switch-teacher"
+(nzOnCancel)="showModel()"
+>
+<ng-template #modalContent>
+    <div class="content">
+        <div class="name">当前讲师<span>{{ data.teachName }}</span></div>
+        <div class="switch">
+            <label>请选择讲师</label>
+            <nz-select [ngModel]="currentTeacherId" (ngModelChange)="teacherChange($event)">
+                <nz-option *ngFor="let item of teacherList" [nzValue]="item.teachId" [nzLabel]="item.teachName"></nz-option>
+              </nz-select>
+        </div>
+    </div>
+    <div class="button">
+        <div>设为默认并更换</div>
+    </div>
+</ng-template>
+</nz-modal>

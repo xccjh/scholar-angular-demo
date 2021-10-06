@@ -1,0 +1,85 @@
+<nz-layout class="l-main live-container">
+  <nz-header class="white-bg">
+    <div class="header-box">
+      <div class="header-left">
+        <button nz-button nzType="link" class="gray-text" (click)="goBack()">
+          <i nz-icon nzType="left" nzTheme="outline"></i>
+          返回
+        </button>
+      </div>
+      <div class="header-tilte">{{ title }}</div>
+      <div class="header-status">
+        <p *ngIf="lessonPlanType === '11'">
+          <i nz-icon nzType="bar-chart" nzTheme="outline"></i>
+          面授{{statusName[status]}}
+        </p>
+        <ng-container *ngIf="lessonPlanType === '21'">
+          <p *ngIf="status === '0'" class="ant-btn-link gray-text">
+            直播未开始
+          </p>
+        </ng-container>
+      </div>
+    </div>
+  </nz-header>
+
+  <nz-layout class="l-main padding gray-bg"  style="flex-direction: row;">
+    <nz-sider class="sider white-bg" [nzWidth]="hideBtn ? 0 :360" [style]="{'margin-right': hideBtn ? '0' : '18px'}">
+      <app-task-list (hideBtnChange)="hideBtn = !hideBtn" (taskItemChanges)="setSelect($event)" [refreshList]="refreshList"></app-task-list>
+    </nz-sider>
+
+    <nz-content  class="l-main" style="position: relative;">
+      <nz-spin class="spin" nzSimple  nzTip="加载中..." [nzSpinning]="isLoading"></nz-spin>
+      <ng-container *ngIf="!isLoading && curTask.selectedItem">
+        <!-- 阅读和课后资料 -->
+        <app-read-task
+          *ngIf="curTask.taskType==='0'"
+          [data]="curTask.selectedItem"
+          [id]="curTask.id"
+          (finishTaskCallBack)="finishTask($event)">
+        </app-read-task>
+
+        <!-- 案例 -->
+        <app-case-complex-task
+          *ngIf="curTask.taskType==='1'"
+          [data]="curTask.selectedItem"
+          (finishTaskCallBack)="finishTask($event)">
+        </app-case-complex-task>
+
+        <!-- 习题 -->
+        <app-exercise-task
+          *ngIf="curTask.taskType==='2'"
+          [curTask]="curTask"
+          [data]="curTask.selectedItem"
+          (finishTaskCallBack)="finishTask($event)">
+        </app-exercise-task>
+
+        <!-- 实训 -->
+        <app-train-task
+          *ngIf="curTask.taskType==='3'"
+          [data]="curTask.selectedItem" >
+        </app-train-task>
+
+         <!-- 考试 -->
+        <app-test-task
+          *ngIf="curTask.taskType==='4'"
+          [curTask]="curTask"
+          [data]="curTask.selectedItem"
+          [id]="curTask.id"
+        >
+        </app-test-task>
+         <!-- 问卷  测评 -->
+        <app-question-task
+          *ngIf="curTask.taskType==='6' || curTask.taskType==='7'"
+          [curTask]="curTask"
+          [data]="curTask.selectedItem"
+          [id]="curTask.id">
+        </app-question-task>
+      </ng-container>
+      <!-- 没选择任务 -->
+      <!-- <ng-container *ngIf="curTask.taskType === '-999'">
+        <app-default-task></app-default-task>
+      </ng-container> -->
+    </nz-content>
+  </nz-layout>
+</nz-layout>
+

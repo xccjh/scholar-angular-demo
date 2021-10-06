@@ -1,0 +1,67 @@
+<nz-spin [nzSpinning]="newCompanyLoading"
+         [nzDelay]="0">
+  <form nz-form [formGroup]="newCompanyForm">
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzRequired>公司名称</nz-form-label>
+      <nz-form-control [nzSpan]="18" nzHasFeedback [nzErrorTip]="nameTpl">
+        <input nz-input placeholder="请输入公司名称" formControlName="name"/>
+      </nz-form-control>
+      <span style="margin-left: 10px;"
+            [style.color]='newCompanyForm.controls.name.hasError("maxlength")?"red":"inherit"'>
+          {{getNameLength() }}/40</span>
+      <ng-template #nameTpl let-control>
+        <div
+          *ngIf="control.hasError('required')">公司名称不能为空
+        </div>
+        <div
+          *ngIf="control.hasError('maxlength')">公司名称不能超过40个字符
+        </div>
+      </ng-template>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzRequired>有效期限</nz-form-label>
+      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="有效期限不能为空">
+        <nz-select formControlName="termType" style='flex:1' [nzShowSearch]='true'>
+          <nz-option [nzValue]="0" nzLabel="半年"></nz-option>
+          <nz-option [nzValue]="1" nzLabel="1年"></nz-option>
+          <nz-option [nzValue]="2" nzLabel="2年"></nz-option>
+          <nz-option [nzValue]="3" nzLabel="3年"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzRequired>权限设置</nz-form-label>
+      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="权限设置不能为空">
+        <nz-select formControlName="permission" style='flex:1' [nzShowSearch]='true' nzMode="multiple">
+          <nz-option nzValue="业务中心" nzLabel="业务中心"></nz-option>
+          <nz-option nzValue="数字大脑" nzLabel="数字大脑"></nz-option>
+          <nz-option nzValue="财务中心" nzLabel="财务中心"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzRequired>上传数据包</nz-form-label>
+      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="数据包不能为空">
+        <input type='hidden' formControlName="filePath"/>
+        <nz-upload
+          [nzBeforeUpload]='beforeUpload'
+          [nzCustomRequest]="customRewardRequest"
+          [nzRemove]='removeFileSelf'
+          [(nzFileList)]='nzFileList'
+          [nzShowUploadList]=' { showPreviewIcon: false, showRemoveIcon: true, showDownloadIcon: false }'
+        >
+          <button nz-button [disabled]='newCompanyForm.value.filePath?true:null'>
+            <i nz-icon nzType="upload" style='font-size:20px;'></i>本地上传
+          </button>
+          <div *ngIf='!newCompanyForm.value.filePath'>
+            支持zip、rar格式
+          </div>
+        </nz-upload>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+  <div *nzModalFooter>
+    <button nz-button (click)="cancel()">取消</button>
+    <button nz-button nzType="primary" (click)="save()" [nzLoading]="newCompanyLoading">确定</button>
+  </div>
+</nz-spin>

@@ -1,0 +1,34 @@
+<vg-player class="container">
+  <div class="header">
+    <div>
+      {{title}}
+    </div>
+    <div>
+      <vg-volume vgFor="my-video"></vg-volume>
+        <!-- <vg-mute class="item-size"></vg-mute> -->
+    </div>
+  </div>
+  <vg-controls class="body">
+    <vg-play-pause class="item-size"></vg-play-pause>
+
+    <vg-scrub-bar class="item-size" style="margin:0;">
+      <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+      <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
+    </vg-scrub-bar>
+
+    <div class="timer-container">
+      <vg-time-display class="item-size" vgFor="my-video"
+        [vgProperty]="'current'"
+        [vgFormat]="'mm:ss'"></vg-time-display>
+      <div class="divider">/</div>
+      <vg-time-display class="item-size" vgFor="my-video" [vgProperty]="'total'"
+        [vgFormat]="'mm:ss'"></vg-time-display>
+    </div>
+  </vg-controls>
+
+  <audio [vgMedia]="media" #media id="my-video" preload="auto">
+    <source
+      [src]="url"
+      type="audio/mp3">
+  </audio>
+</vg-player>

@@ -1,0 +1,110 @@
+<nz-spin [nzSpinning]="isLoading" [nzDelay]="0" class="full-height">
+  <ng-container *ngIf="nodes[0]; else other">
+    <div class="tree-container">
+      <nz-tree
+        #nzTreeComponent
+        [nzData]="nodes"
+        [nzTreeTemplate]="isCustomNode ? nzTreeTemplate : null"
+        [nzDraggable]="isDraggable"
+        [nzCheckable]="isCheckable"
+        [nzMultiple]="isMultiple"
+        [nzShowLine]="isShowLine"
+        [nzExpandAll]="isExpandAll"
+        [nzBeforeDrop]="beforeDrop"
+        [nzCheckedKeys]="defaultCheckedKeys"
+        [nzSelectedKeys]="defaultCheckedKeys"
+        [nzExpandedKeys]="defaultExpandedKeys"
+        (nzClick)="nzEvent($event)"
+        (nzOnDragEnd)="nzEvent($event)"
+        (nzCheckBoxChange)="nzEvent($event)">
+      </nz-tree>
+    </div>
+  </ng-container>
+  <ng-template #other>
+    <nz-empty style="margin-top: 50px;"></nz-empty>
+  </ng-template>
+</nz-spin>
+
+<ng-template #nzTreeTemplate let-node>
+  <span draggable class="custom-node"
+        [class.active]="activedNode?.key === node.key">
+    <!-- 非叶子节点 -->
+    <span *ngIf="!node.isLeaf">
+      <span class="title">
+        <ng-container
+          *ngTemplateOutlet="inputTpl; context: { $implicit:node }">
+        </ng-container>
+      </span>
+      <span class="icon-row"
+            *ngIf="activedNode?.key === node.key && !node.origin.isEdit && !preview">
+        <ng-container
+          *ngTemplateOutlet="iconTpl; context: { $implicit:node }">
+        </ng-container>
+      </span>
+      <span class="icon-row"
+            *ngIf="activedNode?.key === node.key && node.origin.isEdit">
+        <ng-container
+          *ngTemplateOutlet="editTpl; context: { $implicit:node }">
+        </ng-container>
+      </span>
+    </span>
+    <!-- 叶子节点 -->
+    <span *ngIf="node.isLeaf">
+      <span class="title">
+        <ng-container
+          *ngTemplateOutlet="inputTpl; context: { $implicit:node }">
+        </ng-container>
+      </span>
+
+      <span class="icon-row"
+            *ngIf="activedNode?.key === node.key && !node.origin.isEdit && !preview">
+        <ng-container
+          *ngTemplateOutlet="iconTpl; context: { $implicit:node }">
+        </ng-container>
+      </span>
+
+      <span class="icon-row"
+            *ngIf="activedNode?.key === node.key && node.origin.isEdit">
+        <ng-container
+          *ngTemplateOutlet="editTpl; context: { $implicit:node }">
+        </ng-container>
+      </span>
+    </span>
+  </span>
+</ng-template>
+
+<ng-template #inputTpl let-node>
+  <span *ngIf="!node.origin.isEdit">{{ node.title  }} <span *ngIf='node.isLeaf && lack' style='color:red;'>（ 缺少 ）</span></span>
+  <input *ngIf="node.origin.isEdit"
+         [style]="{width:'100px'}"
+         nz-input nzSize="small"
+         [(ngModel)]="node.origin.editTitle"
+         (keyup.enter)="confirmEdit(node)"
+  />
+</ng-template>
+
+<ng-template #iconTpl let-node>
+  <i
+    nz-icon nzType="edit"
+    nzTheme="outline"
+    *ngIf="node.origin.iconBtn.edit"
+    (click)="edit(node)">
+  </i>
+
+  <i nz-icon nzType="minus-circle"
+     nzTheme="outline"
+     *ngIf="node.origin.iconBtn.del"
+     (click)="warning(node)">
+  </i>
+
+  <i nz-icon nzType="plus-circle"
+     nzTheme="outline"
+     *ngIf="node.origin.iconBtn.add"
+     (click)="add(node)">
+  </i>
+</ng-template>
+
+<ng-template #editTpl let-node>
+  <i nz-icon nzType="check" nzTheme="outline" (click)="confirmEdit(node)"></i>
+  <i nz-icon nzType="close" nzTheme="outline" (click)="cancelEdit(node)"></i>
+</ng-template>

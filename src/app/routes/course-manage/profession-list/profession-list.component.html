@@ -1,0 +1,195 @@
+<nz-layout class='container'>
+  <div class='main-header'>
+    {{orgCode === 'zksd' ? "专业查询" : "学科查询"}}
+  </div>
+  <div class='header'>
+    <label>关键词搜索：</label>
+    <input nz-input [placeholder]="orgCode==='zksd'?'支持专业编号/专业名称/负责人':'支持学科编号/学科名称/负责人'" [(ngModel)]="searchWordVal"
+           (ngModelChange)="storingData()"
+           style='margin-right: 20px' (keyup.enter)='searchData("button")'/>
+    <!--    <label>创建时间：</label>-->
+    <!--    <nz-range-picker nzFormat='yyyy-MM-dd' [(ngModel)]="dateRangeVal"-->
+    <!--                     (ngModelChange)="storingData()"></nz-range-picker>-->
+    <button nz-button nzType="primary" style='margin-left:20px;' (click)="searchData('button')">查询</button>
+    <button nz-button nzType="primary" style='margin-left:20px;' (click)="resetData()">重置</button>
+  </div>
+  <nz-content style='padding: 15px 20px 20px;'>
+    <div class="course-header">
+      <button nz-button nzType="primary" (click)="showProfessionModal()" [disabled]='this.isManager!=="1"'
+              style="margin-bottom:20px;">{{orgCode === 'zksd' ? "新增专业" : '新增学科'}}</button>
+    </div>
+    <div class='table-container' id='tableScroll' [class.no-scoll]='!data.length'>
+      <nz-table #ajaxTable
+                [nzData]="data"
+                [nzFrontPagination]="false"
+                [nzShowSizeChanger]="true"
+                [nzScroll]='{x:orgCode === "zksd"?"880px":"1200px",y : height+"px"}'
+                [nzPageSizeOptions]='[15, 20, 30, 40, 50]'
+                [nzShowTotal]="totalTemplate"
+                [nzLoading]="isLoading"
+                [nzTotal]="total"
+                [(nzPageIndex)]="pageIndex"
+                [(nzPageSize)]="pageSize"
+                (nzPageIndexChange)="searchData()"
+                (nzPageSizeChange)="searchData()">
+        <thead>
+        <tr>
+          <th nzWidth='120px'>{{orgCode === 'zksd' ? "专业编号" : "学科编号"}}</th>
+          <th nzWidth='200px'>{{orgCode === 'zksd' ? "专业名称" : "学科名称"}}</th>
+          <th nzWidth='200px'>产品线</th>
+          <th *ngIf="orgCode !== 'zksd'" nzWidth='120px'>学科类型</th>
+          <th nzWidth='120px'>学科管理人 <i nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip
+                                       nzTooltipTitle="学科管理人负责管理学科，有编辑和删除学科和移交学科的权限。"
+                                       nzTooltipTrigger='click' class='font-question'
+                                       [nzTooltipOverlayStyle]='{"max-width": "190px"}'></i></th>
+          <th nzWidth='120px'>学科负责人 <i nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip
+                                       nzTooltipTitle="学科负责人负责建设学科下的课程"
+                                       nzTooltipTrigger='click' class='font-question'
+                                       [nzTooltipOverlayStyle]='{"max-width": "255px"}'></i></th>
+          <th nzWidth='120px'>终审人 <i nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip
+                                     nzTooltipTitle="终审人负责对课程与课包进行最终审批"
+                                     nzTooltipTrigger='click' class='font-question'
+                                     [nzTooltipOverlayStyle]='{"max-width": "255px"}'></i></th>
+          <!--          <th>创建者</th>-->
+          <!--          <th>创建时间</th>-->
+          <th *ngIf='isManager==="1"' nzWidth='200px'>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of ajaxTable.data">
+          <td><span class='synopsis-text'>{{ data?.code || '--' }}</span></td>
+          <td><span class='synopsis-text'>{{ data?.name || '--' }}</span></td>
+          <td><span class='synopsis-text'>{{ data?.productLineName || '--' }}</span></td>
+          <td *ngIf="orgCode !== 'zksd'"><span class='synopsis-text'>{{ data?.majorTypeName || '--' }}</span></td>
+          <td><span class='synopsis-text'>{{ data?.managerName || data?.leaderName || '--' }}</span></td>
+          <td><span class='synopsis-text'>{{ data?.leaderName || '--' }}</span></td>
+          <td><span class='synopsis-text'>{{ data?.finalApproverName || '--' }}</span></td>
+          <!--          <td>{{ data?.createrName }}</td>-->
+          <!--          <td>{{ getDate(data?.createTime)}}</td>-->
+          <td *ngIf='isManager==="1"'>
+            <a (click)="showProfessionModal(data)"
+               style='margin-right:10px;padding:0;'
+               [disabled]='(data.managerId || data.createrId) !== userId'
+               nz-button
+               nzType="link"
+            >编辑</a>
+            <a (click)="transferSubjects(data)"
+               style='margin-right:10px;padding:0;'
+               nz-button
+               nzType="link"
+               [disabled]='(data.managerId || data.createrId) !== userId'
+            >移交学科</a>
+            <a (click)="del(data)"
+               [ngStyle]='{color: ((data.managerId || data.createrId) === userId ? "red":"rgba(0,0,0,.25)"),padding:0}'
+               nz-button
+               nzType="link"
+               [disabled]='(data.managerId || data.createrId) !== userId'
+            >删除</a>
+          </td>
+        </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </nz-content>
+  <ng-template #totalTemplate let-total>共 {{ total }} 条记录</ng-template>
+</nz-layout>
+
+<nz-modal [(nzVisible)]="transferSubjectsVisible" nzTitle="移交学科" (nzOnCancel)="transferSubjectsVisible=false"
+          (nzOnOk)="transferOk()" [nzMaskClosable]='false'>
+  <nz-spin [nzSpinning]="isModalLoading" [nzDelay]="0">
+    <div style='color:#bdbdbd;margin-bottom:20px;'>注意：将学科移交给他人后，您将失去管理该学科的权限（包括查看、编辑、删除、移交学科权限）。</div>
+    <div style='display:flex;'>
+      <span style='margin-top:5px;'>学科管理人：</span>
+       <qkc-role-member style='flex:1' [(ngModel)]="subjectsManager" role="ROLE-KECHENG" placeholder="请选择学科管理人"></qkc-role-member>
+<!--      <input nz-input placeholder="请输入学科管理人" [(ngModel)]="subjectsManager" style='flex:1'/>-->
+    </div>
+  </nz-spin>
+</nz-modal>
+
+<ng-template #modalContent>
+  <nz-spin [nzSpinning]="isModalLoading" [nzDelay]="0">
+    <form nz-form [formGroup]="modalForm">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5" nzRequired>{{orgCode === 'zksd' ? "专业名称" : '学科名称'}}</nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback [nzErrorTip]="nameTpl" style='max-width: 316px;'>
+          <input nz-input formControlName="name" [placeholder]="orgCode==='zksd'?'请输入专业名称':'请输入学科名称'"
+                 (keyup.enter)='confirm()'/>
+        </nz-form-control>
+        <span style="margin-left: 10px;display: inline-block;margin-top: 4px;"
+              [style.color]='modalForm.controls.name.hasError("maxlength")?"red":"inherit"'>
+          {{modalForm.value.name.length}}/25</span>
+        <ng-template #nameTpl let-control>
+          <div
+            *ngIf="control.hasError('required')">{{orgCode === 'zksd' ? '专业名称不能为空' : '学科名称不能为空'}}</div>
+          <div
+            *ngIf="control.hasError('maxlength')">{{orgC
+            <div
+              *ngIf="control.hasError('required')">{{orgCode === 'zksd' ? '专业名称不能为空' : '学科名称不能为空'}}</div>
+            <div
+              *ngIf="control.hasError('maxlength')">{{orgCode === 'zksd' ? '专业名称不能超过25个字符' : '学科名称不能超过25个字符'}}</div>
+          </div>
+        </ng-template>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5" nzRequired>产品线</nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="产品线不能为空">
+          <nz-spin [nzSpinning]="islineProductLoading" [nzDelay]="0">
+            <nz-select [ngModel]="modalForm.value.productLineId" formControlName="productLineId" nzShowSearch
+                       nzAllowClear>
+              <nz-option [nzValue]="lineitem.id" [nzLabel]="lineitem.name"
+                         *ngFor="let lineitem of allLine;"></nz-option>
+            </nz-select>
+          </nz-spin>
+        </nz-form-control>
+      </nz-form-item>
+
+
+      <nz-form-item *ngIf='orgCode !== "zksd"'>
+        <nz-form-label [nzSpan]="5">学科类型</nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <nz-select [ngModel]="modalForm.value.majorType" formControlName="majorType" nzShowSearch nzAllowClear>
+            <nz-option nzValue="" nzLabel="请选择"></nz-option>
+            <nz-option nzValue="1" nzLabel="财会证书"></nz-option>
+            <nz-option nzValue="2" nzLabel="会计实操"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5" nzRequired>{{orgCode === 'zksd' ? '专业' : '学科'}}负责人</nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="{{orgCode === 'zksd' ? '专业' : '学科'}}负责人不能为空">
+          <qkc-role-member formControlName="leaderId" role="ROLE-KECHENG"
+                           placeholder="{{orgCode === 'zksd' ? '专业' : '学科'}}请选择负责人"></qkc-role-member>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5" nzRequired>终审人</nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="终审人不能为空">
+          <qkc-role-member formControlName="finalApproverId" role="ROLE-KECHENG" placeholder="请选择终审人"></qkc-role-member>
+        </nz-form-control>
+      </nz-form-item>
+
+      <!--      <nz-form-item>-->
+      <!--        <nz-form-label [nzSpan]="5" nzRequired>学科管理人</nz-form-label>-->
+      <!--        <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="学科管理人不能为空">-->
+      <!--          <qkc-role-member formControlName="managerId" role="ROLE-KECHENG" placeholder="请选择学科管理人"></qkc-role-member>-->
+      <!--        </nz-form-control>-->
+      <!--      </nz-form-item>-->
+
+      <!--      <nz-form-item>-->
+      <!--        <nz-form-label [nzSpan]="5">排序</nz-form-label>-->
+      <!--        <nz-form-control [nzSpan]="18">-->
+      <!--          <nz-input-number [nzStep]="1" formControlName="seq" nzPrecisionMode='toFixed' [nzMin]="1" [nzPrecision]='0' (keyup.enter)='confirm()'></nz-input-number>-->
+      <!--          <br>-->
+      <!--          <span style='display: inline-block;margin-top: 14px;font-size: 14px'>排序只是针对题库在学员端的展示顺序</span>-->
+      <!--        </nz-form-control>-->
+      <!--      </nz-form-item>-->
+    </form>
+  </nz-spin>
+</ng-template>
+
+
+
+

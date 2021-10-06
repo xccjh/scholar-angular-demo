@@ -1,0 +1,1242 @@
+<div class="container">
+  <div class="left">
+    <div class="row-title">章节结构</div>
+    <app-course-structure-tree
+      [chapterSelectable]="false"
+      [coursePacketId]="coursePacketId"
+      (nodeChange)="nodeChange($event)"
+      [defaultSection]='defaultSection'
+      [defaultExpandedKeys]='defaultExpandedKeys'
+      #tree>
+    </app-course-structure-tree>
+    <span class='not-content' *ngIf='preview==="1"&&!tree?.nodes.length'>
+      该课包尚未建立章节内容
+    </span>
+  </div>
+
+  <div class="gap"></div>
+
+  <div class='right-content'>
+    <nz-spin [nzSpinning]="listLoading || hanoutLoading" [nzDelay]="0">
+      <div class="row-title" style='padding-left: 10px;margin-top: 20px;'>
+        {{curNode?.data?.title}}
+        <button nz-button nzType="primary" (click)='importVideo()' *ngIf='teachType==="22" && preview === "0"'
+                style='float:right;margin-right:15px;'>导入视频
+        </button>
+      </div>
+      <div class="right" *ngIf='teachType!=="22"'>
+        <nz-collapse [style]="{ border: 'none', 'background-color': '#fff'}">
+          <nz-collapse-panel
+            [style]="{'margin-bottom': '24px', border: '1px solid #d9d9d9'}"
+            [(nzActive)]="active1"
+            [nzHeader]="lectureTpl">
+            <ng-template #lectureTpl>
+            <span>
+              讲义
+              <i nz-icon
+                 nzType="question-circle"
+                 nzTheme="outline"
+                 nz-tooltip
+                 [nzTooltipTitle]="tipsJy"
+                 [nzTooltipOverlayStyle]='{"max-width": "770px"}'
+                 class='font-question'
+                 nzTooltipTrigger='click'
+                 (click)='stopPropagation($event)'
+              ></i>
+            </span>
+            </ng-template>
+            <ng-template #tipsJy>
+              <div>讲义主要提供给讲师给学员上课使用：</div>
+              <div>1、建议优先WPS制作PPT ；</div>
+              <div>2、尽量少用第三模板；</div>
+              <div>3、PPT的文件大小应控制在100M之内；</div>
+            </ng-template>
+            <div class="list" cdkDropList (cdkDropListDropped)="sectionDrop($event,'1')">
+              <ng-container *ngIf="preview==='0'||handoutsLecture?.length">
+                <div class="list-item" *ngFor="let item of handoutsLecture;let sectionIdx=index;" cdkDrag>
+              <span class="title" [title]="item.attachmentName">
+                <nz-avatar style="vertical-align: middle;" [nzShape]="'circle'" [nzSize]="20"
+                           [ngStyle]="{ 'background-color': '#ea5c6c' }"
+                           [nzText]="'讲'"></nz-avatar>
+                {{ item.attachmentName }}
+              </span>
+                  <ng-container *ngIf='preview==="0"'>
+                    <div class='other-containers'>
+                    <span>
+                      <label
+                        nz-checkbox
+                        [nzDisabled]='disableMainLecture(item)'
+                        [(ngModel)]="item.isMainFile"
+                        (ngModelChange)="mainFileChange($event, item)">
+                        主讲义
+                      </label>
+                    </span>
+                    </div>
+                    <select class='other-container' [(ngModel)]="item.downloadType"
+                            *ngIf='item.attachmentPath'
+                            (ngModelChange)="downloadChange($event, item)">
+                      <option value="0">不可下载</option>
+                      <option value="1">讲师可下载</option>
+                    </select>
+                  </ng-container>
+                  <nz-spin [nzSpinning]="associateing[sectionIdx]" [nzDelay]="0" nzTip='查询主讲义信息中...'>
+                    <div class="action-group">
+                      <a nz-button nzType="link" (click)="previewHandout(item)">
+                        <i nz-icon nzType="eye" nzTheme="outline"></i>
+                        预览
+                      </a>
+                      <a nz-button nzType="link" (click)="downLoad(item)"
+                         *ngIf='item.attachmentPath&&item.attachmentPath.indexOf(".")>0'>
+                        <i nz-icon nzType="download" nzTheme="outline"></i>
+                        下载
+                      </a>
+                      <a nz-button nzType="link" (click)="associate(item,sectionIdx)"
+                         *ngIf='showassolite(item)'>
+                        <i nz-icon nzType="disconnect" nzTheme="outline"></i>
+                        关联
+                      </a>
+                      <a nz-button nzType="link" [style]="{ color: '#f53131'}" (click)="delHandout(item)"
+                         *ngIf='preview==="0"'>
+                        <i nz-icon nzType="delete" nzTheme="outline"></i>
+                        删除
+                      </a>
+                    </div>
+                  </nz-spin>
+                </div>
+                <div class="add-section" *ngIf='preview==="0"'>
+                  <div>
+                    <button nz-button nzType="primary" [nzSize]="'small'" [style]="{'margin-right': '10px'}"
+                            (click)="callSchoolEnterpriseLib('read','101')">阅读库调用
+                    </button>
+                    <button nz-button nzType="primary" [nzSize]="'small'" (click)="uploadHandout('101')">本地上传</button>
+                  </div>
+                </div>
+              </ng-container>
+              <span *ngIf="preview==='1'&&!handoutsLecture?.length">没有讲义内容</span>
+            </div>
+          </nz-collapse-panel>
+        </nz-collapse>
+      </div>
+      <div class="right" *ngIf="teachType==='22'">
+        <nz-collapse [style]="{ border: 'none', 'background-color': '#fff'}">
+          <nz-collapse-panel
+            [style]="{'margin-bottom': '24px', border: '1px solid #d9d9d9'}"
+            [(nzActive)]="active2"
+            [nzHeader]="recordingTpl">
+            <ng-template #recordingTpl>
+              <span>录播</span>
+            </ng-template>
+            <div class="list" cdkDropList (cdkDropListDropped)="sectionDrop($event,'2')">
+              <ng-container *ngIf="preview==='0'||handoutsRecording?.length">
+                <div class="list-item" *ngFor="let item of handoutsRecording;let sectionIdx=index;" cdkDrag>
+                  <div>
+                  <span class="title" [title]="item.attachmentName">
+<!--                    <nz-avatar [nzShape]="'square'" [nzSize]="14" [nzSrc]="getIcon(item.aattachmentExt)"></nz-avatar>-->
+                &nbsp;     <nz-avatar style="vertical-align: middle;" [nzShape]="'circle'" [nzSize]="20"
+                                      [ngStyle]="{ 'background-color': '#675dca' }"
+                                      [nzText]="'视'"></nz-avatar>
+                    {{ item.attachmentName }}
+                  </span>
+                    <span style='margin-left: 10px;color:#1890ff;vertical-align: top;'>{{item.authorName}}</span>
+                  </div>
+                  <div class="action-group">
+                    <a nz-button nzType="link" (click)="editHandout(item)" *ngIf='preview==="0"'>
+                      <i nz-icon nzType="edit" nzTheme="outline"></i>
+                      编辑
+                    </a>
+                    <a nz-button nzType="link" (click)="previewHandout(item)">
+                      <i nz-icon nzType="eye" nzTheme="outline"></i>
+                      预览
+                    </a>
+                    <a nz-button nzType="link" [style]="{ color: '#f53131'}" (click)="delHandout(item)"
+                       *ngIf='preview==="0"'>
+                      <i nz-icon nzType="delete" nzTheme="outline"></i>
+                      删除
+                    </a>
+                  </div>
+                </div>
+                <div class="add-section" *ngIf='preview==="0"'>
+                  <div>
+                    <button nz-button nzType="primary" [nzSize]="'small'" [style]="{'margin-right': '10px'}"
+                            (click)="videoUpload('polyway')">保利威视频
+                    </button>
+                    <button nz-button nzType="primary" [nzSize]="'small'" [style]="{'margin-right': '10px'}"
+                            (click)="videoUpload('showInteraction')">展示互动视频
+                    </button>
+                    <button nz-button nzType="primary" [nzSize]="'small'" (click)="videoUpload('localVideo')">上传视频
+                    </button>
+                  </div>
+                  <div></div>
+                </div>
+              </ng-container>
+              <span *ngIf="preview==='1'&&!handoutsRecording?.length">没有视频内容</span>
+            </div>
+          </nz-collapse-panel>
+        </nz-collapse>
+      </div>
+      <div class="right" *ngIf='teachType!=="22"'>
+        <nz-collapse [style]="{ border: 'none', 'background-color': '#fff'}">
+          <nz-collapse-panel
+            [style]="{'margin-bottom': '24px', border: '1px solid #d9d9d9'}"
+            [(nzActive)]="active3"
+            [nzHeader]="panelHeaderTpl">
+            <ng-template #panelHeaderTpl>
+              <span>任务</span>
+            </ng-template>
+
+            <div class="list" cdkDropList (cdkDropListDropped)="sectionDrop($event,'3')">
+              <ng-container *ngIf="preview==='0'||taskList?.length">
+                <div class="list-item" *ngFor="let item of taskList;let sectionIdx=index;" cdkDrag>
+                  <div class="title task">
+                    <span [title]="item.name"
+                          class='title-name'
+                          [ngStyle]='{"max-width":item.linkId?"calc(100% - 56px)":"100%"}'>
+                    <nz-avatar style="vertical-align: middle;" [nzShape]="'circle'" [nzSize]="20"
+                               [ngStyle]="{ 'background-color': getColor(item.taskType) }"
+                               [nzText]="getText(item.taskType)"></nz-avatar>
+                      {{ item.name }}
+                      <span style='color:#33ade7' *ngIf='showExamType(item)'>{{getExamText(item)}}</span>
+                    <span style='color:#33ade7' *ngIf='ShowJobType(item)'>{{getTaskFormText(item.taskForm)}}</span>
+                    <span style='color:#a951fb' *ngIf='ShowCheck(item)'>【考核】</span>
+                  </span>
+                    <span style="color:red;min-width:56px;vertical-align: top;" *ngIf='item.linkId'>【已绑】</span>
+                  </div>
+                  <!-- <span style='min-width: 70px;'>-->
+                  <!--      <label-->
+                  <!--        nz-checkbox-->
+                  <!--        [(ngModel)]="item.isNeed"-->
+                  <!--        [disabled]='preview==="1"'-->
+                  <!--        (ngModelChange)="isNeedChange($event, item)">-->
+                  <!--     必选-->
+                  <!--   </label>-->
+                  <!--   </span>-->
+                  <select [(ngModel)]="item.downloadType"
+                          [ngClass]='{"other-container":true}'
+                          [disabled]='preview==="1"'
+                          *ngIf='item.attachmentPath'
+                          (ngModelChange)="downloadChange($event, item,true)">
+                    <option value="0">不可下载</option>
+                    <option value="1">讲师可下载</option>
+                    <option value="2">讲师+学生可下载</option>
+                  </select>
+                  <div style='min-width: 100px;height: 10px;' *ngIf="!item.attachmentPath">
+                  </div>
+                  <select [(ngModel)]="item.gradeType"
+                          class='other-container'
+                          [class.disable-select]='preview==="1" || exerciseType ==="1" || item.taskType==="4"'
+                          [disabled]='preview==="1" || exerciseType ==="1" || item.taskType==="4"'
+                          *ngIf='item.taskType==="2" || item.taskType==="4"'
+                          (ngModelChange)="gradeTypeChange($event, item)">
+                    <option value="1">学生自评</option>
+                    <option value="2">老师批改</option>
+                  </select>
+                  <div style='min-width: 100px;height: 10px;'
+                       *ngIf='!(item.taskType==="2" || item.taskType==="4")'>
+                  </div>
+                  <select [(ngModel)]="item.isGrade"
+                          class='other-container'
+                          [disabled]='preview==="1"'
+                          *ngIf='item.taskType==="1"'
+                          (ngModelChange)="isGradeChange($event, item)">
+                    <option value="">请选择</option>
+                    <option value="0">不评分</option>
+                    <option value="1">需评分</option>
+                  </select>
+                  <div style='min-width: 100px;height: 10px;'
+                       *ngIf='!(item.taskType==="1")'>
+                  </div>
+                  <button
+                    class="other-button"
+                    *ngIf='(item.taskType==="4" || item.taskType==="6" || item.taskType==="7")&&preview==="0"'
+                    nz-button
+                    nzType="primary" (click)='examSetting(item)'>
+                    {{(item.taskType === "4") ? '考试设置' : '权限设置'}}
+                  </button>
+                  <div style='width: 88px;height: 10px;'
+                       *ngIf='!((item.taskType==="4" || item.taskType==="6" || item.taskType==="7")&&preview==="0")'>
+                  </div>
+                  <div class="action-group">
+                    <a nz-button nzType="link" (click)="previewTask(item)">
+                      <i nz-icon nzType="eye" nzTheme="outline"></i>
+                      预览
+                    </a>
+                    <a nz-button nzType="link" (click)="edit(item)"
+                       *ngIf='(item.taskType==="4"||item.taskType==="2"||item.taskType==="6"||item.taskType==="7")&&preview==="0"'>
+                      <i nz-icon nzType="edit" nzTheme="outline" (click)="edit(item)"></i>
+                      编辑
+                    </a>
+                    <a nz-button nzType="link" (click)="downLoad(item)"
+                       *ngIf='item.attachmentPath&&item.taskType!=="4"&&item.attachmentPath.indexOf(".")>0'>
+                      <i nz-icon nzType="download" nzTheme="outline"></i>
+                      下载
+                    </a>
+                    <a nz-button nzType="link" [style]="{ color: '#f53131'}" (click)="delHandout(item,true)"
+                       *ngIf='preview==="0"'>
+                      <i nz-icon nzType="delete" nzTheme="outline"></i>
+                      删除
+                    </a>
+                  </div>
+                </div>
+                <div class="add-section" *ngIf='preview==="0"&&taskList.length<limitTask'>
+                  <div>
+                    <button nz-button nzType="primary" [nzSize]="'small'" [style]="{'margin-right': '10px'}"
+                            (click)="callSchoolEnterpriseLib('read','1')">阅读库调用
+                    </button>
+                    <button nz-button nzType="primary" [nzSize]="'small'" [style]="{'margin-right': '10px'}"
+                            (click)="callSchoolEnterpriseLib( 'case','1')">案例库调用
+                    </button>
+                    <!--                    <button nz-button nzType="primary" [nzSize]="'small'" [style]="{'margin-right': '10px'}"-->
+                    <!--                            (click)="callSchoolEnterpriseLib( 'setting','1')">实训库调用-->
+                    <!--                    </button>-->
+                    <button nz-button nzType="primary" [nzSize]="'small'" [style]="{'margin-right': '10px'}">
+                      <a nz-dropdown [nzDropdownMenu]="menuwj">
+                        <i nz-icon nzType="plus" nzTheme="outline"></i>
+                        问卷调研
+                      </a>
+                    </button>
+                    <nz-dropdown-menu #menuwj="nzDropdownMenu">
+                      <ul nz-menu nzSelectable>
+                        <li nz-menu-item (click)="questionnaireCall('questionnaireType')">问卷调用</li>
+                        <li nz-menu-item (click)="questionnaireCall('evaluationType')">测评调用</li>
+                      </ul>
+                    </nz-dropdown-menu>
+                    <button nz-button nzType="primary" [nzSize]="'small'" [style]="{'margin-right': '10px'}">
+                      <a nz-dropdown [nzDropdownMenu]="menuExercises">
+                        <i nz-icon nzType="plus" nzTheme="outline"></i>
+                        练习作业
+                      </a>
+                    </button>
+                    <nz-dropdown-menu #menuExercises="nzDropdownMenu">
+                      <ul nz-menu nzSelectable>
+                        <li nz-menu-item (click)="entryExercises()">新增作业</li>
+                        <li nz-menu-item (click)="chooseExercises()">选择作业</li>
+                      </ul>
+                    </nz-dropdown-menu>
+                    <button nz-button nzType="primary" [nzSize]="'small'" [style]="{'margin-right': '10px'}">
+                      <a nz-dropdown [nzDropdownMenu]="menu">
+                        <i nz-icon nzType="plus" nzTheme="outline"></i>
+                        考试任务
+                      </a>
+                    </button>
+                    <nz-dropdown-menu #menu="nzDropdownMenu">
+                      <ul nz-menu nzSelectable>
+                        <li nz-menu-item (click)="addVolume()">新增组卷</li>
+                        <li nz-menu-item (click)="chooseTestPaper()">选择试卷</li>
+                      </ul>
+                    </nz-dropdown-menu>
+                    <button nz-button nzType="primary" [nzSize]="'small'" (click)="uploadHandout('104')"
+                            [style]="{'margin-right': '10px'}"><i nz-icon nzType="upload" nzTheme="outline"></i>本地上传
+                    </button>
+                  </div>
+                </div>
+              </ng-container>
+              <span *ngIf="preview==='1'&&!taskList?.length">没有任务内容</span>
+            </div>
+          </nz-collapse-panel>
+        </nz-collapse>
+      </div>
+      <div class="right">
+        <nz-collapse [style]="{ border: 'none', 'background-color': '#fff'}">
+          <nz-collapse-panel
+            [style]="{'margin-bottom': '24px', border: '1px solid #d9d9d9'}"
+            [(nzActive)]="active4"
+            [nzHeader]="zlTpl">
+            <ng-template #zlTpl>
+            <span>资料<i nz-icon nzType="question-circle" nzTheme="outline"
+                       nz-tooltip [nzTooltipTitle]="tipszl" [nzTooltipOverlayStyle]='{"max-width": "770px"}'
+                       class='font-question' nzTooltipTrigger='click' (click)='stopPropagation($event)'></i></span>
+            </ng-template>
+            <ng-template #tipszl>
+              <div>主动发送给学员学习的资源</div>
+            </ng-template>
+            <div class="list" cdkDropList (cdkDropListDropped)="sectionDrop($event,'4')">
+              <ng-container *ngIf="preview==='0'||handoutsMaterial?.length">
+                <div class="list-item" [id]='"material"+sectionIdx'
+                     *ngFor="let item of handoutsMaterial;let sectionIdx=index;" cdkDrag>
+                  <div>
+              <span class="title" [title]="item.attachmentName">
+<!--                <nz-avatar [nzShape]="'square'" [nzSize]="14" [nzSrc]="getIcon(item.aattachmentExt)"></nz-avatar>-->
+                &nbsp; <nz-avatar style="vertical-align: middle;" [nzShape]="'circle'" [nzSize]="20"
+                                  [ngStyle]="{ 'background-color': '#34bbc7' }"
+                                  [nzText]="'资'"></nz-avatar>
+                {{ item.attachmentName }}
+              </span>
+                  </div>
+                  <div class="action-group">
+                    <a nz-button nzType="link" (click)="previewHandout(item)">
+                      <i nz-icon nzType="eye" nzTheme="outline"></i>预览
+                    </a>
+                    <a nz-button nzType="link" (click)="downLoad(item)"
+                       *ngIf='item.attachmentPath&&item.attachmentPath.indexOf(".")>0'>
+                      <i nz-icon nzType="download" nzTheme="outline"></i>
+                      下载
+                    </a>
+                    <a nz-button nzType="link" [style]="{ color: '#f53131'}" (click)="delHandout(item)"
+                       *ngIf='preview==="0"'>
+                      <i nz-icon nzType="delete" nzTheme="outline"></i>
+                      删除
+                    </a>
+                  </div>
+                </div>
+                <div class="add-section" *ngIf='preview==="0"'>
+                  <div>
+                    <button nz-button nzType="primary" [nzSize]="'small'" [style]="{'margin-right': '10px'}"
+                            (click)="callSchoolEnterpriseLib('read','102')">阅读库调用
+                    </button>
+                    <button nz-button nzType="primary" [nzSize]="'small'" (click)="uploadHandout('102')">本地上传</button>
+                  </div>
+                  <div></div>
+                </div>
+              </ng-container>
+              <span *ngIf="preview==='1'&&!handoutsMaterial?.length">没有资料内容</span>
+            </div>
+          </nz-collapse-panel>
+        </nz-collapse>
+      </div>
+    </nz-spin>
+  </div>
+</div>
+<!--保利威上传-->
+<ng-template #polywaymodal>
+  <form nz-form [formGroup]="polyway">
+    <nz-form-item *ngIf="reset">
+      <nz-form-label [nzSpan]="5" nzRequired>{{label === 'polyway' ? '视频ID' : '视频地址'}}</nz-form-label>
+      <nz-form-control [nzSpan]="18" nzHasFeedback [nzErrorTip]="label === 'polyway' ? '视频地址不能为空':'视频ID不能为空' ">
+        <input nz-input type="text" formControlName="videoUrl"
+               [placeholder]="'请输入' + (label === 'polyway' ? '视频ID':'视频地址')"
+               (keyup.enter)="comfirmUpload(label)"/>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item *ngIf="label==='showInteraction'">
+      <nz-form-label [nzSpan]="5" nzRequired>视频时长</nz-form-label>
+      <nz-form-control [nzSpan]="18">
+        <nz-input-number style='margin-right:10px;' [nzStep]="1" formControlName="videoDuration" [nzMin]='0'
+                         nzPlaceHolder="请输入视频时长" (keyup.enter)="comfirmUpload(label)"
+        ></nz-input-number>
+        分钟
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzRequired>指导讲师</nz-form-label>
+      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="指导讲师不能为空">
+        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="请选择指导讲师" formControlName="authorId">
+          <nz-option [nzLabel]="item.name" [nzValue]="item.id" *ngFor='let item of teacherList;'></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzRequired>视频名字</nz-form-label>
+      <nz-form-control [nzSpan]="18" nzHasFeedback [nzErrorTip]="attachmentNameTpl" style='max-width: 316px;'>
+        <input nz-input type="text" formControlName="attachmentName" placeholder="请输入视频名字"
+               (keyup.enter)="comfirmUpload(label)"/>
+      </nz-form-control>
+      <span style="margin:5px 0 0 10px;"
+            [style.color]='polyway.controls.attachmentName.hasError("maxlength")?"red":"inherit"'>
+          {{polyway.value.attachmentName.length}}/50</span>
+      <ng-template #attachmentNameTpl let-control>
+        <div *ngIf="control.hasError('required')">课程名称不能为空</div>
+        <div *ngIf="control.hasError('maxlength')">课程名称不能超过50个字符</div>
+      </ng-template>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzRequired>视频标签</nz-form-label>
+      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="视频标签不能为空">
+        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="请选择视频标签" formControlName="videoType">
+          <nz-option nzLabel="主要" nzValue="1"></nz-option>
+          <nz-option nzLabel="冲刺" nzValue="2"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item *ngIf="reset">
+      <nz-form-label [nzSpan]="5" nzRequired>排序</nz-form-label>
+      <nz-form-control [nzSpan]="18">
+        <nz-input-number [nzStep]="1" formControlName="seq" [nzMin]='1' (keyup.enter)="comfirmUpload(label)"
+        ></nz-input-number>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</ng-template>
+<!--本地上传-->
+<ng-template #localvideomodal>
+  <form nz-form [formGroup]="localVideo">
+    <nz-form-item *ngIf="reset">
+      <nz-form-label [nzSpan]="5" nzRequired>视频</nz-form-label>
+      <nz-form-control [nzSpan]="18" nzErrorTip="请上传视频">
+        <nz-spin [nzSpinning]="loading"
+                 [nzDelay]="0">
+          <qkc-upload
+            [showUploadList]='{showPreviewIcon: true,showRemoveIcon: true,showDownloadIcon: false}'
+            [isPolyway]='true'
+            (optsChange)='compltedUpload()'
+            limit="1"
+            listType="picture-card"
+            acceptType="flv,avi,mpg,mp4,wmv,mov,3gp,.asf"
+            formControlName="videoUrl">
+            <i nz-icon nzType="upload" style='font-size:20px;'></i>
+          </qkc-upload>
+          <div class='desc'>
+            支持格式flv,avi,mpg,mp4,wmv,mov,3gp,.asf等
+          </div>
+          <div class='desc'>
+            (本地上传到保利威的视频需要经过保利威审核后才能正常播放)
+          </div>
+        </nz-spin>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzRequired>视频标签</nz-form-label>
+      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="视频标签不能为空">
+        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="请选择视频标签" formControlName="videoType">
+          <nz-option nzLabel="主要" nzValue="1">主要</nz-option>
+          <nz-option nzLabel="冲刺" nzValue="2">冲刺</nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzRequired>视频名字</nz-form-label>
+      <nz-form-control [nzSpan]="18" nzHasFeedback [nzErrorTip]="attachmentNameTplLocal" style='max-width: 316px;'>
+        <input nz-input type="text" formControlName="attachmentName" placeholder="请输入视频名字"
+               (keyup.enter)="comfirmUpload('localVideo')"/>
+      </nz-form-control>
+      <span style="margin:5px 0 0 10px;"
+            [style.color]='localVideo.controls.attachmentName.hasError("maxlength")?"red":"inherit"'>
+          {{localVideo.value.attachmentName.length}}/50</span>
+      <ng-template #attachmentNameTplLocal let-control>
+        <div *ngIf="control.hasError('required')">视频名字不能为空</div>
+        <div *ngIf="control.hasError('maxlength')">视频名字不能超过50个字符</div>
+      </ng-template>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzRequired>指导讲师</nz-form-label>
+      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="指导讲师不能为空">
+        <nz-spin [nzSpinning]="instructorLoading" [nzDelay]="0">
+          <nz-select nzShowSearch nzAllowClear nzPlaceHolder="请选择指导讲师" formControlName="authorId">
+            <nz-option [nzLabel]="item.name" [nzValue]="item.id" *ngFor='let item of teacherList;'></nz-option>
+          </nz-select>
+        </nz-spin>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item *ngIf="reset">
+      <nz-form-label [nzSpan]="5" nzRequired>排序</nz-form-label>
+      <nz-form-control [nzSpan]="18">
+        <nz-input-number [nzStep]="1" formControlName="seq" [nzMin]='1' (keyup.enter)="comfirmUpload('localVideo')"
+        ></nz-input-number>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</ng-template>
+<!--新增考试-->
+<ng-template #addExam>
+  <form nz-form [formGroup]="addExamFrom">
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzRequired>任务名称</nz-form-label>
+      <nz-form-control [nzSpan]="18" nzHasFeedback [nzErrorTip]="examNameTpl">
+        <input nz-input type="text" formControlName="missionName" placeholder="请输入任务名称"/>
+      </nz-form-control>
+      <span style="margin:5px 0 0 10px;display: inline-block;"
+            [style.color]='addExamFrom.controls.missionName.hasError("maxlength")?"red":"inherit"'>
+          {{addExamFrom.value.missionName.length}}/50</span>
+      <ng-template #examNameTpl let-control>
+        <div *ngIf="control.hasError('required')">
+          任务名称不能为空
+        </div>
+        <div *ngIf="control.hasError('maxlength')">{{'任务名称不能超过50个字符'}}</div>
+      </ng-template>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzRequired>组卷方式</nz-form-label>
+      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="组卷方式不能为空">
+        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="请选择组卷方式" formControlName="formingMethod">
+          <nz-option nzLabel="选题/录题组卷" [nzValue]="1"></nz-option>
+          <nz-option nzLabel="题型难度随机组卷" [nzValue]="2"></nz-option>
+          <nz-option nzLabel="知识点难度抽题组卷" [nzValue]="3"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzRequired>子题库</nz-form-label>
+      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="子题库不能为空">
+        <nz-spin [nzSpinning]="searchLoad" [nzDelay]="0">
+          <nz-tree-select
+            style="width: 100%"
+            [nzNodes]="exam"
+            nzDefaultExpandAll
+            nzShowSearch
+            nzPlaceHolder="请选择子题库"
+            formControlName="subQuestionBank"
+            (ngModelChange)='subQuestionBankChange($event)'
+            [nzDropdownStyle]="{'max-height': '400px'}"
+            [nzTreeTemplate]="nzTreeTemplate"
+          >
+          </nz-tree-select>
+        </nz-spin>
+        <ng-template #nzTreeTemplate let-node let-origin="origin">
+            <span class="custom-node">
+              <span *ngIf="!node.isLeaf">
+                <i nz-icon [nzType]="node.isExpanded ? 'folder-open' : 'folder'"></i>
+                <span class="folder-name">{{ node.title }}</span>
+              </span>
+              <span *ngIf="node.isLeaf">
+                <i nz-icon nzType="file"></i>
+                <span class="file-name">{{ node.title }}</span>
+              </span>
+            </span>
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</ng-template>
+<!--编辑考试-->
+<ng-template #addExamExit>
+  <form nz-form [formGroup]="addExamFrom">
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzRequired>任务名称</nz-form-label>
+      <nz-form-control [nzSpan]="18" nzHasFeedback [nzErrorTip]="examNameTpl">
+        <input nz-input type="text" formControlName="missionName" placeholder="请输入任务名称"/>
+      </nz-form-control>
+      <span style="margin:5px 0 0 10px;display: inline-block;"
+            [style.color]='addExamFrom.controls.missionName.hasError("maxlength")?"red":"inherit"'>
+          {{addExamFrom.value.missionName.length}}/50</span>
+      <ng-template #examNameTpl let-control>
+        <div *ngIf="control.hasError('required')">
+          任务名称不能为空
+        </div>
+        <div *ngIf="control.hasError('maxlength')">{{'任务名称不能超过50个字符'}}</div>
+      </ng-template>
+    </nz-form-item>
+    <!--    <nz-form-item >-->
+    <!--      <nz-form-label [nzSpan]="5" nzRequired>组卷方式</nz-form-label>-->
+    <!--      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="组卷方式不能为空">-->
+    <!--        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="请选择组卷方式" formControlName="formingMethod"-->
+    <!--                   [nzDisabled]='true'>-->
+    <!--          <nz-option nzLabel="选题/录题组卷" [nzValue]="1"></nz-option>-->
+    <!--          <nz-option nzLabel="题型难度随机组卷" [nzValue]="2"></nz-option>-->
+    <!--          <nz-option nzLabel="知识点难度抽题组卷" [nzValue]="3"></nz-option>-->
+    <!--        </nz-select>-->
+    <!--      </nz-form-control>-->
+    <!--    </nz-form-item>-->
+    <nz-form-item *ngIf='addExamFrom.value.subQuestionBank'>
+      <nz-form-label [nzSpan]="5" nzRequired>子题库</nz-form-label>
+      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="子题库不能为空">
+        <nz-spin [nzSpinning]="searchLoad" [nzDelay]="0">
+          <nz-tree-select
+            [nzDisabled]='true'
+            style="width: 100%"
+            [nzNodes]="exam"
+            nzDefaultExpandAll
+            nzShowSearch
+            [nzAllowClear]='false'
+            nzPlaceHolder="请选择子题库"
+            formControlName="subQuestionBank"
+            (ngModelChange)='subQuestionBankChange($event)'
+            [nzDropdownStyle]="{'max-height': '400px'}"
+            [nzTreeTemplate]="nzTreeTemplate"
+          >
+          </nz-tree-select>
+        </nz-spin>
+        <ng-template #nzTreeTemplate let-node let-origin="origin">
+            <span class="custom-node">
+              <span *ngIf="!node.isLeaf">
+                <i nz-icon [nzType]="node.isExpanded ? 'folder-open' : 'folder'"></i>
+                <span class="folder-name">{{ node.title }}</span>
+              </span>
+              <span *ngIf="node.isLeaf">
+                <i nz-icon nzType="file"></i>
+                <span class="file-name">{{ node.title }}</span>
+              </span>
+            </span>
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+    <div style='text-align:right;'>
+      <button nz-button nzType="primary" (click)="jobCancel()" style='margin-right:20px;'>取消</button>
+      <button nz-button nzType="primary" (click)="jumpQuestionBank('curExamData')" style='margin-right:20px;'>跳转题库
+      </button>
+      <button nz-button nzType="primary" (click)="examDetermine()" style='margin-right:20px;'>确定</button>
+    </div>
+  </form>
+</ng-template>
+<!--新增作业-->
+<ng-template #jobSettings>
+  <form nz-form [formGroup]="addJobFromSeting">
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzRequired>任务名称
+      </nz-form-label>
+      <nz-form-control [nzSpan]="18" nzHasFeedback [nzErrorTip]="jobNameTpl">
+        <input nz-input placeholder="请输入任务名称" formControlName="name"/>
+      </nz-form-control>
+      <span style="margin:5px 0 0 10px;display: inline-block;"
+            [style.color]='addJobFromSeting.controls.name.hasError("maxlength")?"red":"inherit"'>
+          {{addJobFromSeting.value.name.length}}/50</span>
+      <ng-template #jobNameTpl let-control>
+        <div *ngIf="control.hasError('required')">
+          任务名称不能为空
+        </div>
+        <div *ngIf="control.hasError('maxlength')">{{'任务名称不能超过50个字符'}}</div>
+      </ng-template>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzRequired>任务类型
+      </nz-form-label>
+      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="任务类型不能为空">
+        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="请选择任务类型" formControlName="taskForm">
+          <nz-option nzLabel="课前" nzValue="0"></nz-option>
+          <nz-option nzLabel="课中" nzValue="1"></nz-option>
+          <nz-option nzLabel="课后" nzValue="2"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzRequired>子题库</nz-form-label>
+      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="子题库不能为空">
+        <nz-tree-select
+          style="width: 100%"
+          [nzNodes]="exercise"
+          nzDefaultExpandAll
+          nzShowSearch
+          nzPlaceHolder="请选择子题库"
+          formControlName="subQuestionBank"
+          (ngModelChange)='execrisesSubQuestionBankChange($event)'
+          [nzDropdownStyle]="{'max-height': '400px'}"
+          [nzTreeTemplate]="nzTreeTemplateSubQuestionBank"
+        >
+        </nz-tree-select>
+        <ng-template #nzTreeTemplateSubQuestionBank let-node let-origin="origin">
+            <span class="custom-node">
+              <span *ngIf="!node.isLeaf">
+                <i nz-icon [nzType]="node.isExpanded ? 'folder-open' : 'folder'"></i>
+                <span class="folder-name">{{ node.title }}</span>
+              </span>
+              <span *ngIf="node.isLeaf">
+                <i nz-icon nzType="file"></i>
+                <span class="file-name">{{ node.title }}</span>
+              </span>
+            </span>
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</ng-template>
+<!--编辑作业-->
+<ng-template #jobSettingsEdit>
+  <form nz-form [formGroup]="addJobFromSeting">
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzRequired>任务名称
+      </nz-form-label>
+      <nz-form-control [nzSpan]="18" nzHasFeedback [nzErrorTip]="jobNameTpl">
+        <input nz-input placeholder="请输入任务名称" formControlName="name"/>
+      </nz-form-control>
+      <span style="margin:5px 0 0 10px;display: inline-block;"
+            [style.color]='addJobFromSeting.controls.name.hasError("maxlength")?"red":"inherit"'>
+          {{addJobFromSeting.value.name.length}}/50</span>
+      <ng-template #jobNameTpl let-control>
+        <div *ngIf="control.hasError('required')">
+          任务名称不能为空
+        </div>
+        <div *ngIf="control.hasError('maxlength')">{{'任务名称不能超过50个字符'}}</div>
+      </ng-template>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzRequired>任务类型
+      </nz-form-label>
+      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="任务类型不能为空">
+        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="请选择任务类型" formControlName="taskForm">
+          <nz-option nzLabel="课前" nzValue="0"></nz-option>
+          <nz-option nzLabel="课中" nzValue="1"></nz-option>
+          <nz-option nzLabel="课后" nzValue="2"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <!--    <nz-form-item>-->
+    <!--      <nz-form-label [nzSpan]="5" nzRequired>子题库</nz-form-label>-->
+    <!--      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="子题库不能为空">-->
+    <!--        <nz-tree-select-->
+    <!--          [nzDisabled]='true'-->
+    <!--          [nzAllowClear]='false'-->
+    <!--          style="width: 100%"-->
+    <!--          [nzNodes]="exercise"-->
+    <!--          nzPlaceHolder="请选择子题库"-->
+    <!--          formControlName="subQuestionBank"-->
+    <!--          (ngModelChange)='execrisesSubQuestionBankChange($event)'-->
+    <!--          [nzDropdownStyle]="{'max-height': '400px'}"-->
+    <!--          [nzTreeTemplate]="nzTreeTemplateSubQuestionBank"-->
+    <!--        >-->
+    <!--        </nz-tree-select>-->
+    <!--        <ng-template #nzTreeTemplateSubQuestionBank let-node let-origin="origin">-->
+    <!--            <span class="custom-node">-->
+    <!--              <span *ngIf="!node.isLeaf">-->
+    <!--                <i nz-icon [nzType]="node.isExpanded ? 'folder-open' : 'folder'"></i>-->
+    <!--                <span class="folder-name">{{ node.title }}</span>-->
+    <!--              </span>-->
+    <!--              <span *ngIf="node.isLeaf">-->
+    <!--                <i nz-icon nzType="file"></i>-->
+    <!--                <span class="file-name">{{ node.title }}</span>-->
+    <!--              </span>-->
+    <!--            </span>-->
+    <!--        </ng-template>-->
+    <!--      </nz-form-control>-->
+    <!--    </nz-form-item>-->
+    <div style='text-align:right;'>
+      <button nz-button nzType="primary" (click)="jobCancel()" style='margin-right:20px;'>取消</button>
+      <button nz-button nzType="primary" (click)="jumpQuestionBank('curJobData')" style='margin-right:20px;'>跳转题库
+      </button>
+      <button nz-button nzType="primary" (click)="jobDetermine()" style='margin-right:20px;'>确定</button>
+    </div>
+  </form>
+</ng-template>
+<!--试卷调用-->
+<nz-modal [(nzVisible)]="examListPreview" (nzOnCancel)="examListPreview=false;examSubQuestionBankExam=[]" nzTitle='选择试卷'
+          nzWidth='1000' [nzFooter]='null' [nzBodyStyle]='{maxHeight:"550px"}'>
+  <div class='header'>
+    <div class='header-container wcl'>
+      <div class='header-item w31'>
+        <nz-select nzPlaceHolder="请选择查询关键字" [(ngModel)]="queryKeywords" (ngModelChange)="queryKeywordsChange()"
+                   style=';width:150px;'>
+          <nz-option nzValue="1" nzLabel="试卷ID"></nz-option>
+          <nz-option nzValue="2" nzLabel="试卷名称"></nz-option>
+        </nz-select>
+        <input nz-input placeholder="名称搜索" [(ngModel)]="testPaperName" (keyup.enter)='getCallList("exam")'
+               *ngIf="NumberS(queryKeywords)===2"/>
+        <input nz-input placeholder="ID搜索" [(ngModel)]="testPaperId" (keyup.enter)='getCallList("exam")'
+               *ngIf="NumberS(queryKeywords)===1" type="number" min="0"/>
+      </div>
+      <div class='header-item w31'>
+        <label style='min-width:90px;line-height:32px'>组卷方式: </label>
+        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="请选择组卷方式" [(ngModel)]="selectedValue"
+                   style='margin-right: 20px;width:calc(100% - 100px);flex:1'>
+          <nz-option nzValue="1" nzLabel="选题组卷/录题组卷"></nz-option>
+          <nz-option nzValue="2" nzLabel="题型难度随机组卷"></nz-option>
+          <nz-option nzValue="3" nzLabel="知识点难度抽题组卷"></nz-option>
+        </nz-select>
+      </div>
+      <div class='header-item mr0 w31'>
+        <label style='min-width:90px;line-height:32px'>子题库: </label>
+        <nz-spin [nzSpinning]="searchLoad" [nzDelay]="0">
+          <nz-tree-select
+            style="width: 178px"
+            [nzNodes]="examSearch"
+            nzDefaultExpandAll
+            nzShowSearch
+            nzMultiple
+            nzCheckable
+            [(ngModel)]="examSubQuestionBankExam"
+            (ngModelChange)='subQuestionBankChangeSearch($event,"examSearch")'
+            [nzDropdownStyle]="{'max-height': '400px'}"
+            [nzTreeTemplate]="nzTreeTemplateSearchExam"
+          >
+          </nz-tree-select>
+        </nz-spin>
+        <ng-template #nzTreeTemplateSearchExam let-node let-origin="origin">
+            <span class="custom-node">
+              <span *ngIf="!node.isLeaf">
+                <i nz-icon [nzType]="node.isExpanded ? 'folder-open' : 'folder'"></i>
+                <span class="folder-name">{{ node.title }}</span>
+              </span>
+              <span *ngIf="node.isLeaf">
+                <i nz-icon nzType="file"></i>
+                <span class="file-name">{{ node.title }}</span>
+              </span>
+            </span>
+        </ng-template>
+      </div>
+    </div>
+    <button nz-button nzType="primary" style='margin-left:20px;vertical-align: top;' (click)="getCallList('exam')">查询
+    </button>
+  </div>
+  <nz-spin [nzSpinning]="isCallLoading" [nzDelay]="0">
+    <nz-table #basicTable [nzData]="listOfData" [nzScroll]='{ y: "350px" }' [nzFrontPagination]='false'
+              class='evaluation-table'>
+      <thead>
+      <tr>
+        <th nzWidth='100px'>试卷ID</th>
+        <th nzWidth='150px'>试卷名称</th>
+        <th nzWidth='100px'>试卷年份</th>
+        <th nzWidth='100px'>组卷方式</th>
+        <th nzWidth='100px'>试卷分类</th>
+        <th nzWidth='80px'>题量</th>
+        <th nzWidth='80px'>分数</th>
+        <th nzWidth='120px'>操作</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td>{{ data.id }}</td>
+        <td>{{ data.name }}</td>
+        <td>{{ data.year }}</td>
+        <td>{{ getFormingMethod(data.groupWay) }}</td>
+        <td>{{ getType(data.type) }}</td>
+        <td>{{ data.number }}</td>
+        <td>{{ data.score }}</td>
+        <td>
+          <a (click)='transfer(data,false)' *ngIf='showTransfer(data,false)'>调用</a>
+          <a (click)='cancelCall(data,"exam")' *ngIf='showTransfer(data,true)'>取消调用</a>
+          <nz-divider nzType="vertical"></nz-divider>
+          <a (click)='previewExaminationPaper(data)'>预览</a>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </nz-spin>
+</nz-modal>
+<!--作业调用-->
+<nz-modal [(nzVisible)]="exerciseListPreview" (nzOnCancel)="exerciseListPreview=false;homeworkSubQuestionBank=[]"
+          nzTitle='选择作业'
+          nzWidth='1000' [nzFooter]='null' [nzBodyStyle]='{maxHeight:"550px"}'>
+  <nz-spin [nzSpinning]="isCallLoading" [nzDelay]="0">
+    <div class='header'>
+      <div class='header-container'>
+        <div class='header-item'>
+          <nz-select nzPlaceHolder="请选择查询关键字" [(ngModel)]="queryKeywordsJob" (ngModelChange)="queryKeywordsJobChange()"
+                     style=';width:150px;'>
+            <nz-option nzValue="1" nzLabel="作业ID"></nz-option>
+            <nz-option nzValue="2" nzLabel="作业名称"></nz-option>
+          </nz-select>
+          <input nz-input placeholder="名称搜索" [(ngModel)]="testExerciseName" (keyup.enter)='getCallList("exercise")'
+                 *ngIf="NumberS(queryKeywordsJob)===2"/>
+          <input nz-input placeholder="ID搜索" [(ngModel)]="testExerciseId" (keyup.enter)='getCallList("exercise")'
+                 type="number" min="0"
+                 *ngIf="NumberS(queryKeywordsJob)===1"/>
+        </div>
+        <div class='header-item'>
+          <label style='min-width:90px;line-height:32px'>子题库: </label>
+          <nz-spin [nzSpinning]="searchLoad" [nzDelay]="0">
+            <nz-tree-select
+              style="width: 250px"
+              [nzNodes]="exerciseSearch"
+              nzDefaultExpandAll
+              nzShowSearch
+              nzMultiple
+              nzCheckable
+              [(ngModel)]="homeworkSubQuestionBank"
+              (ngModelChange)='subQuestionBankChangeSearch($event,"exerciseSearch")'
+              [nzDropdownStyle]="{'max-height': '400px'}"
+              [nzTreeTemplate]="nzTreeTemplateSearchPractice"
+            >
+            </nz-tree-select>
+          </nz-spin>
+          <ng-template #nzTreeTemplateSearchPractice let-node let-origin="origin">
+            <span class="custom-node">
+              <span *ngIf="!node.isLeaf">
+                <i nz-icon [nzType]="node.isExpanded ? 'folder-open' : 'folder'"></i>
+                <span class="folder-name">{{ node.title }}</span>
+              </span>
+              <span *ngIf="node.isLeaf">
+                <i nz-icon nzType="file"></i>
+                <span class="file-name">{{ node.title }}</span>
+              </span>
+            </span>
+          </ng-template>
+        </div>
+        <button nz-button nzType="primary" style="margin-left:20px;" (click)="getCallList('exercise')">查询</button>
+      </div>
+    </div>
+    <nz-table #basicTableExercise [nzData]="listOfDataExercise" [nzScroll]='{ y: "350px" }' class='evaluation-table'
+              [nzFrontPagination]='false'>
+      <thead>
+      <tr>
+        <th nzWidth='100px'>作业ID</th>
+        <th nzWidth='150px'>作业名称</th>
+        <th nzWidth='80px'>题量</th>
+        <th nzWidth='80px'>分数</th>
+        <th nzWidth='120px'>操作</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of basicTableExercise.data">
+        <td>{{ data.id }}</td>
+        <td>{{ data.name }}</td>
+        <td>{{ data.number }}</td>
+        <td>{{ data.score }}</td>
+        <td>
+          <a (click)='transfer(data,true)' *ngIf='showTransfer(data,false)'>调用</a>
+          <a (click)='cancelCall(data,"exercise")' *ngIf='showTransfer(data,true)'>取消调用</a>
+          <nz-divider nzType="vertical"></nz-divider>
+          <a (click)='previewExaminationPaper(data)'>预览</a>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </nz-spin>
+</nz-modal>
+<!--问卷调用-->
+<nz-modal [(nzVisible)]="questionnairePreview" (nzOnCancel)="closeQuestionnaire('questionnaireType')" nzTitle='选择问卷'
+          nzWidth='1000' [nzFooter]='null' [nzBodyStyle]='{maxHeight:"550px"}'>
+  <div class='header'>
+    <div class='header-container'>
+      <div class='header-item'>
+        <label style='min-width:90px;line-height:32px'>关键词搜索: </label>
+        <input nz-input placeholder="支持名称搜索" [(ngModel)]="questionnaireName"/>
+      </div>
+      <div class='header-item'>
+        <label style='min-width:90px;line-height:32px'>问卷类型: </label>
+        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="请选择问卷类型" [(ngModel)]="questionnaireType">
+          <nz-option nzLabel="总部测评" nzValue="1"></nz-option>
+          <nz-option nzLabel="校区测评" nzValue="2"></nz-option>
+        </nz-select>
+      </div>
+
+      <button nz-button nzType="primary" (click)="questionnaireCall('questionnaireType')">查询</button>
+      <button nz-button nzType="primary" (click)="newQuestionnaire('questionnaireType')" style='margin-left: 50px'>
+        新增问卷
+      </button>
+    </div>
+  </div>
+  <nz-spin [nzSpinning]="isCallLoading" [nzDelay]="0">
+    <nz-table #questionnaireTable [nzData]="listOfQuestionnaireData" class='evaluation-table'
+              [nzScroll]='{ y: "350px" }'
+              [nzFrontPagination]='false'>
+      <thead>
+      <tr>
+        <th nzWidth='100px'>问卷ID</th>
+        <th nzWidth='150px'>问卷名称</th>
+        <th nzWidth='100px'>问卷类型</th>
+        <th nzWidth='100px'>问卷学科</th>
+        <th nzWidth='100px'>题量</th>
+        <th nzWidth='80px'>问卷状态</th>
+        <th nzWidth='120px'>操作</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of questionnaireTable.data">
+        <td>{{ data.paperId }}</td>
+        <td>{{ data.name }}</td>
+        <td>{{ getQuestionnaireType(data.evaluateId) }}</td>
+        <td>{{ data.majorName }}</td>
+        <td>{{ data.questionNumber }}</td>
+        <td>{{ getEvaluationStatus(data.status) }}</td>
+        <td>
+          <a (click)='transferQuestionnaire(data,"questionnaireType")' *ngIf='showTransfer(data,false)'>调用</a>
+          <a (click)='cancelCall(data,"questionnaireType")' *ngIf='showTransfer(data,true)'>取消调用</a>
+          <nz-divider nzType="vertical"></nz-divider>
+          <a (click)='previewExaminationQuestionnaire(data)'>预览</a>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </nz-spin>
+</nz-modal>
+<!--测评调用-->
+<nz-modal [(nzVisible)]="evaluationPreview" nzTitle='选择测评'
+          nzWidth='1000' [nzFooter]='null' (nzOnCancel)="closeQuestionnaire('evaluationType')"
+          [nzBodyStyle]='{maxHeight:"550px"}'>
+  <div class='header'>
+    <div class='header-container'>
+      <div class='header-item'>
+        <label style='min-width:90px;line-height:32px'>关键词搜索: </label>
+        <input nz-input placeholder="支持名称搜索" [(ngModel)]="evaluationName"/>
+      </div>
+      <div class='header-item'>
+        <label style='min-width:90px;line-height:32px'>测评类型: </label>
+        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="请选择测评类型" [(ngModel)]="evaluationType">
+          <nz-option nzLabel="招生测评" nzValue="1"></nz-option>
+          <nz-option nzLabel="入学测评" nzValue="2"></nz-option>
+        </nz-select>
+      </div>
+      <button nz-button nzType="primary" (click)="questionnaireCall('evaluationType')">查询</button>
+      <button nz-button nzType="primary" (click)="newQuestionnaire('evaluationType')" style='margin-left: 50px'>新增测评
+      </button>
+    </div>
+  </div>
+  <nz-spin [nzSpinning]="isCallLoading" [nzDelay]="0">
+    <nz-table #evaluationTable [nzData]="listOfEvaluationData" [nzScroll]='{ y: "350px" }' class='evaluation-table'
+              [nzFrontPagination]='false'>
+      <thead>
+      <tr>
+        <th nzWidth='100px'>测评ID</th>
+        <th nzWidth='150px'>测评名称</th>
+        <th nzWidth='100px'>测评类型</th>
+        <th nzWidth='100px'>测评学科</th>
+        <th nzWidth='100px'>题量</th>
+        <th nzWidth='80px'>测评状态</th>
+        <th nzWidth='120px'>操作</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of evaluationTable.data">
+        <td>{{ data.paperId }}</td>
+        <td>{{ data.name }}</td>
+        <td>{{ getEvaluationType(data.evaluateId) }}</td>
+        <td>{{ data.majorName }}</td>
+        <td>{{ data.questionNumber }}</td>
+        <td>{{ getEvaluationStatus(data.status) }}</td>
+        <td>
+          <a (click)='transferQuestionnaire(data,"evaluationType")' *ngIf='showTransfer(data,false)'>调用</a>
+          <a (click)='cancelCall(data,"evaluationType")' *ngIf='showTransfer(data,true)'>取消调用</a>
+          <nz-divider nzType="vertical"></nz-divider>
+          <a (click)='previewExaminationQuestionnaire(data)'>预览</a>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </nz-spin>
+</nz-modal>
+<!--考试设置-->
+<nz-modal [(nzVisible)]="isVisible" [nzMaskClosable]="false" nzTitle="考试设置" (nzOnCancel)="isVisible=false">
+  <nz-spin [nzSpinning]="examSettingLoading" [nzDelay]="0">
+    <form nz-form [formGroup]="examSettingForm">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5" nzRequired>考试时长</nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="考试设置不能为空">
+          <nz-input-number [nzMin]="1" [nzStep]="1"
+                           formControlName="examLength" style='margin-right:10px'></nz-input-number>
+          分钟
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5" nzRequired>及格分数</nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="及格分数不能为空">
+          <nz-input-number [nzMin]="1" [nzStep]="1"
+                           formControlName="passScore" style='margin-right:10px'></nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5" nzRequired>试卷类型</nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="试卷类型不能为空">
+          <nz-select formControlName="paperType" (ngModelChange)="paperTypeChange($event)">
+            <nz-option nzValue="1" nzLabel="阶段考试"></nz-option>
+            <nz-option nzValue="2" nzLabel="单科考试"></nz-option>
+            <nz-option nzValue="3" nzLabel="模拟考试"></nz-option>
+            <nz-option nzValue="4" nzLabel="密押考试"></nz-option>
+            <!--          <nz-option nzValue="5" nzLabel="机考考试"></nz-option>-->
+            <nz-option nzValue="6" nzLabel="实操考试"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item *ngIf='examSettingForm.value.paperType==="5"'>
+        <nz-form-label [nzSpan]="5" nzRequired>机考类型</nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="机考类型不能为空">
+          <nz-select formControlName="computerType">
+            <nz-option nzValue="1" nzLabel="初级"></nz-option>
+            <nz-option nzValue="2" nzLabel="中级"></nz-option>
+            <nz-option nzValue="3" nzLabel="税务师"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5" nzRequired>是否重考</nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="是否重考不能为空">
+          <nz-radio-group formControlName='isRedo'>
+            <label nz-radio nzValue="1" nzDisabled>是</label>
+            <label nz-radio nzValue="0" nzDisabled>否</label>
+          </nz-radio-group>
+          <div *ngIf='examSettingForm.value.paperType==="6"&&(examType==="3"||examType==="2")'
+               style='position:absolute;'>
+            补考按结课28天后遇到的10号开放权限，直到合格为止
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5" nzRequired>答题次数</nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="答题次数不能为空">
+          <nz-radio-group formControlName='answerTimes' [(ngModel)]='examSettingForm.value.answerTimes'
+                          (ngModelChange)='clearStatus("examSettingForm")'
+                          [nzDisabled]='exerciseType ==="2" ?true:null'>
+            <label nz-radio [nzValue]="0">无限制</label>
+            <label nz-radio [nzValue]="1">
+              <nz-input-number [(ngModel)]="value" [nzMin]="1" [nzMax]="100" [nzStep]="1"
+                               [ngModelOptions]="{standalone: true}"
+                               [disabled]='exerciseType ==="2" ?true:null'></nz-input-number>
+            </label>
+          </nz-radio-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5" nzRequired>出成绩</nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="是否出成绩不能为空">
+          <nz-radio-group formControlName='resultWay'>
+            <label nz-radio nzValue="1">交卷即出</label>
+          </nz-radio-group>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </nz-spin>
+  <div *nzModalFooter>
+    <button nz-button (click)="isVisible = false">取消</button>
+    <button nz-button nzType="primary" (click)="saveExamination()" [nzLoading]='examSettingLoading'>确定</button>
+  </div>
+</nz-modal>
+<!--问卷设置-->
+<nz-modal [(nzVisible)]="isQuestionnaireVisible" [nzMaskClosable]="false" nzTitle="权限设置"
+          (nzOnCancel)="isQuestionnaireVisible=false">
+  <form nz-form [formGroup]="questionnairSettingForm">
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzRequired>答题次数</nz-form-label>
+      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="答题次数不能为空">
+        <nz-radio-group formControlName='answerTimes' [(ngModel)]='questionnairSettingForm.value.answerTimes'
+                        (ngModelChange)='clearStatus("questionnairSettingForm")'>
+          <label nz-radio [nzValue]="0">无限制</label>
+          <label nz-radio [nzValue]="1">
+            <nz-input-number [(ngModel)]="answerTimesValue" [nzMin]="1" [nzMax]="100" [nzStep]="1"
+                             [ngModelOptions]="{standalone: true}"></nz-input-number>
+          </label>
+        </nz-radio-group>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+  <div *nzModalFooter>
+    <button nz-button (click)="isQuestionnaireVisible = false">取消</button>
+    <button nz-button nzType="primary" (click)="saveQuestionnaire()">确定</button>
+  </div>
+</nz-modal>
+<!--讲义关联-->
+<nz-modal [(nzVisible)]="visibleAssociate" [nzMaskClosable]="false" nzTitle="讲义资源关联"
+          (nzOnCancel)="completebind()" [nzFooter]='null' [nzBodyStyle]='{maxHeight:"500px",overflowY:"auto"}'>
+  <nz-spin [nzSpinning]="bindLoading"
+           [nzDelay]="0">
+    <div class='associate'>
+    <span style='float: left'>
+      主讲义（共{{this.totalPage}}页）
+    </span>
+      <span style='float: right;cursor: pointer' (click)='previewHandout(currentAssocate)'>
+      <i nz-icon nzType="eye" nzTheme="outline"></i>
+      预览
+    </span>
+    </div>
+    <div class='association-table' *ngFor='let itemArr of assocateClassLists;let i=index'>
+      <div style='margin-bottom: 10px;'>
+        {{'第' + itemArr[0].sectionSeq + '节  ' + itemArr[0].sectionName}}
+        <i nz-icon nzType="caret-right" nzTheme="outline" (click)='itemArr.expend=false' *ngIf='itemArr.expend'
+           style='cursor: pointer'></i>
+        <i nz-icon nzType="caret-down" nzTheme="outline" (click)='itemArr.expend=true' *ngIf='!itemArr.expend'
+           style='cursor: pointer'></i>
+      </div>
+      <div *ngFor='let item of itemArr;let j=index' [ngClass]='{"h0":itemArr.expend,"association-list":true}'>
+        <div class='list-item'>
+         <span class="associate-title" [title]="item.name">
+                     <nz-avatar style="vertical-align: middle;" [nzShape]="'circle'" [nzSize]="20"
+                                [ngStyle]="{ 'background-color': getColor(item.taskType),marginTop:'-5px' }"
+                                [nzText]="getText(item.taskType)"></nz-avatar>
+           {{item.name}}
+         </span>
+          <nz-input-number [(ngModel)]="item.pageNum" [nzMin]="1" [nzMax]="1000000" [nzStep]="1" nzPlaceHolder='请输入页码'
+                           style='width:120px;float:right' (ngModelChange)='modelChangeDetect($event)'
+                           (nzFocus)='current = undefined' (nzBlur)='current = undefined'></nz-input-number>
+          <span style='min-width: 70px;float:right'>
+            <label
+              nz-checkbox
+              [nzDisabled]='(currentBindLength>=bingLimit&&(!assocateLists[j].pageNum))||(!item.pageNum)'
+              [(ngModel)]="item.isBindAssoicate"
+              (ngModelChange)="isBindChange($event, item)">
+             </label>
+             <button nz-button nzType="dashed"
+                     (click)="getBlur(item)"
+                     style='margin:0 10px'
+                     [disabled]='currentBindLength >= bingLimit || !item.pageNum || assocateLists[j].pageNum'>{{'绑定111'+ assocateLists[i].pageNum }}</button>j
+         </span>
+        </div>
+      </div>
+    </div>
+    <div *nzModalFooter>
+      <!--    <button nz-button (click)="visibleAssociate = false">取消</button>-->
+      <button nz-button nzType="primary" (click)="completebind()">关闭</button>
+    </div>
+  </nz-spin>
+</nz-modal>
+<!--资源预览-->
+<app-resource-preview-modal [isPreviewpolyway]='isPreviewpolyway' [previewTitle]='previewTitle'
+                            [resourceUrl]='resourceUrl' *ngIf='previewStart'
+                            (closePreview)='closePreview()'></app-resource-preview-modal>

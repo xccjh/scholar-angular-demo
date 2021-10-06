@@ -1,0 +1,79 @@
+<div class="container guide-teacher" data-name="guide-teacher-menu">
+  <div class="title">
+    指导讲师查询
+  </div>
+  <div class="header">
+    <h6>
+      指导讲师姓名：
+    </h6>
+    <input nz-input placeholder="请输入讲师姓名" [(ngModel)]="searchName" (input)="handleInputSearch()"
+           (keyup.enter)="handleSearch()"/>
+    <button nz-button nzType="primary" (click)="handleSearch()">查询</button>
+    <button nz-button nzType="primary" style='margin-left: 20px;' (click)="resetQuery()">重置</button>
+  </div>
+
+  <div class="table-ctrl">
+    <button nz-button nzType="primary" (click)="handleAddRow()"><i nz-icon nzType="plus" nzTheme="outline"></i>新增讲师
+    </button>
+    <button nz-button nzType="primary" class="imports" (click)="handleBatchUpload()">批量导入</button>
+  </div>
+
+
+  <div class="table-content" id="tableScroll" [class.no-scoll]='!tableList?.length'>
+    <nz-table
+      #basicTable [nzData]="tableList" [nzScroll]="{ x:'1104px',y: height+'px' }"
+      [nzPageSizeOptions]='[15, 20, 30, 40, 50]'
+      [nzShowTotal]="totalTemplate" [nzLoading]="isLoading"
+      [nzTotal]="total" [(nzPageIndex)]="pageIndex"
+      [(nzPageSize)]="pageSize" [nzShowSizeChanger]="true" [nzFrontPagination]="false"
+      (nzPageIndexChange)="handleSearchData()" (nzPageSizeChange)="handleSearchData(true)">
+      <thead>
+      <tr>
+        <th nzWidth='120px'>指导讲师姓名</th>
+        <th nzWidth="254px">简介</th>
+        <th nzWidth='280px'>试讲视频</th>
+        <th nzWidth='220px'>视频名字</th>
+        <th nzWidth='120px'>创建时间</th>
+        <th nzWidth='150px'>操作</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td>{{data.name}}</td>
+        <td><span class="synopsis-text" nz-tooltip [nzTooltipTitle]='data.introduction'>{{data.introduction}}</span></td>
+        <td>
+          <ng-container *ngIf="data.videoId">
+            <i nz-icon nzType="folder-view" nzTheme="outline"></i>
+            <a nz-button [nzSize]="" nzType="link" class="a-span"
+               (click)="handlepreVideo(data.videoId)">{{data.videoId}}</a>
+          </ng-container>
+          <span *ngIf="!data.videoId">--</span>
+        </td>
+        <td><span class='synopsis-text'>{{ data.videoName}}</span></td>
+          <td>{{ getDate(data?.createTime)}}</td>
+          <td>
+            <a (click)="handleTablePreview(data)">预览</a>
+            <nz-divider nzType="vertical"></nz-divider>
+            <a (click)="handleTableRowEdit(data)">编辑</a>
+            <nz-divider nzType="vertical"></nz-divider>
+            <a style="color: red;" (click)="handleTableRowDel(data)">删除</a>
+          </td>
+      </tr>
+      </tbody>
+    </nz-table>
+    <ng-template #totalTemplate let-total>共 {{ total }} 条记录</ng-template>
+  </div>
+
+  <!-- 弹窗 -->
+  <app-add-edit #addEditComponent (changeTableList)="getLableListData($event)"></app-add-edit>
+  <app-batch-upload #batchUploadComponent (changeTableList)="getLableListData($event)"></app-batch-upload>
+  <!--保利威预览-->
+  <nz-modal [(nzVisible)]="isPreviewpolyway" (nzOnCancel)="isPreviewpolyway=false" [nzFooter]='null' [nzTitle]='null'
+            nzWidth='600' [nzBodyStyle]='{padding:0,height:"500px"}' *ngIf='isPreviewpolyway'>
+    <iframe
+      allowfullscreen='true'
+      [src]="resourceUrl"
+      style="width: 100%;border: none;height: 100%">
+    </iframe>
+  </nz-modal>
+</div>

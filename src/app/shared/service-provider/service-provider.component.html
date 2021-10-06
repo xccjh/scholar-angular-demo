@@ -1,0 +1,10 @@
+<nz-spin [nzSpinning]="isServiceProviderLoading" [nzDelay]="0">
+  <nz-select [(ngModel)]="courseProviderId"
+             (ngModelChange)="courseProviderChange($event)"
+             nzShowSearch nzAllowClear [nzPlaceHolder]="placeholder" [style]="style">
+    <nz-option [nzValue]="courseItemService.id" [nzLabel]="courseItemService.typeName"
+               *ngFor="let courseItemService of courseServiceProvider;">
+      {{courseItemService.id}}
+    </nz-option>
+  </nz-select>
+</nz-spin>

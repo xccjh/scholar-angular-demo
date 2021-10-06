@@ -1,0 +1,206 @@
+<nz-layout>
+  <nz-content style='padding: 15px 20px 20px;'>
+    <div class="course-header">
+      <div>
+        <button nz-button nzType="primary" (click)="addSubQuestionBank('新建模块')">
+          新增子题库
+        </button>
+        <button nz-button nzType="primary" (click)="subQuestionBankLabelManagement()" style='margin:0 0 0 20px;'>
+          子题库标签管理
+        </button>
+        <i nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip [nzTooltipTitle]="tipsPak"
+           nzTooltipTrigger='click' class='font-question' [nzTooltipOverlayStyle]='{"max-width": "550px"}'></i>
+        <ng-template #tipsPak>
+          <div>子题库是通过组装试题库，试卷库的内容自定义配置功能模块，最终在学员端展示</div>
+        </ng-template>
+      </div>
+    </div>
+    <div class="table-container" id='tableScroll' [class.no-scoll]='!data.length'>
+      <nz-table #basicTable [nzData]="data" [nzFrontPagination]="false"
+                [nzPageSizeOptions]='[15, 20, 30, 40, 50]'
+                [nzShowSizeChanger]="true"
+                [nzScroll]='{y : height+"px"}'
+                [nzShowTotal]="totalTemplate" [nzLoading]="isLoading" [nzTotal]="total"
+                [(nzPageIndex)]="pageIndex"
+                [(nzPageSize)]="pageSize" (nzPageIndexChange)="searchData()"
+                (nzPageSizeChancge)="searchData()">
+        <thead>
+        <tr>
+          <th>子题库编码</th>
+          <th>子题库名称</th>
+          <th>子题库标签</th>
+          <th>类型</th>
+          <th>年份</th>
+          <th>状态</th>
+          <th>更新时间</th>
+          <th nzWidth='170px'>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of basicTable.data;let idx=index;">
+          <td>{{ data.code }}</td>
+          <td>{{ data.name }}</td>
+          <td>{{ data.leaderName }}</td>
+          <td>{{ data.statusName}}</td>
+          <td>{{ data.auditStatusName}}</td>
+          <td>{{ data.auditStatusName}}</td>
+          <td>{{ data.auditStatusName}}</td>
+          <td>
+            <a class='operating' (click)="edit(data)">编辑</a>
+            <a class="light-color operating" (click)="startUsing(data)">启用</a>
+            <a class="light-color operating" (click)="disable(data)">禁用</a>
+            <a class="light-color operating" (click)="del(data)">删除</a>
+          </td>
+        </tr>
+        </tbody>
+      </nz-table>
+    </div>
+    <ng-template #totalTemplate let-total>共 {{ total }} 条记录</ng-template>
+  </nz-content>
+</nz-layout>
+
+<!-- 模块-->
+<ng-template #modalContent>
+  <nz-spin [nzSpinning]="isModalLoading" [nzDelay]="0">
+    <form nz-form [formGroup]="modalForm">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5" nzRequired>模块名称</nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback [nzErrorTip]="nameTpl" style='max-width: 316px;'>
+          <input nz-input type="text" formControlName="moduleName" placeholder="请输入模块名称" (keyup.enter)='confirm()'/>
+        </nz-form-control>
+        <span style="margin-left: 10px;"
+              [style.color]='modalForm.controls.moduleName.hasError("maxlength")?"red":"inherit"'>
+          {{modalForm.value.moduleName.length}}/25</span>
+        <ng-template #nameTpl let-control>
+          <div *ngIf="control.hasError('required')">
+            模块名称不能为空
+          </div>
+          <div *ngIf="control.hasError('maxlength')">{{'模块名称不能超过25个字符'}}</div>
+        </ng-template>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5" nzRequired>模块类型</nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="模块类型不能为空">
+          <nz-select formControlName="moduleType" placeholder="请选择模块类型">
+            <nz-option nzValue="" nzLabel="请选择">
+            </nz-option>
+            <nz-option nzValue="1" nzLabel="专业课">
+            </nz-option>
+            <nz-option nzValue="2" nzLabel="公共课">
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5">是否启用</nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <nz-switch formControlName="whetherToEnable" nzCheckedChildren="开" nzUnCheckedChildren="关"></nz-switch>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </nz-spin>
+</ng-template>
+
+
+<!--子题库-->
+<ng-template #subQuestionBankFormContent>
+  <nz-spin [nzSpinning]="isModalLoading" [nzDelay]="0">
+    <form nz-form [formGroup]="subQuestionBankForm">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5" nzRequired>模块名称</nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback [nzErrorTip]="subQuestionBankTpl" style='max-width: 316px;'>
+          <input nz-input type="text" formControlName="subQuestionBankName" placeholder="请输入子题库名称" (keyup.enter)='confirm()'/>
+        </nz-form-control>
+        <span style="margin-left: 10px;"
+              [style.color]='subQuestionBankForm.controls.subQuestionBankName.hasError("maxlength")?"red":"inherit"'>
+          {{subQuestionBankForm.value.subQuestionBankName.length}}/25</span>
+        <ng-template #subQuestionBankTpl let-control>
+          <div *ngIf="control.hasError('required')">
+            子题库名称不能为空
+          </div>
+          <div *ngIf="control.hasError('maxlength')">{{'子题库名称不能超过25个字符'}}</div>
+        </ng-template>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5" nzRequired>年份</nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="年份不能为空">
+          <nz-year-picker formControlName="year" (ngModelChange)="onChange($event)" nzPlaceHolder="请选择年份"></nz-year-picker>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5">属性</nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <nz-select formControlName="property" nzDisabled>
+            <nz-option nzValue="1" nzLabel="SEE.AI题库"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5">子题库标签</nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="子题库标签不能为空">
+          <nz-select formControlName="subQuestionBankLabel" nzPlaceHolder="请选择子题库标签">
+            <nz-option nzValue="1" nzLabel="SEE.AI题库"></nz-option>
+            <nz-option nzValue="2" nzLabel="SEE.AI题库"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </nz-spin>
+</ng-template>
+
+
+<!-- 子题库标签 -->
+<nz-modal [(nzVisible)]="subQuestionBankLabelVisibility" [nzMaskClosable]="false" nzTitle="系列管理"
+          (nzOnCancel)="subQuestionBankLabelVisibility=false">
+  <div class='list-item' *ngFor="let label of labels;let i=index;">
+    <div class='item-left'>
+      {{i + 1}}、{{label?.name}}
+    </div>
+    <div class='operating'>
+      <a nz-button nzType="link" nzSize="small" (click)="labelEdit(label)">
+        <i nz-icon nzType="edit" nzTheme="outline"></i>
+        编辑</a>
+      <a nz-button nzType="link" nzSize="small" (click)="labelDel(label)">
+        <i nz-icon nzType="delete" nzTheme="outline"></i>
+        删除</a>
+    </div>
+  </div>
+  <div *nzModalFooter>
+    <button nz-button (click)="subQuestionBankLabelVisibility=false">取消</button>
+    <button nz-button nzType="primary" (click)="addSubQuestionBankLabel()">添加</button>
+  </div>
+</nz-modal>
+
+
+<!--新增子题库标签-->
+<ng-template #subQuestionBankLabelContent>
+  <nz-spin [nzSpinning]="isModalLoading" [nzDelay]="0">
+    <form nz-form [formGroup]="subQuestionBankLabelForm">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5" nzRequired>标签名称</nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback [nzErrorTip]="subQuestionBankLabelNameTpl" style='max-width: 316px;'>
+          <input nz-input type="text" formControlName="subQuestionBankLabelName" placeholder="请输入标签名称" (keyup.enter)='confirm()'/>
+        </nz-form-control>
+        <span style="margin-left: 10px;line-height:32px;  "
+              [style.color]='subQuestionBankLabelForm.controls.subQuestionBankLabelName.hasError("maxlength")?"red":"inherit"'>
+          {{subQuestionBankLabelForm.value.subQuestionBankLabelName.length}}/25</span>
+        <ng-template #subQuestionBankLabelNameTpl let-control>
+          <div *ngIf="control.hasError('required')">
+            标签名称不能为空
+          </div>
+          <div *ngIf="control.hasError('maxlength')">{{'标签名称不能超过25个字符'}}</div>
+        </ng-template>
+      </nz-form-item>
+    </form>
+  </nz-spin>
+</ng-template>
+
+
+
+
+

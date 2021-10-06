@@ -1,0 +1,86 @@
+<div class="container">
+  <div class="header">
+    <div>
+      <span class="title"> {{ title }}</span>
+    </div>
+    <div>
+      <button nz-button nzType="primary" (click)="back()" [nzLoading]='isLoading'>保存并返回
+      </button>
+            <button nz-button nzType="primary" *ngIf="curProgress!==0" (click)="preStep()">上一步</button>
+            <button nz-button nzType="primary"
+                    *ngIf="curProgress!==1"
+                    (click)="nextStep()">
+              下一步
+            </button>
+      <button nz-button
+              nzType="danger"
+              [disabled]='getDisabled()'
+              [nzLoading]='isLoading'
+              class='operation-button'
+              (click)='status==="0"?(submitReview(auditStatus === "3")):knowledgeGraph?.submitForApproval(title,auditStatus === "3")'
+              title='能够审核的必要条件:1.不是待审核状态2.知识点状态有新增或删除'>
+        {{auditStatus === "3" ? '重新提交' : '提交审批'}}
+      </button>
+      <!--  <button nz-button nzType="danger" [disabled]='(!treeComponent?.modify.flag)||status!=="1"||auditStatus==="1"'-->
+      <!--          class='operation-button'-->
+      <!--          (click)='nailingApproval()' title='能够审核的必要条件:1.该课程通过审核为标准2.不是待审核状态3.知识点状态有新增或删除'>-->
+      <!--    钉钉审批-->
+      <!--  </button>-->
+    </div>
+  </div>
+  <div class="step">
+    <nz-steps [nzCurrent]="curProgress">
+      <nz-step nzTitle="课程信息" (click)='changeProgress(0,"direct")' style='cursor: pointer'></nz-step>
+      <nz-step [nzTitle]="knowledgeGraphTitle" (click)='changeProgress(1,"direct")' style='cursor: pointer'></nz-step>
+      <!--      <nz-step [nzTitle]="questionBankSettingsTitle" (click)='changeProgress(2,"direct")' style='cursor: pointer'></nz-step>-->
+      <!--      <nz-step [nzTitle]="recordingLecturerTitle" (click)='changeProgress(2,"direct")'-->
+      <!--               style='cursor: pointer'></nz-step>-->
+      <ng-template #knowledgeGraphTitle>
+        知识图谱<i nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip
+               [nzTooltipTitle]="knowledgeGraphTip"
+               class='font-question' [nzTooltipOverlayStyle]='{"max-width": "800px"}'></i>
+      </ng-template>
+      <ng-template #knowledgeGraphTip>
+        <div>
+          第一次性导入图谱时请尽量保持图谱完整性，审批通过后不要轻易删除知识谱;
+        </div>
+        <div>删除后将会导致题库中的科目结构与课包智适应设置中的章节绑定同步进行删除</div>
+      </ng-template>
+      <!--      标准课包知识图谱改动需要再次审核-->
+      <!--      <ng-template #questionBankSettingsTitle>-->
+      <!--        题库设置 <span style="color:#1890ff">(免审批)</span>-->
+      <!--      </ng-template>-->
+      <!--      <ng-template #recordingLecturerTitle>-->
+      <!--        录播讲师 <span style="color:#1890ff">(免审批)</span>-->
+      <!--      </ng-template>-->
+    </nz-steps>
+  </div>
+  <div class="gap"></div>
+  <div class="content">
+    <nz-spin [nzSpinning]="isLoading" [nzDelay]="0" style='height:100%;'>
+      <nz-tabset [nzTabBarStyle]="{display:'none'}" [nzSelectedIndex]="curProgress">
+        <nz-tab nzTitle="课包结构" [style]="{height: '100%'}" [nzForceRender]='true'>
+          <ng-template nz-tab>
+            <app-course-details #curriculumConstruction></app-course-details>
+          </ng-template>
+        </nz-tab>
+        <nz-tab nzTitle="知识图谱" [nzForceRender]='kno'>
+          <ng-template nz-tab>
+            <app-structure #knowledgeGraph></app-structure>
+          </ng-template>
+        </nz-tab>
+        <!--      <nz-tab nzTitle="题库设置">-->
+        <!--        <ng-template nz-tab>-->
+        <!--          <app-questionsetting-configuration #questionBankSettings></app-questionsetting-configuration>-->
+        <!--        </ng-template>-->
+        <!--      </nz-tab>-->
+        <!--      <nz-tab nzTitle="录播讲师">-->
+        <!--        <ng-template nz-tab>-->
+        <!--          <app-recording-lecturer #recordingLecturer></app-recording-lecturer>-->
+        <!--        </ng-template>-->
+        <!--      </nz-tab>-->
+      </nz-tabset>
+    </nz-spin>
+  </div>
+</div>
+

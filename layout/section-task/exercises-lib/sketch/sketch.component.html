@@ -1,0 +1,40 @@
+<!-- 题干 -->
+<div class="question-header">
+  <div class="green-bg" *ngIf="!isComplex">{{ exerciseData.exerciseKindName }}</div>
+  <div class="ques-num" *ngIf="quesNum">{{quesNum}}、</div>
+  <div class="question-title" [innerHTML]="exerciseData.content | safeHtml"></div>
+  <div *ngIf="['finish','selfEvalute'].includes(exerciseData.status)" class="question-score">
+    <div>
+      {{ exerciseData.evaluateExp }}/{{ exerciseData.originalExp }}&nbsp;分
+    </div>
+  </div>
+</div>
+
+<!-- 答题 -->
+<div class="answer-content" *ngIf="exerciseData.mode !== 'collection'">
+  <textarea rows="7"
+    nz-input
+    placeholder="请输入答案"
+    [(ngModel)]="exerciseData.myAnswer"
+    [disabled]="['finish','selfEvalute'].includes(exerciseData.status)">
+  </textarea>
+</div>
+
+<!-- 正确答案 -->
+<div class="question-analysis" *ngIf="['finish','selfEvalute'].includes(exerciseData.status)">
+  <p class="analysis-title">正确答案：</p>
+  <p class="fill-answer" [innerHTML]="exerciseData.answer | safeHtml">
+  </p>
+</div>
+
+<!-- 解析 -->
+<div class="question-analysis" *ngIf="['finish','selfEvalute'].includes(exerciseData.status)">
+  <p class="analysis-title">解析：</p>
+  <div class="analysis-content" [innerHTML]="exerciseData.analysis | safeHtml"></div>
+  <a *ngIf="exerciseData.videoAnalysis" 
+    class="analysis-video-title" 
+    [href]="exerciseData.videoAnalysis" 
+    target="__blank">
+    点击视频观看解答
+  </a>
+</div>

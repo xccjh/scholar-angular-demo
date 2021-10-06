@@ -1,0 +1,81 @@
+@lineHeight: 40px;
+@bgColor: #ddd;
+@borderColor: #707B7C;
+
+:host ::ng-deep {
+  .ant-tree li.drag-over>span[draggable] {
+    color: red;
+    background-color: blueviolet;
+
+    & span {
+      background-color: blueviolet;
+    }
+  }
+
+  // .ant-tree li>span {
+  //   line-height: @lineHeight;
+  //   height: @lineHeight;
+  // }
+
+  .has-bg-tree .ant-tree li>span {
+    background-color: #F0F1F3 !important;
+  }
+
+  .ant-tree .ant-tree-treenode {
+    align-items: center !important;
+  }
+
+  .ant-tree .ant-tree-node-content-wrapper{
+    flex: 1;
+    background-color: @bgColor;
+  }
+}
+
+.custom-node {
+  width: 100%;
+  height: @lineHeight;
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &.light-span {
+    // background: #e6f7ff;
+    color: #1890ff;
+  }
+}
+
+.active {
+  background: #1890ff;
+  color: #fff;
+}
+
+.title {
+  display: block;
+  margin-left: 4px;
+}
+
+.icon-container {
+  display: block;
+
+  .icon-row {
+    display: inline-block;
+    color: grey;
+
+    & i {
+      cursor: pointer;
+      margin-right: 8px;
+    }
+  }
+}
+
+.input-edit {
+  // outline: none;
+  // background-color: @bgColor;
+  // border: none;
+  width: 300px;
+  // max-width: 300px;
+
+  // &:focus{
+  //   outline: none;
+  // }
+}

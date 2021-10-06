@@ -1,0 +1,345 @@
+.top-container {
+  height: 50px;
+  line-height: 50px;
+  border-bottom: 1px solid #ddd;
+
+  .title {
+    float: left;
+    margin-left: 20px;
+    font-size: 18px;
+  }
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+
+.operation-button {
+  float: left;
+  margin: 9px 20px 0 0;
+}
+
+.list-self {
+  margin-top: 20px;
+
+  .item-top {
+    display: inline-block;
+    width: 230px;
+    border-radius: 5px;
+    margin-left: -10px;
+    transition: all 1s;
+
+    &.cdk-drop-list-dragging {
+      box-shadow: -3px 3px 10px #ccc8c8;
+      height: 62px;
+      width: 187px;
+      margin-right: 20px;
+    }
+  }
+
+  .item-left {
+    //box-shadow: -3px 3px 10px #ccc8c8;
+    box-shadow: 0px 0px 2px #b8b8b8;
+    border-radius: 5px;
+    height: 60px;
+    width: 210px;
+    line-height: 60px;
+    padding-left: 10px;
+    margin-right: 10px;
+    margin-left: 10px;
+    display: inline-block;
+    background-color: #fafafa;
+    position: relative;
+
+    &:hover {
+      top: -5px;
+    }
+
+    .item-text {
+      width: 140px;
+      display: inline-block;
+      cursor: move;
+      height: 60px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .img-dec {
+      width: 50px;
+      height: 50px;
+    }
+
+    .img-desc {
+      padding-left: 10px;
+      width: 85px;
+      display: inline-block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+
+    .br5 {
+      border-radius: 5px;
+    }
+
+    .item-text-desc {
+      padding-left: 10px;
+      height: 20px;
+      position: relative;
+      line-height: 20px;
+      top: -20px;
+    }
+
+    .preview-item {
+      position: absolute;
+      right: 30px;
+      top: 22px;
+    }
+
+    .edit-item {
+      position: absolute;
+      right: 50px;
+      top: 22px;
+    }
+
+    .close-circle {
+      position: absolute;
+      right: 10px;
+      top: 22px;
+    }
+
+    i:hover {
+      cursor: pointer;
+      color: blue;
+    }
+  }
+}
+
+.example-custom-placeholder {
+  height: 60px;
+  width: 185px;
+  background: red;
+  display: inline-block;
+  margin-right: 20px;
+}
+
+.example-custom-placeholder {
+  width: 0;
+  height: 0;
+  display: inline-block;
+}
+
+.upload-list-inline {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.container {
+  height: calc(100% - 50px);
+  background-color: white;
+  overflow: hidden;
+  display: flex;
+  padding: 20px;
+  position: relative;
+
+  .label-title {
+    font-size: 20px;
+  }
+
+
+  .left-container {
+    height: calc(100% - 32px);
+    border-right: 1px solid #ddd;
+    overflow: hidden;
+    min-width: 200px;
+
+    .search-container {
+      display: flex;
+      padding-right: 10px;
+      position: absolute;
+      left: 0;
+      top: 0;
+      background: white;
+      z-index: 998;
+      width: 100%;
+
+
+      .search-text {
+        display: inline-block;
+        width: 24px;
+        margin-top: 4px;
+      }
+    }
+
+    .tree-container-out {
+      height: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
+
+      .tree-container {
+        display: inline-block;
+        overflow: hidden;
+        padding-right: 55px;
+        margin-top: 45px;
+        position: relative;
+
+        .tree-kno {
+          overflow: hidden;
+          display: inline-block;
+        }
+      }
+
+    }
+
+    .right-wrap {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .right {
+      background: #fff;
+      border: 1px solid #ddd;
+      text-align: center;
+      font-size: 12px;
+      height: 20px;
+      line-height: 20px;
+    }
+  }
+
+  .right-container {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1;
+    padding: 20px 0 20px 20px;
+
+    .code {
+      display: inline-block;
+      margin-top: 4px;
+    }
+  }
+
+}
+
+host ::ng-deep .upload-list-inline .ant-upload-list-item {
+  float: left;
+  width: 200px;
+  margin-right: 8px;
+}
+
+:host ::ng-deep .upload-list-inline [class*='-upload-list-rtl'] .ant-upload-list-item {
+  float: right;
+}
+
+:host ::ng-deep .upload-list-inline .ant-upload-animate-enter {
+  animation-name: uploadAnimateInlineIn;
+}
+
+:host ::ng-deep .upload-list-inline .ant-upload-animate-leave {
+  animation-name: uploadAnimateInlineOut;
+}
+
+
+//:host ::ng-deep .richtext .ant-form-item-control-input {
+//  min-height: 150px;
+//}
+
+
+.desc-container {
+  position: relative;
+
+  .desc {
+    position: absolute;
+    top: 40px;
+    left: 0;
+  }
+}
+
+.progress-learning-materials {
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  top: 41px;
+  left: 0;
+
+}
+
+.cube {
+  width: 100px;
+  height: 100px;
+  border: 1px solid rgb(196, 196, 196);
+  text-align: center;
+  line-height: 100px;
+  border-radius: 2px;
+  cursor: pointer;
+  box-shadow: 0 0 2px #ccc8c8;
+
+
+  &:hover {
+    color: rgb(80, 170, 254);
+    border: 1px dashed rgb(80, 170, 254);
+  }
+}
+
+.learning-materials {
+  font-size: 20px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+:host ::ng-deep .ant-spin-container {
+  position: static;
+}
+
+:host ::ng-deep .ant-tree {
+  position: static !important;
+}
+
+.mt10 {
+  margin-top: 10px;
+}
+
+.mt20 {
+  margin-top: 20px;
+}
+
+.ml20 {
+  margin-left: 20px;
+}
+
+.ml40 {
+  margin-left: -40px;
+}
+
+.icon-fullscreen {
+  position: absolute;
+  bottom: 16px;
+  right: 20px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+::ng-deep .modal-wrap {
+  height: 100%;
+
+  > .ant-modal-content {
+    height: 100%;
+  }
+}
+
+
+
+
+
+::ng-deep .upload-list-inline {
+  .ant-upload-list-picture .ant-upload-list-item-name, .ant-upload-list-picture-card .ant-upload-list-item-name {
+    max-width: 230px!important;
+  }
+}

@@ -1,0 +1,73 @@
+<div class="outline-container"
+     *ngFor="let chapters of outline;let i = index">
+  <div class="item"
+       (click)="switchChapters(chapters,i)"
+       [ngClass]="{'close': chapters.open || !chapters.children}">
+    <span>第{{chineseNumber[i]}}章：{{chapters.name}}</span>
+    <i nz-icon
+       *ngIf="chapters.open "
+       nzType="up"
+       nzTheme="outline">
+    </i>
+    <i nz-icon
+       *ngIf="!chapters.open"
+       nzType="down"
+       nzTheme="outline">
+    </i>
+  </div>
+  <div class="outline-detail"
+       *ngIf="chapters.children &&
+      chapters.children.length > 0 && chapters.open"
+  >
+    <div class="chapters"
+         *ngFor="let section of chapters.children,let s=index">
+      <div class="section-name">
+        <span>
+          <span class="name">第{{chineseNumber[s]}}节：{{section.name}}</span>
+          <span class="size" *ngIf="courseData.isSmart == '1'">{{section.knowledgePointCount || 0}}个知识点</span>
+        </span>
+        <span class="document" (click)="showData(section)" *ngIf='section?.handoutsMaterial?.length'>
+          <i nz-icon nzType="folder" nzTheme="outline"></i>
+          <span>资料</span>
+        </span>
+      </div>
+      <div class="">
+        <div class="section">
+          <div class="item"
+               *ngFor="let knowledge of section.handoutsRecording"
+               (click)="goToBreakthrough(knowledge,section)">
+            <i nz-icon nzType="play-circle" nzTheme="outline"></i>
+            <div class="description">
+              <span class="name"
+                    [ngStyle]="{color:'#3A3C42'}">{{knowledge.title}}</span>
+              <span class="time">{{knowledge.videoLength || 0}}分钟</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nz-modal
+  [(nzVisible)]="isVisible"
+  [nzTitle]="modalTitle"
+  [nzContent]="modalContent"
+  [nzFooter]="null"
+  nzClassName="data"
+  (nzOnCancel)="showData('')"
+>
+  <ng-template #modalTitle>
+    资料
+  </ng-template>
+  <ng-template #modalContent>
+    <div class="box-inner">
+      <ul>
+        <li *ngFor="let item of handoutsMaterial, let i=index" (click)="download(item)">
+          <img src="assets/images/file.png" alt="">
+          {{item.attachmentName}}
+        </li>
+      </ul>
+    </div>
+  </ng-template>
+</nz-modal>

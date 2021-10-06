@@ -1,0 +1,81 @@
+@import '../../less/exercises-lib.less';
+.default-input(){
+  & input {
+    border: none;
+    outline: none;
+    width: 80%;
+    margin: 0 auto;
+    background: @gray-bg;
+    color: @text-color;
+  }
+
+  & input:focus {
+    outline: none;
+  }
+}
+
+.list-item {
+  width: 100%;
+  margin-bottom: 15px;
+  .top{
+    line-height: 34px;
+    text-align: center;
+  }
+  .middle{
+    text-align: center;
+  }
+  .subject {
+    .default-input();
+  }
+
+  .answer {
+    .default-input();
+    .input-number{
+      border: none;
+      outline: none;
+      width: 80%;
+      margin: 0 auto;
+      background: transparent;
+      padding: 0.1rem 0.3rem;
+      color: @text-color;
+      
+    }
+  }
+
+  .gray-bg {
+    background: @gray-bg;
+  }
+
+
+  .bg-primary {
+    background-color: @primary-color;
+  }
+
+  .bg-warning {
+    background-color: @wrong-color-text;
+  }
+}
+
+.add-footer{
+  margin:20px 0;
+  text-align: center;
+}
+
+// .wrong-answer {
+//   background-color: @wrong-bg !important;
+
+//   & input {
+//     color: @wrong-color-text !important;
+//   }
+// }
+
+// .right-answer {
+//   background-color: @success-bg !important;
+
+//   & input {
+//     color: @primary-color !important;
+//   }
+// }
+::ng-deep .ant-input-number-input-wrap{
+  .default-input();
+}

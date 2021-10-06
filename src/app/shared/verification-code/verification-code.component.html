@@ -1,0 +1,22 @@
+<nz-modal [(nzVisible)]="isShow" nzTitle="安全验证" (nzOnCancel)="closeModals()" [nzMaskClosable]="false">
+  <nz-spin [nzSpinning]="isLoading" [nzDelay]="0">
+    <form nz-form [formGroup]="verCodeForm">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="24" style="text-align: left;">请使用尾数{{telphone.substring(7)}}的手机接受验证码</nz-form-label>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5" nzRequired style="text-align: left;">验证码</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="验证码不能为空">
+          <input nz-input type="text" formControlName="verCode" placeholder="请输入验证码" type="number"/>
+        </nz-form-control>
+        <div class="flex-box">
+          <button nz-button (click)="getVerCode()" *ngIf="!sendPhoneDisabled">{{isFirstGetCode ? '发送验证码' : '重新发送'}}</button>
+          <button nz-button  *ngIf="sendPhoneDisabled">重新发送({{time}}s)</button>
+        </div>
+      </nz-form-item>
+    </form>
+    <div *nzModalFooter>
+      <button nz-button nzType="primary" (click)="modifyVerCode()">确定</button>
+    </div>
+  </nz-spin>
+</nz-modal>

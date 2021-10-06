@@ -1,0 +1,22 @@
+<div nz-row>
+  <div nz-col nzSpan="6" class="bar-item" [class.bar-item-selected]="idx===0" (click)="select(0)">
+    课前<nz-badge [nzCount]="tabsCount[0]" class="badge site-badge-count-4" [nzOffset]="[0,-20]"></nz-badge>
+    <span class="selected-border"></span>
+    <!-- undo.preSum -->
+  </div>
+
+  <div nz-col nzSpan="6" class="bar-item" [class.bar-item-selected]="idx===1" (click)="select(1)">
+    课中<nz-badge [nzCount]="tabsCount[1]"  class="badge site-badge-count-4" [nzOffset]="[0,-20]"></nz-badge>
+    <span class="selected-border"></span>
+  </div>
+
+  <div nz-col nzSpan="6" class="bar-item" [class.bar-item-selected]="idx===2" (click)="select(2)">
+    课后<nz-badge [nzCount]="tabsCount[2]" class="badge site-badge-count-4" [nzOffset]="[0,-20]"></nz-badge>
+    <span class="selected-border"></span>
+  </div>
+
+  <div nz-col nzSpan="6" class="bar-item" [class.bar-item-selected]="idx===3" (click)="select(3)">
+    资料<nz-badge [nzCount]="tabsCount[3]" class="badge site-badge-count-4" [nzOffset]="[0,-20]"></nz-badge>
+    <span class="selected-border"></span>
+  </div>
+</div>

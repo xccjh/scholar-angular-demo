@@ -1,0 +1,50 @@
+<!-- 题干 -->
+<div class="question-header">
+  <div class="green-bg">{{ exerciseData.exerciseKindName }}</div>
+  <div class="question-title" [innerHTML]="exerciseData.content | safeHtml"></div>
+</div>
+<div class="question-btn">
+  <nz-tabset [(nzSelectedIndex)]="exerciseData.complexExeIdx" class="show-tab">
+    <nz-tab *ngFor="let exerciseItem of exerciseData.questionList;let i=index;" [nzTitle]="complexTabTitle">
+      <ng-template #complexTabTitle>
+        <span class="dot" *ngIf="exerciseItem.mode !== 'collection' && !exerciseItem.isEvalute"></span>{{ exerciseItem.exerciseKindName }}
+      </ng-template>
+      <!-- 单选 多选 判断 -->
+      <app-choice-question
+      *ngIf="['JudgeChoice', 'SingleChoice', 'MultipleChoice', 'TwiceChoice', 'IndefiniteMultiple'].includes(exerciseItem.exerciseKind)"
+      [exerciseData]="exerciseItem"
+      [isComplex]="true"
+      [quesNum]="i+1">
+    </app-choice-question>
+
+    <!-- 填空 -->
+    <app-fill-blanks
+      *ngIf="exerciseItem.exerciseKind === 'FillBlanks'"
+      [isComplex]="true"
+      [quesNum]="i+1"
+      [exerciseData]="exerciseItem">
+    </app-fill-blanks>
+
+    <!-- 表格题 -->
+    <app-form-subject
+      *ngIf="exerciseItem.exerciseKind === 'FormSubject'"
+      [exerciseData]="exerciseItem"
+      [quesNum]="i+1">
+    </app-form-subject>
+
+    <!-- 分录题 -->
+    <app-entry-subject
+      *ngIf="exerciseItem.exerciseKind === 'EntrySubject'"
+      [exerciseData]="exerciseItem"
+      [quesNum]="i+1">
+    </app-entry-subject>
+
+    <!-- 问答 -->
+    <app-sketch
+      *ngIf="exerciseItem.exerciseKind === 'Sketch'"
+      [exerciseData]="exerciseItem"
+      [quesNum]="i+1">
+    </app-sketch>
+    </nz-tab>
+  </nz-tabset>
+</div>

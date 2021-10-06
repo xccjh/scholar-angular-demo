@@ -1,0 +1,17 @@
+<div class="container">
+  <qkc-tag-select model="multiple" 
+    [listOfOption]="tagArr" 
+    [(ngModel)]="tags" 
+    placeholder="请选择资源标签"
+    style="width: calc(100% - 80px);">
+  </qkc-tag-select>
+  <button nz-button nzType="primary" (click)="chooseLabel()">选择</button>
+</div>
+
+<qkc-profession-label-drawer
+  [(visible)]="isShow"
+  [professionId]="professionId"
+  [knowledgePointIds]="knowledgePointIds"
+  [initialData]="tags"
+  (selectLabelChange)="selectLabelChange($event)">
+</qkc-profession-label-drawer>

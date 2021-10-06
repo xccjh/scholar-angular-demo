@@ -1,0 +1,38 @@
+<div class='packet-box'>
+  <div class='packet-box-content'>
+    <div class='packet-header'>
+      学习大纲
+    </div>
+    <div class='packet-body'>
+      <div style='color: black;margin-bottom: 20px;font-size:16px;margin-left: 5px;'>
+        请输入验证码：
+      </div>
+      <form nz-form [formGroup]="formGroup">
+        <nz-form-item style='min-width:100%'>
+          <nz-form-control [nzSpan]="21" nzHasFeedback [nzErrorTip]="errorTpl" style='width:328px'>
+            <nz-input-group [nzSuffix]="inputClearTpl" nzSize='large'>
+              <input nz-input type="text" formControlName="code" required placeholder="请输入验证码"
+                     style='width:100%'/>
+            </nz-input-group>
+            <ng-template #inputClearTpl
+            ><i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle" *ngIf="formGroup.value.code"
+                style='transform: translateY(-2px);' (click)="clearCode()"></i
+            ></ng-template>
+            <ng-template #errorTpl let-control>
+              <ng-container *ngIf="control.hasError('required')">
+                验证码不能为空哦~
+              </ng-container>
+              <ng-container *ngIf="control.hasError('maxlength') || control.hasError('minlength')">
+                请输入6位的验证码
+              </ng-container>
+            </ng-template>
+          </nz-form-control>
+          <button style="margin-left:15px" nz-button nzType="primary" nzSize='large' (click)='coursePackageView()'>
+            课包查看
+          </button>
+        </nz-form-item>
+      </form>
+    </div>
+  </div>
+</div>
+

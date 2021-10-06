@@ -1,0 +1,37 @@
+<div class="clearfix">
+<nz-upload
+    nzAction=""
+    nzListType="picture-card"
+    [(nzFileList)]="opts.imageList"
+    [nzShowButton]="opts.imageList.length < opts.limit"
+    [nzShowUploadList]="showUploadList"
+    [nzPreview]="handlePreview"
+    [nzRemove] ="remove"
+    [nzBeforeUpload] = "beforeUpload"
+    [nzCustomRequest] = "customReq"
+    (nzChange) = "onChange($event)"
+>
+    <i nz-icon nzType="plus"></i>
+    <div class="ant-upload-text">上传图片</div>
+
+    <!-- <p class="ant-upload-drag-icon">
+        <i nz-icon nzType="inbox"></i>
+      </p>
+      <p class="ant-upload-text">Click or drag file to this area to upload</p>
+      <p class="ant-upload-hint">
+        Support for a single or bulk upload. Strictly prohibit from uploading company data or other band files
+      </p> -->
+</nz-upload>
+
+<nz-modal
+    [nzVisible]="previewVisible"
+    [nzMaskClosable]="false"
+    [nzContent]="modalContent"
+    [nzFooter]="null"
+    (nzOnCancel)="previewVisible = false"
+>
+    <ng-template #modalContent>
+    <img [src]="previewImage" [ngStyle]="{ width: '100%' }" />
+    </ng-template>
+</nz-modal>
+</div>

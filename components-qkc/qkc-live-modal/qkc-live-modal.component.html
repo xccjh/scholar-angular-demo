@@ -1,0 +1,25 @@
+
+<div class="ant-modal-content" [style]="{'display' : isVisible ? 'block' : 'none'}" [class]="liveClass" cdkDrag [cdkDragDisabled]="isMax" cdkDragBoundary=".live-container">
+  <div class="dialog-header" cdkDragHandle >
+    <p>直播</p>
+    <div class="oper-btn">
+      <a (click)="minimize()"><i nz-icon nzType="line" nzTheme="outline"></i></a>
+      <a (click)="maximize()" *ngIf="!isMax"><i nz-icon nzType="fullscreen" nzTheme="outline"></i></a>
+      <a (click)="reduction()" *ngIf="isMax"><i nz-icon nzType="fullscreen-exit" nzTheme="outline"></i></a>
+      <a (click)="handleCancel()"><i nz-icon nzType="close" nzTheme="outline"></i></a>
+    </div>
+  </div>
+  <div class="dialog-content">
+    <div class="content" *ngIf="src">
+      <iframe [src]="safeUrl" frameborder="0"></iframe>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="fix-min-btn" *ngIf="isMin">
+  <button nz-button nzType="link" (click)="showModal()">
+    <img src="assets/images/live.gif" alt="" srcset="">
+  </button>
+</div>

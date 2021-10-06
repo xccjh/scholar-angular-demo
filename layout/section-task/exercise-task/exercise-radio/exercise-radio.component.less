@@ -1,0 +1,99 @@
+.radio-box {
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  &-item {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+
+    width: 100%;
+    padding: 0 18px;
+    height: 42px;
+    line-height: 42px;
+    text-align: left;
+    font-size: 14px;
+    color: #3a3c42;
+    cursor: pointer;
+
+    .serial-num {
+      flex: 0 0 20px;
+      text-align: left;
+    }
+
+    .title-wrapper {
+      flex: 1;
+    
+      display: flex;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+
+      margin: 0;
+      height: 42px;
+    }
+
+    .title {
+      display: flex;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      ::ng-deep {
+        p, div {
+          width: inherit;
+          height: 42px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        img {
+          display: none;
+        }
+      }
+    }
+
+    .exp {
+      flex: 0 0 50px;
+      text-align: right;
+    }
+
+    .dot {
+      position: absolute;
+      top: 20px;
+      left: 8px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background-color: #ff5300;
+    }
+  }
+
+  &-item-selected {
+    color: #00ab84;
+    background: #ebf9f5;
+  }
+
+  &-item-right {
+    color: #00ab84;
+  }
+
+  &-item-wrong {
+    color: #ff5300;
+  }
+
+  &-item-done {
+    color: white;
+    color: #00ab84;
+  }
+
+  // &-item-undone{
+  //   border: 1px solid #818EA5;
+  // }
+
+  &-item-score {
+    color: white;
+    background-color: #00ab84;
+  }
+}

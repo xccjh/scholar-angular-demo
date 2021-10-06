@@ -1,0 +1,27 @@
+<div>
+  <div style='margin-bottom: 20px;'>
+    <span style='color:red'>*</span>学习目标：
+    <nz-select nzShowSearch nzPlaceHolder="请选择学习目标" [(ngModel)]="learningTarget" style='min-width:100px;'>
+      <nz-option nzLabel="了解" nzValue="1"></nz-option>
+      <nz-option nzLabel="理解" nzValue="2"></nz-option>
+      <nz-option nzLabel="掌握" nzValue="3"></nz-option>
+      <nz-option nzLabel="应用" nzValue="4"></nz-option>
+      <nz-option nzLabel="分析" nzValue="5"></nz-option>
+      <nz-option nzLabel="创新" nzValue="6"></nz-option>
+    </nz-select>
+  </div>
+  <qkc-upload
+    [acceptType]="acceptTypeFiles.deafult.acceptType"
+    [limit]="limit"
+    [maxSize]='maxSize'
+    multiple='true'
+    [(ngModel)]="files">
+    <button nz-button><i nz-icon nzType="upload"></i><span>选择文件</span></button>
+    <p style="margin-top: 8px;">{{ acceptTypeFiles.deafult.desc }}</p>
+  </qkc-upload>
+
+  <div style="text-align: center;margin-top: 20px;">
+    <button nz-button nzType="default" style="margin-right: 20px;" (click)="cancel()">取消</button>
+    <button nz-button nzType="primary" [nzLoading]="isLoading" (click)="confirm()">确定上传</button>
+  </div>
+</div>

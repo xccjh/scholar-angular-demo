@@ -1,0 +1,309 @@
+<div class="container">
+  <div [ngClass]='{"header":true,"scroll-up":isExpend}'>
+    <div class='title'>
+      基本信息 <i nz-icon nzType="down" nzTheme="outline" class='icon-expend' (click)='isExpend=!isExpend' nz-tooltip
+              nzTooltipTitle="收起"
+              [hidden]='isExpend' title='单击收起'></i><i nz-icon nzType="up" nzTheme="outline" class='icon-expend'
+                                                      [hidden]='!isExpend'
+                                                      nz-tooltip nzTooltipTitle="单击展开"
+                                                      (click)="isExpend = !isExpend"></i>
+      <button nz-button (click)='backtolist()' style='float:right;margin-top:20px;'>返回</button>
+    </div>
+    <nz-descriptions [nzColumn]="desColumn" [ngClass]='{"desc-header": isExpend,"animated":true}'
+                     class='course-information-header'>
+      <nz-descriptions-item nzTitle="课程编号">{{  data?.code }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="课程名称">{{ data?.name }}</nz-descriptions-item>
+      <nz-descriptions-item
+        [nzTitle]="orgCode==='zksd'?'所属专业':'所属学科'">{{getMajorList(data) }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="课程服务商">{{ data?.courseProviderName }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="负责人">{{ data?.leaderName }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="创建人">{{ data?.createrName }}</nz-descriptions-item>
+      <nz-descriptions-item
+        nzTitle="更新时间">{{ data?.lastModifiedTime | date:'yyyy-MM-dd HH:mm:ss':'GMT+08:00' }}</nz-descriptions-item>
+
+      <nz-descriptions-item nzTitle="层次" *ngIf='orgCode==="zksd"'>{{ data?.eduLevelName }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="地区" *ngIf='orgCode==="zksd"'>{{ data?.courseAreaName }}</nz-descriptions-item>
+      <!--      <nz-descriptions-item nzTitle="排序">{{ data?.seq }}</nz-descriptions-item>-->
+    </nz-descriptions>
+  </div>
+
+  <nz-tabset class='tabs-self' [ngStyle]="{height: isExpend ? 'calc(100% - 100px)' : ' calc(100% - 215px)'}" [nzType]="'card'" (nzSelectChange)='tabChage($event)'
+             [nzSelectedIndex]='this.selectIndex'>
+    <nz-tab nzTitle="课程信息" style='font-size:20px;' [nzForceRender]='true'>
+      <nz-descriptions [nzColumn]="{ xxl: 1, xl: 1, lg: 1, md: 1, sm: 1, xs: 1 }"
+                       style='padding: 15px 20px 15px;overflow: auto;height: 100%;' class='course-information'>
+        <nz-descriptions-item [nzTitle]="kc" [nzSpan]="2">
+          <ng-container *ngIf='data.courseMemberUserList&&data.courseMemberUserList.length'>
+            <div *ngFor="let option of data.courseMemberUserList" class='item-member' nz-tooltip
+                 [nzTooltipTitle]="(option.userName || '匿名' )+ ( option.telphone? ('('+ option.telphone+')'): '')">
+              {{(option.userName || '匿名')}}
+            </div>
+          </ng-container>
+          <ng-template #kc>
+            <span
+              [class.ant-descriptions-item-label-innner]='data.courseMemberUserList&&data.courseMemberUserList.length'>课程组成员</span>
+          </ng-template>
+          <ng-container *ngIf='!(data.courseMemberUserList&&data.courseMemberUserList.length)'>
+            该用户没有选择评审组成员
+          </ng-container>
+        </nz-descriptions-item>
+        <!--        <nz-descriptions-item nzTitle="评审组成员" [nzSpan]="2">-->
+        <!--          <ng-container *ngIf='data.courseAuditUserList&&data.courseAuditUserList.length'>-->
+        <!--            <div *ngFor="let option of data.courseAuditUserList" class='item-member' nz-tooltip-->
+        <!--                 [nzTooltipTitle]="(option.userName || '匿名' )+'('+ option.telphone || '' +')'">-->
+        <!--              {{(option.userName || '匿名')}}-->
+        <!--            </div>-->
+        <!--          </ng-container>-->
+        <!--          <ng-container *ngIf='!(data.courseAuditUserList&&data.courseAuditUserList.length)'>&ndash;&gt;-->
+        <!--            该用户没有选择评审组成员-->
+        <!--          </ng-container>-->
+        <!--          {{getAduitMenberdata(data)}}-->
+        <!--        </nz-descriptions-item>-->
+        <nz-descriptions-item [nzTitle]="xt" [nzSpan]="2">
+          <ng-container *ngIf='data.exercisesAuditUserList&&data.exercisesAuditUserList.length'>
+            <div *ngFor="let option of data.exercisesAuditUserList" class='item-member' nz-tooltip
+                 [nzTooltipTitle]="(option.userName || '匿名' ) + ( option.telphone? ('('+ option.telphone+')'): '') ">
+              {{(option.userName || '匿名')}}
+            </div>
+          </ng-container>
+          <ng-template #xt>
+            <span
+              [class.ant-descriptions-item-label-innner]='data.exercisesAuditUserList&&data.exercisesAuditUserList.length'>习题审核人员</span>
+          </ng-template>
+          <ng-container *ngIf='!(data.exercisesAuditUserList&&data.exercisesAuditUserList.length)'>
+            该用户没有选择习题审核人员
+          </ng-container>
+          <!--          {{getExerciseReviewMenberdata(data)}}-->
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="课程封面" [nzSpan]="2">
+          <img class="cover-image" [src]="ossUrl+data?.courseDetail?.coverPath" alt="pic"
+               *ngIf='data?.courseDetail?.coverPath'/>
+          <span *ngIf='!data?.courseDetail?.coverPath'>
+            该用户没有上传课程封面
+          </span>
+        </nz-descriptions-item>
+        <!--        <nz-descriptions-item nzTitle="教学示范" [nzSpan]="2">-->
+        <!--          <ng-container *ngIf='data?.courseFile.length'>-->
+        <!--            <ng-container *ngFor="let item of data?.courseFile;let i=index">-->
+        <!--              <img [src]='getPreview(item)' style='width:108px;height: 128px;margin-right:20px;'/>-->
+        <!--            </ng-container>-->
+        <!--          </ng-container>-->
+        <!--          <ng-cotainer *ngIf='!data?.courseFile.length'>-->
+        <!--            该用户没有上传课程附件-->
+        <!--          </ng-cotainer>-->
+        <!--        </nz-descriptions-item>-->
+        <nz-descriptions-item nzTitle="课程简介" >
+          <div [innerHTML]='(data?.courseDetail?.introduction ? data?.courseDetail?.introduction : "暂无介绍") | safeHtml'></div>
+        </nz-descriptions-item>
+      </nz-descriptions>
+    </nz-tab>
+    <nz-tab nzTitle="知识图谱" style='font-size:20px;' [nzForceRender]='true'>
+      <div class='knowledge-graph'>
+        <div class="left-container"
+             nz-resizable
+             [style.width.px]="width"
+             (nzResize)="onResize($event)">
+          <div class='filter-container'>
+            <i nz-icon nzType="filter" nzTheme="outline" nz-dropdown [nzDropdownMenu]="menu"
+               nzPlacement="bottomCenter"></i>
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+              <ul nz-menu nzSelectable>
+                <li nz-menu-item (click)='filterKnowledgePoints(true,$event)' [nzSelected]='allNodes'>全部</li>
+                <li nz-menu-item (click)='filterKnowledgePoints(false,$event)' [nzSelected]='!allNodes'>待审核</li>
+              </ul>
+            </nz-dropdown-menu>
+          </div>
+          <div #treeContainer class='tree-container'>
+            <qkc-tree-knowledgegraph
+              class='tree-kno'
+              (examWeightInThisChapterChange)='examWeightInThisChapterChange'
+              [extendedData]='validateForm'
+              [examWeightInThisChapter]="examWeightInThisChapter"
+              [professionId]="selectedProfesson?.id"
+              [defaultCheckedKeys]="defaultCheckedKeys"
+              [preview]='true'
+              [isExpandAll]='isExpandAll'
+              (nodeChange)="nodeChange($event)"
+              model="custom"
+              [type]='type'
+              [isDraggable]='false'
+              [status]='auditStatus'
+              [allNodes]='allNodes'
+              #tree>
+              <!--            [type]='type'-->
+            </qkc-tree-knowledgegraph>
+          </div>
+          <nz-resize-handle nzDirection="right">
+            <div class="right-wrap">
+              <i class="right" nz-icon nzType="more" nzTheme="outline"></i>
+            </div>
+          </nz-resize-handle>
+        </div>
+        <div class="right-container">
+          <div [hidden]="!(kType==='2')">
+            本章考试权重 ：
+            <nz-input-number [(ngModel)]="examWeightInThisChapter" [nzMin]="0" [nzMax]="10" [nzStep]="1"
+                             disabled style='color:black'></nz-input-number>
+            <span style='margin-left:10px;'>
+        实际权重 = 本章权重/ 所有章节的权重之和
+      </span>
+          </div>
+          <div [hidden]="!(kType=='4')" style="height: 100%;">
+            <form nz-form [formGroup]="validateForm">
+              <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24" style='max-width: 100px;'>知识点编码</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24" style='min-width: calc(100% - 100px);' class='richtext'
+                                 nzErrorTip='请填写知识点编码'>
+                  <div [title]='validateForm.value.code'
+                       style='width:100%;border:1px solid #d9d9d9;min-height:30px;padding-left: 10px;line-height: 30px;color: black;'>{{validateForm.value.code}}</div>
+                </nz-form-control>
+              </nz-form-item>
+              <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24" style='max-width: 100px;'>知识点定义</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24"
+                                 style='min-width: calc(100% - 100px);overflow: hidden;position: relative;'
+                                 class='richtext'
+                                 nzErrorTip='请填写知识点定义'>
+                  <ckeditor [editor]="Editor"
+                            [disabled]='true'
+                            class='edit-content'
+                            [config]="config" formControlName='content'></ckeditor>
+                  <!--                  <div style='position:absolute;width:100%;height:100%;top: 0;cursor: not-allowed;'></div>-->
+                  <!--                    <div [innerHTML]="validateForm.value.content" [title]='validateForm.value.content'-->
+                  <!--                         class='edit-content'></div>-->
+                </nz-form-control>
+              </nz-form-item>
+              <nz-form-item class='difficultiess'>
+                <nz-form-label [nzSm]="6" [nzXs]="24" style='max-width: 100px;'>重难点</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                  <nz-radio-group formControlName='keyLevel'>
+                    <label nz-radio [nzValue]="1" nzDisabled>1星</label>
+                    <label nz-radio [nzValue]="2" nzDisabled>2星</label>
+                    <label nz-radio [nzValue]="3" nzDisabled>3星</label>
+                  </nz-radio-group>
+                </nz-form-control>
+              </nz-form-item>
+              <nz-form-item class='difficultiess'>
+                <nz-form-label [nzSm]="6" [nzXs]="24" style='max-width: 100px;'>是否冲刺</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                  <nz-radio-group formControlName='isSprint'>
+                    <label nz-radio [nzValue]="true" nzDisabled>是</label>
+                    <label nz-radio [nzValue]="false" nzDisabled>否</label>
+                  </nz-radio-group>
+                </nz-form-control>
+              </nz-form-item>
+              <nz-form-item class='difficultiess'>
+                <nz-form-label [nzSm]="6" [nzXs]="24" style='max-width: 100px;'>是否巩固</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                  <nz-radio-group formControlName='isStable'>
+                    <label nz-radio [nzValue]="true" nzDisabled>是</label>
+                    <label nz-radio [nzValue]="false" nzDisabled>否</label>
+                  </nz-radio-group>
+                </nz-form-control>
+              </nz-form-item>
+              <nz-form-item class='difficultiess'>
+                <nz-form-label [nzSm]="6" [nzXs]="24" style='max-width: 100px;'>是否押题</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                  <nz-radio-group formControlName='isFinal'>
+                    <label nz-radio [nzValue]="true" nzDisabled>是</label>
+                    <label nz-radio [nzValue]="false" nzDisabled>否</label>
+                  </nz-radio-group>
+                </nz-form-control>
+              </nz-form-item>
+              <nz-form-item class='difficultiess'>
+                <nz-form-label [nzSm]="6" [nzXs]="24" style='max-width: 100px;'>知识点状态</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                  <nz-radio-group formControlName='opsType'>
+                    <label nz-radio [nzValue]="0" nzDisabled>不变</label>
+                    <label nz-radio [nzValue]="1" nzDisabled>新增</label>
+                    <label nz-radio [nzValue]="2" nzDisabled>变更</label>
+                  </nz-radio-group>
+                </nz-form-control>
+              </nz-form-item>
+              <nz-form-item>
+                <nz-form-label style='width:100px'>讲解视频</nz-form-label>
+                <nz-form-control style='width:calc(100% - 100px)' nzErrorTip='请上传讲解视频'>
+                  <input nz-input formControlName='explanationVideo' type='hidden'/>
+                  <div class='list-self' [hidden]='!validateForm.value.explanationVideo.length'>
+                    <div class='item-left' *ngFor='let itemFile of validateForm.value.explanationVideo'
+                         [title]='getName(itemFile.videoUrl)'>
+                      <div class="item-text">
+                        <img [src]="getPreview(itemFile.videoUrl)" alt="thumbnail" class='img-dec'
+                             [class.br5]='isPicture(itemFile.videoUrl)'
+                             nz-tooltip [nzTooltipTitle]='itemFile.videoUrl' (click)='previewItem(itemFile)'>
+                        <span class='img-desc' nz-tooltip [nzTooltipTitle]='getName(itemFile.videoUrl)'>
+                          {{getName(itemFile.videoUrl)}}
+                        </span>
+                      </div>
+                      <i nz-icon nzType="eye" nzTheme="outline"
+                         (click)='previewItem(itemFile)'></i>
+                    </div>
+                  </div>
+                  <span *ngIf='!validateForm.value.explanationVideo.length' style='color: #bfbfbf'>未上传讲解视频</span>
+                </nz-form-control>
+              </nz-form-item>
+
+              <nz-form-item>
+                <!--                [ngStyle]="{'maxWidth':validateForm.value.learningMaterials.length?'100px':'inherit','width':!validateForm.value.learningMaterials.length?'100px':'inherit'}"-->
+                <nz-form-label style='width:100px'>学习资料</nz-form-label>
+                <nz-form-control style='width:calc(100% - 100px)' nzErrorTip='请上传学习资料'>
+                  <qkc-upload
+                    [hidden]='!validateForm.value.learningMaterials.length'
+                    [showUploadList]='{showPreviewIcon: true,showRemoveIcon: false,showDownloadIcon: false}'
+                    uploadDir="structure/learningMaterials"
+                    limit="0"
+                    listType="picture-card"
+                    acceptType="jpg,jpeg,png,xls,xlsx,docx,pdf,docx,pptx,ppt,mp3,mp4, m2v, mkv, rmvb, wmv, avi, flv, mov,bmp"
+                    formControlName="learningMaterials">
+                  </qkc-upload>
+                  <!--                  nz-tooltip [nzTooltipTitle]='validateForm.value.learningMaterials'-->
+                  <span *ngIf='!validateForm.value.learningMaterials.length' style='color: #bfbfbf'>未上传学习资料</span>
+                </nz-form-control>
+              </nz-form-item>
+              <nz-form-item class='difficultiess'>
+                <nz-form-label [nzSm]="6" [nzXs]="24" style='max-width: 100px;'>是否已完善</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                  <nz-radio-group formControlName='isDone'>
+                    <label nz-radio [nzValue]="true" nzDisabled>是</label>
+                    <label nz-radio [nzValue]="false" nzDisabled>否</label>
+                  </nz-radio-group>
+                </nz-form-control>
+              </nz-form-item>
+            </form>
+          </div>
+          <div [hidden]="!(kType==='1'||kType==='3')">
+            <nz-result nzStatus="info" nzTitle="暂无预览"></nz-result>
+          </div>
+        </div>
+      </div>
+    </nz-tab>
+    <!--    <nz-tab nzTitle="录播讲师" style='font-size:20px;'>-->
+    <!--      <ng-template nz-tab>-->
+    <!--        <app-recording-lecturer #recordingLecturer [preview]='true'></app-recording-lecturer>-->
+    <!--      </ng-template>-->
+    <!--    </nz-tab>-->
+
+  </nz-tabset>
+</div>
+
+<nz-modal [(nzVisible)]="isPreviewpolyway" (nzOnCancel)="isPreviewpolyway=false" [nzFooter]='null' [nzTitle]='null'
+          nzWidth='600' [nzBodyStyle]='{padding:0,height:"500px"}'>
+  <iframe
+    allowfullscreen='true'
+    [src]="resourceUrl"
+    *ngIf='isPreviewpolyway'
+    style="width: 100%;border: none;height: 100%">
+  </iframe>
+</nz-modal>
+
+
+<app-resource-preview-modal [isPreviewpolyway]='isPreviewpolyway' [previewTitle]='previewTitle'
+                            [resourceUrl]='resourceUrl' *ngIf='previewStart'
+                            (closePreview)='closePreview()'></app-resource-preview-modal>
+
+
+<qkc-attachment-show-modal
+  [(isShow)]="previewVisible"
+  [url]="previewUrl">
+</qkc-attachment-show-modal>
+

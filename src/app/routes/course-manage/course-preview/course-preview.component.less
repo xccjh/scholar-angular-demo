@@ -1,0 +1,347 @@
+.container {
+  height: 100%;
+  overflow: hidden;
+
+
+  .header {
+    padding: 0 20px 20px 20px;
+    border-bottom: 20px solid #f0f2f5;
+
+    .title {
+      font-size: 20px;
+      height: 50px;
+      line-height: 50px;
+    }
+  }
+
+  .tabs-self {
+    overflow: hidden;
+  }
+
+  .list-self {
+    .item-left {
+      height: 65px;
+      border: 1px dashed #dbdbdb;
+      width: 185px;
+      line-height: 60px;
+      padding-left: 10px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin-right: 20px;
+      display: inline-block;
+      background-color: #fafafa;
+      padding-right: 50px;
+      position: relative;
+
+      .item-text {
+        width: 140px;
+        display: inline-block;
+        height: 65px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .img-dec {
+        width: 50px;
+        height: 50px;
+        cursor: pointer;
+      }
+
+      .img-desc {
+        padding-left: 10px;
+        width: 85px;
+        display: inline-block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        vertical-align: middle;
+      }
+
+      .br5 {
+        border-radius: 5px;
+      }
+
+      .item-text-desc {
+        padding-left: 10px;
+        height: 20px;
+        position: relative;
+        line-height: 20px;
+        top: -20px;
+      }
+
+      .preview-item {
+        position: absolute;
+        right: 30px;
+        top: 22px;
+      }
+
+      &:hover {
+        box-shadow: 0 0 10px #e1e1e1;
+      }
+
+      i {
+        position: absolute;
+        cursor: pointer;
+        right: 20px;
+        top: 26px;
+      }
+    }
+  }
+
+  .cover-image {
+    max-width: 300px;
+  }
+
+  .knowledge-graph {
+    background-color: white;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    padding: 20px;
+
+
+
+    .label-title {
+      font-size: 20px;
+    }
+
+    .left-container {
+      height: 100%;
+      border-right: 1px solid #ddd;
+      overflow-x: hidden;
+      overflow-y: auto;
+      position: relative;
+
+
+      .filter-container {
+        position: absolute;
+        top: 0;
+        right: 12px;
+        cursor: pointer;
+      }
+
+      .tree-container {
+        display: inline-block;
+        overflow: hidden;
+        margin-right: 55px;
+
+        .tree-kno {
+          overflow: hidden;
+          display: inline-block;
+        }
+      }
+
+      .right-wrap {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .right {
+        background: #fff;
+        border: 1px solid #ddd;
+        text-align: center;
+        font-size: 12px;
+        height: 20px;
+        line-height: 20px;
+      }
+    }
+
+    .right-container {
+      height: 100%;
+      overflow: auto;
+      flex: 1;
+      padding: 20px;
+    }
+  }
+
+}
+
+.item-member {
+  position: relative;
+  width: 72px;
+  height: 36px;
+  border: 1px solid #d9d9d9;
+  opacity: 1;
+  border-radius: 3px;
+  margin-right: 18px;
+  margin-bottom: 18px;
+  text-align: center;
+  line-height: 36px;
+  color: #999;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 10px;
+  vertical-align: top;
+  display: inline-block;
+
+
+  .text-box {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+    padding: 0 10px;
+  }
+
+
+  &.add-member {
+    color: #D2DAE8;
+    border: 1px solid #F0F1F3;
+
+    .add-member-icon {
+      font-size: 15px;
+      color: #D2DAE8;
+    }
+
+    &:hover {
+      cursor: pointer;
+      color: #A3ABB8;
+      border: 1px solid transparent;
+      box-shadow: 0 0 10px #cccccc;
+
+      .add-member-icon {
+        color: #A3ABB8;
+        cursor: pointer;
+      }
+
+    }
+  }
+
+  .cross {
+    cursor: pointer;
+    color: white;
+    text-align: center;
+    line-height: 20px;
+    font-size: 15px;
+    border-radius: 50%;
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    top: -12px;
+    right: -12px;
+    background: #FC3F4C;
+    opacity: 1;
+    transform: scale(0.5);
+
+    &:hover {
+      transform: scale(0.6);
+      box-shadow: 0 0 5px #FC3F4C;
+    }
+  }
+}
+
+.scroll-up {
+  height: 100px;
+  overflow: hidden;
+}
+
+.icon-expend {
+  cursor: pointer;
+  font-size: 14px;
+  transform: translateY(-3px);
+
+  &:hover {
+    transform: translateY(-5px);
+    transition: all .6s;
+    box-shadow: 0 0 10px grey;
+    border-radius: 50%;
+    padding: 1px;
+  }
+}
+
+.introduction-preview {
+  .ant-descriptions-item-content {
+    word-break: break-all
+  }
+}
+
+.list-self {
+  width: 100%;
+}
+
+:host ::ng-deep .tabs-self {
+  .ant-tabs-nav-container {
+    height: 60px;
+    font-size: 20px;
+    background-color: #f9fafb;
+
+    .ant-tabs-tab {
+      border: 0;
+      background: transparent;
+      height: 60px;
+      line-height: 60px;
+      padding-top: 0;
+    }
+
+    .ant-tabs-tab-active {
+      background: #fff;
+    }
+  }
+}
+
+:host ::ng-deep .tabs-self .ant-descriptions-row {
+  height: 60px;
+}
+
+:host ::ng-deep .difficultiess {
+  span {
+    color: black !important;
+  }
+}
+
+:host ::ng-deep .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-tab {
+  padding: 0 16px 8px;
+}
+
+
+:host ::ng-deep .ant-tabs .ant-tabs-top-content {
+  height: calc(100% - 60px);
+}
+
+:host ::ng-deep .ant-tabs-tabpane {
+  height: 100%;
+}
+
+:host ::ng-deep .ant-spin-container {
+  position: static;
+}
+
+:host ::ng-deep .ant-tree {
+  position: static !important;
+}
+
+:host ::ng-deep .course-information .ant-descriptions-item > .ant-descriptions-item-label {
+  min-width: 100px;
+  text-align: right;
+  vertical-align: top;
+}
+
+.ant-descriptions-item-label-innner {
+  height: 36px;
+  line-height: 36px;
+  display: inline-block;
+}
+
+
+:host ::ng-deep .course-information-header .ant-descriptions-item-content {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  margin-bottom: 3px;
+}
+
+:host ::ng-deep .ck-editor__top {
+  display: none;
+}
+
+
+:host ::ng-deep .course-information .ant-descriptions-item {
+  display: flex;
+}

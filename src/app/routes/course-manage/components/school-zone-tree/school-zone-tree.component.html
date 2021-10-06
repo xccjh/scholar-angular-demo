@@ -1,0 +1,12 @@
+<nz-tree
+  style="width: 80%"
+  [(ngModel)]="selectedValues"
+  [nzData]="opts"
+  [nzExpandedKeys]="expandKeys"
+  nzCheckable
+  [nzMultiple]="true"
+  (ngModelChange)="selectedChange($event)"
+  [nzHideUnMatched]='true'
+>
+</nz-tree>
+<ng-template #omittedPlaceHolder let-omittedValues> 还有 {{ omittedValues.length }} 个校区/大区...</ng-template>

@@ -1,0 +1,24 @@
+
+
+<div class="video">
+    <video controls="controls" controlslist="nodownload"
+        *ngIf="showVideo == '1' && sourceType == '1'"
+        [src]="mp4Url"></video>
+    <iframe
+        *ngIf="showVideo == '1' && (sourceType == '2' || sourceType === '3')"
+        allowfullscreen='true'
+        [src]="baoliUrl"
+        class="video-bg"
+        id="frame"
+        >
+    </iframe>
+    <!-- <video
+        *ngIf="showVideo == '1' && sourceType == '2'"
+        [src]="baoliUrl"
+        class="video-bg"
+        id="appPage"
+    >
+    </video> -->
+    <div class="tips" *ngIf="showVideo == '0'">暂无学习视频</div>
+</div>
+<nz-spin class="full-spin"  [ngStyle]="{visibility:!fullLoading?'hidden':'visible'}" [nzSpinning]="fullLoading" nzSimple nzTip="加载中..."></nz-spin>

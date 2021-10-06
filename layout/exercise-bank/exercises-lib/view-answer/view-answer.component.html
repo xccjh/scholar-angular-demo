@@ -1,0 +1,143 @@
+<app-exercises-header></app-exercises-header>
+<nz-spin [nzSpinning]="passRecord" [nzDelay]="0" nzTip="查询闯关记录中..." style='width:100%;height: calc(100% - 120px);'>
+  <div class='container-com'>
+    <div class='container'>
+      <div class='header clearfix'>
+        <div class='banner' >
+          <div class='title'>恭喜完成训练</div>
+          <div class='score'>
+            你的得分 <span class='num'>{{fraction}}</span> 分
+          </div>
+          <button nz-button nzShape="round" class='train-again' (click)='trainAgain()'><span class='text'>再次训练</span>
+          </button>
+          <div class='modify'>
+          </div>
+        </div>
+        <div class='answers'>
+          <div class='title'>
+            答题情况
+          </div>
+          <div class='question-list'>
+      <span *ngFor='let item of questions;let i=index;'
+            [ngClass]="{'color-red':ifRed(i)}" style='backgroundColor: #1db88e' (click)="showModal(i + 1)" >
+        {{i + 1}}
+      </span>
+          </div>
+        </div>
+      </div>
+      <div class='knowledge-points'>
+        <div class='knowledge-points-left'>
+          <div class='list-item'>
+            <div class='list-label header-label'>
+              薄弱知识点
+            </div>
+            <div class='list-label list-input header-label'>
+              难度
+            </div>
+          </div>
+          <div *ngIf='errorKnowledges.length' style='height:calc(100% - 67px);overflow:auto;'>
+            <div class='list-item hover-item' *ngFor="let item of errorKnowledges;let i=index;"
+                 (click)='gotoKnowledgePoints(item)'>
+              <div class='list-label' [title]='item.name || item.pointName'>
+                {{item.name || item.pointName}}
+              </div>
+              <div class='list-label list-input'>
+                <i nz-icon nzType="star" nzTheme="fill" class='star yellow'
+                   *ngFor='let itemx of getLevel(item.keyLevel)'></i>
+                <i nz-icon nzType="star" nzTheme="fill" class='star'
+                   *ngFor='let itemxx of getOtherLevel(item.keyLevel)'></i>
+              </div>
+            </div>
+          </div>
+          <div class='list-item hover-item' *ngIf='!errorKnowledges.length'>
+            <div class='list-label'>
+              无
+            </div>
+          </div>
+        </div>
+        <div class='knowledge-points-right'>
+          <div class='list-item'>
+            <div class='list-label header-label'>
+              正确知识点
+            </div>
+            <div class='list-label list-input header-label'>
+              难度
+            </div>
+          </div>
+          <div style='height:calc(100% - 67px);overflow:auto;' *ngIf='correctKnowledges.length'>
+            <div class='list-item hover-item' *ngFor="let item of correctKnowledges;let i=index;"
+                 (click)='gotoKnowledgePoints(item)'>
+              <div class='list-label' [title]='item.name || item.pointName'>
+                {{item.name || item.pointName}}
+              </div>
+              <div class='list-label list-input'>
+                <i nz-icon nzType="star" nzTheme="fill" class='star yellow'
+                   *ngFor='let itemx of getLevel(item.keyLevel)'></i>
+                <i nz-icon nzType="star" nzTheme="fill" class='star'
+                   *ngFor='let itemxx of getOtherLevel(item.keyLevel)'></i>
+              </div>
+            </div>
+          </div>
+          <div class='list-item hover-item' *ngIf='!correctKnowledges.length'>
+            <div class='list-label'>
+              无
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nz-spin>
+
+
+<nz-modal
+  nzWidth='600'
+  [(nzVisible)]="isVisible" nzTitle="做题记录" [nzFooter]='null'
+  [nzBodyStyle]='{maxHeight: "600px",overflow: "auto"}' (nzOnCancel)='isVisible=false'
+  [nzClosable]='true'>
+  <app-smart-question
+    [smartQuestion]='smartQuestion'
+    [current]='getCurrentNumber()'
+    [idx]='currentIndex'
+    [currenType]='currenType'
+    [maxScreen]='false'
+    *ngIf='isVisible'
+    [submitted]='{flag:true}'
+    [videoAnalysis]='videoAnalysis'
+    [isPreviewpolyway]='isPreviewpolyway'
+    (showModalEmit)='showModalEmit($event)'
+  ></app-smart-question>
+</nz-modal>
+
+
+<nz-modal [(nzVisible)]="successModal"
+          [nzTitle]="null"
+          [nzFooter]='null'
+          (nzOnCancel)='successModal=false'
+          [nzBodyStyle]='{height: "398px",overflow: "auto",padding:0,width:"520px"}'>
+  <div class='header-modal' ImgSet ImgCode='succes'>
+    <div class='head-modal'>恭喜你</div>
+    <div class='title-modal'>{{getTitle()}}</div>
+    <div class='float-pane'>
+      <ng-container>
+        <div class='pane-title'>
+          {{getDetail()}}
+        </div>
+        <div class='tips'>
+          {{(isLastStage && StringI(isLastStage) === '1') ? '已解锁全部' : '已解锁'}}
+        </div>
+      </ng-container>
+      <div class='continue-study'>
+        <button nz-button nzType="primary" nzShape="round" class='button-modal'
+                (click)='continueStudying()'>
+          继续学习
+        </button>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+
+
+
+
+

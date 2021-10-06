@@ -1,0 +1,125 @@
+<nz-button-group *ngIf="isSmart == '1'">
+  <button nz-button
+    type="button"
+    [nzType]="'primary'"
+    [nzBlock]="true"
+    [nzSize]="'large'"
+    style="height: 42px"
+    (click)="toConfirm('训练闯关')">
+    训练闯关
+  </button>
+  <!-- <button nz-button
+    *ngIf="chapterStudyData.passUuid"
+    type="button"
+    [nzType]="'primary'"
+    [nzGhost]="true"
+    [nzBlock]="true"
+    [nzSize]="'large'"
+    style="height: 42px;border: none;"
+    (click)="exercise('继续闯关')">
+    继续闯关
+  </button> -->
+</nz-button-group>
+<div class="card-header">
+  <span>
+    <span class="tick"></span>
+    <span class="label">教学视频</span>
+  </span>
+  <span>
+    <span>当前：{{ chapterStudyData.teachName }}</span>
+    <span class="exchange" >
+      <span (click)="teachTab()">更换</span>
+      <i nz-icon nzType="right" nzTheme="outline"></i>
+    </span>
+  </span>
+</div>
+<div>
+  <div *ngFor="let videos of chapterStudyData.videos"
+    class="card-list-item" [ngClass]="{'current':videos.resourceId == studyVideo.resourceId}" (click)="videoTab(videos)">
+    <span>
+      <i nz-icon nzType="play-circle" nzTheme="outline"></i>
+      <span>{{ videos.videoName }}</span>
+    </span>
+  </div>
+</div>
+<div class="card-header">
+  <span>
+    <span class="tick"></span>
+    <span class="label">资料</span>
+  </span>
+</div>
+<div>
+  <div *ngFor="let materials of chapterStudyData.materials"
+    class="document-item">
+    <span>
+      <i nz-icon
+        nzType="folder"
+        nzTheme="fill">
+      </i>
+      <span>{{ materials.materialName }}</span>
+    </span>
+    <button nz-button
+      type="button"
+      [nzType]="'primary'"
+      (click)="download(materials)">
+      下载
+    </button>
+  </div>
+</div>
+<div class="card-header" *ngIf="isSmart == '1'">
+  <span>
+    <span class="tick"></span>
+    <span class="label">知识点</span>
+  </span>
+</div>
+<div *ngIf="isSmart == '1'">
+  <div *ngFor="let points of chapterStudyData.points"
+    class="card-list-item" (click)="gotoKnowledgeStudy(points)">
+    <span>
+      <i nz-icon nzType="play-circle" nzTheme="outline"></i>
+      <span>{{ points.pointName }}</span>
+    </span>
+    <span class="difficulty">
+      <img src="assets/images/sprint.png"
+        *ngIf="points.isSprint==='1'">
+      <img src="assets/images/stable.png"
+          *ngIf="points.isStable==='1'">
+      <img src="assets/images/ya.png"
+          *ngIf="points.isFinal==='1'">
+      <i nz-icon nzType="star" nzTheme="fill" *ngIf="points.keyLevel > 0"></i>
+      <i nz-icon nzType="star" nzTheme="fill" *ngIf="points.keyLevel > 1"></i>
+      <i nz-icon nzType="star" nzTheme="fill" *ngIf="points.keyLevel > 2"></i>
+    </span>
+  </div>
+</div>
+<nz-spin class="spin training-spin" *ngIf="click" [nzSpinning]="click" nzSimple nzTip="加载中..."></nz-spin>
+
+<nz-modal [(nzVisible)]="isVisible"
+          [nzWidth]="'520px'"
+          [nzWrapClassName]="'test-modal-lsf'"
+          nzTitle=""
+          (nzOnOk)="handleOk()"
+          (nzOnCancel)="isVisible=false"
+          [nzClosable]="true"
+          [nzFooter]="null">
+  <div class="test-modal-container">
+    <img src="assets/images/custom-plan-header.png" alt="">
+    <p class="modal-title">{{modelTitle}}</p>
+    <div class="test-modal-m">
+      <div class="modal-cont">
+        <p><span>知识点数量：</span>{{chapterStudyData.points?.length}}个</p>
+        <p>
+          <span>题目数量：</span>{{selectQuestionData.quesNums == 0 ? selectQuestionData.quesNums : selectQuestionData.quesNums + '-' + selectQuestionData.quesNums * 2}}
+          题</p>
+        <p><span>预估耗时：</span>{{selectQuestionData.quesNums * 3}}分钟</p>
+      </div>
+      <div class="modal-tip" *ngIf="true"><i nz-icon nzType="exclamation-circle" nzTheme="outline"></i> 通过条件：分数大于75分
+        <br>每次答题完成都会更新你的知识图谱
+      </div>
+      <div class="button">
+        <button (click)="handleOk()" [nzLoading]="modelLoading" nz-button class="modal-btn" nzType="primary"
+                [nzSize]="'large'" nzShape="round">{{modelTitle == '继续闯关' ? '继续' : '开始'}}</button>
+      </div>
+    </div>
+  </div>
+</nz-modal>

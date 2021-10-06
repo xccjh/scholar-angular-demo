@@ -1,0 +1,126 @@
+<nz-layout>
+  <div class='main-header'>
+    课程查询
+  </div>
+  <div class='header'>
+    <div class='header-container mb20'>
+      <div class='header-item'>
+        <label>关键词搜索: </label>
+        <input nz-input [placeholder]="'支持课程编号/课程名称/负责人'" [(ngModel)]="searchWordVal" (ngModelChange)='storingData()'
+               style='margin-right: 20px;' (keyup.enter)='searchData("button")'/>
+      </div>
+      <!-- <div class='header-item ml40'>
+        <label>审批状态: </label>
+        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="请选择课程状态" [(ngModel)]="selectedVal"
+                   style='margin-right: 20px;width:250px'>
+          <nz-option nzValue="" nzLabel="全部"></nz-option>
+          <nz-option nzValue="0" nzLabel="草稿"></nz-option>
+          <nz-option nzValue="1" nzLabel="待审批"></nz-option>
+          <nz-option nzValue="2" nzLabel="标准"></nz-option>
+          <nz-option nzValue="3" nzLabel="未通过"></nz-option>
+        </nz-select>
+      </div> -->
+      <div class='header-item'>
+        <label>提交时间：</label>
+        <nz-range-picker [(ngModel)]="dateRangeVal" (ngModelChange)='storingData()'></nz-range-picker>
+      </div>
+      <button nz-button nzType="primary" (click)="searchData('button')" class='ml40'>查询</button>
+      <button nz-button nzType="primary" style='margin-left:20px;' (click)="resetData()">重置</button>
+      <button nz-button nzType="primary" style='margin-left:20px;' (click)="approvBatchpre()" [disabled]="!setOfCheckedId.size">审批</button>
+    </div>
+  </div>
+
+
+  <nz-content style='padding:  20px 20px;'>
+    <div class='table-container' id='tableScroll' [class.no-scoll]='!data.length'>
+      <nz-table #basicTable [nzData]="data" [nzFrontPagination]="false" [nzScroll]="{ y: '500px' }"
+                [nzShowSizeChanger]="true"
+                [nzScroll]='{x:"1150px",y : height+"px"}'
+                [nzPageSizeOptions]='[15, 20, 30, 40, 50]'
+                [nzShowTotal]="totalTemplate" [nzLoading]="isLoading" [nzTotal]="total"
+                [(nzPageIndex)]="pageIndex"
+                [(nzPageSize)]="pageSize" (nzPageIndexChange)="searchData()"
+                (nzPageSizeChange)="searchData()"
+                (nzCurrentPageDataChange)='onCurrentPageDataChange($event)'>
+        <thead>
+        <tr>
+          <th [nzChecked]="checked" [nzIndeterminate]="indeterminate" (nzCheckedChange)="onAllChecked($event)" nzWidth='60px'></th>
+          <th nzWidth='120px'>课程编号</th>
+          <th nzWidth='200px'>课程名称</th>
+          <th nzWidth='200px'>{{orgCode === 'zksd' ? '所属专业' : '所属学科'}}</th>
+          <th nzWidth='120px'>负责人</th>
+          <th nzWidth='120px'>提交时间</th>
+          <th nzWidth='120px'>审批时间</th>
+          <th nzWidth='120px'>审批状态</th>
+          <th nzWidth='90px' nzRight>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of basicTable.data;let idx=index;">
+          <td
+            [nzDisabled]="data.auditStatus !== '1'"
+            [nzChecked]="setOfCheckedId.has(data.id)"
+            (nzCheckedChange)="onItemChecked(data.id, $event)"
+          ></td>
+          <td><span class='synopsis-text'>{{ data.code }}</span></td>
+          <td><span class='synopsis-text'>{{ data.name }}</span></td>
+          <td><span class='synopsis-text'>{{ orgCode == 'zksd' ? data.majorNames : data.majorName}}</span></td>
+          <td><span class='synopsis-text'>{{ data.leaderName ? data.leaderName : "--" }}</span></td>
+          <td>{{ getDate(data?.billDate)}}</td>
+          <td>{{ getDate(data?.auditDate)}}</td>
+          <!--        <td>{{ data.statusName }}</td>-->
+          <td [class.red]='data.auditStatus === "3"' [class.green]='data.auditStatus === "2"' [class.orange]='data.auditStatus === "1"'>{{ data.auditStatusName }}</td>
+          <td nzRight>
+            <nz-space>
+              <nz-space-item>
+                <a (click)="preview(data)">预览</a>
+              </nz-space-item>
+              <nz-space-item *ngIf='data.auditStatus==="1"'>
+                <a (click)="approved(data)" style='color:red'>审批</a>
+              </nz-space-item>
+            </nz-space>
+          </td>
+        </tr>
+        </tbody>
+      </nz-table>
+    </div>
+    <ng-template #totalTemplate let-total>共 {{ total }} 条记录</ng-template>
+  </nz-content>
+</nz-layout>
+
+
+<ng-template #tips>
+  <ng-container *ngIf='this.currentItem.status==="0"'>
+    <div>
+      课程一经审批通过，课程将开放资源研发存储，课包建设权限。
+    </div>
+    <div style="margin-bottom: 10px">
+      请审批以下内容,审批通过将不影响以后修改。
+    </div>
+    <div style="margin-bottom: 10px">
+      1、课程内容是否完善。
+    </div>
+    <div>
+      2、知识图谱是否已完。
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf='this.currentItem.status==="1"'>
+    <div style="margin-bottom: 10px">
+      本次将对知识图谱以下内容进行审批
+    </div>
+    <div style="margin-bottom: 10px">
+      1、知识点新增了{{addKnowledgePoints}}个
+    </div>
+    <div>
+      2、知识点删除了{{delKnowledgePoints}}个
+    </div>
+  </ng-container>
+  <div style='margin:20px 0 0;text-align:right;'>
+    <button nz-button style="margin-right: 15px;" (click)="approveAll(currentItem, '3')" [nzLoading]='approveLoading'>不通过</button>
+    <button nz-button nzType="primary" style="margin-right: 15px;" (click)="approveAll(currentItem, '2');" [nzLoading]='approveLoading'>通过</button>
+  </div>
+</ng-template>
+
+
+

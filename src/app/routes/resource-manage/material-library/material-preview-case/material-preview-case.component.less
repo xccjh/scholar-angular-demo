@@ -1,0 +1,92 @@
+.container {
+  background-color: white;
+  padding: 10px;
+  height: 100%;
+  overflow: scroll;
+
+  @headerHeight: 82px;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+
+    // height: @headerHeight;
+    // line-height: @headerHeight;
+    &-title {
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 32px;
+      margin-left: 20px;
+    }
+  }
+
+  .body {
+    display: flex;
+    height: calc(100% - @headerHeight);
+
+    .left {
+      flex: 0 0 150px;
+
+      .left-fixed {
+        position: fixed;
+      }
+    }
+
+    .middle {
+      flex: 1;
+      padding: 0px 15px 10px 15px;
+      overflow: auto;
+    }
+
+    .right {
+      flex: 0 0 350px;
+      padding: 10px;
+
+      & audio {
+        outline: none;
+      }
+
+      .attach-block {
+        display: block;
+        margin-bottom: 15px;
+        padding: 10px;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        & img {
+          width: 100px;
+          display: block;
+          margin-bottom: 15px;
+        }
+
+        & span {
+          display: block;
+          text-align: center;
+        }
+      }
+    }
+  }
+
+}
+
+.full-height {
+  height: 100%;
+}
+
+:host {
+  ::ng-deep .full-height > .ant-spin-container {
+    height: 100%;
+  }
+}
+
+:host ::ng-deep .edit-content .ck-editor__top {
+  display: none;
+}
+
+:host ::ng-deep .edit-content .ck-content {
+  border-color: transparent !important;
+}
+

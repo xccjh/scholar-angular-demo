@@ -1,0 +1,98 @@
+<nz-layout class="main">
+  <nz-header class="cus-header">
+    <div class="cus-header-left">
+      <div class="logo"><img [src]="defaultLogo" alt=""></div>
+      <i class="trigger" nz-icon
+         [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
+         (click)="isCollapsed = !isCollapsed">
+      </i>
+    </div>
+    <div nz-dropdown
+         [nzDropdownMenu]="topmenu"
+         [nzPlacement]="'bottomCenter'"
+         class="user-profile">
+      <nz-avatar class="thumbnail" nzIcon="user" [nzSize]="22"></nz-avatar>
+      <span class="name">{{user.nickName}}</span>
+    </div>
+    <nz-dropdown-menu #topmenu="nzDropdownMenu">
+      <ul nz-menu>
+        <li nz-menu-item (click)="loginOut()">
+          <i nz-icon nzType="poweroff"></i>
+          <span>退出登录</span>
+        </li>
+        <li nz-menu-item (click)="resetPwd()">
+          <i nz-icon nzType="setting"></i>
+          <span>修改密码</span>
+        </li>
+      </ul>
+    </nz-dropdown-menu>
+  </nz-header>
+
+  <nz-layout>
+    <nz-sider nzCollapsible
+              class="m-silders"
+              [(nzCollapsed)]="isCollapsed"
+              [nzTrigger]="null"
+              nzTheme="light">
+      <ul nz-menu nzMode="inline" [nzInlineCollapsed]="isCollapsed">
+        <ng-container *ngTemplateOutlet="menuTpl; context: { $implicit: menus }"></ng-container>
+        <ng-template #menuTpl let-menus>
+          <ng-container *ngFor="let menu of menus">
+            <ng-container *ngIf="menu.isVisible == '1'">
+              <li nz-submenu
+                  *ngIf="menu.children"
+                  [nzTitle]="menu.text"
+                  [nzIcon]="menu.icon"
+                  [nzPaddingLeft]="isCollapsed ? 0 : menu.level * 15"
+                  [(nzOpen)]="menu.isOpen">
+                <ul>
+                  <ng-container *ngTemplateOutlet="menuTpl; context: { $implicit: menu.children }"></ng-container>
+                </ul>
+              </li>
+              <li nz-menu-item
+                  *ngIf="!menu.children"
+                  [nzPaddingLeft]="menu.level * 15 + 7"
+                  [nzSelected]="menu.isSelected"
+                  (click)="mClick(menu)">
+                <i nz-icon [nzType]="menu.icon" *ngIf="menu.icon"></i>
+                <span>{{menu.text}}</span>
+              </li>
+            </ng-container>
+          </ng-container>
+        </ng-template>
+      </ul>
+    </nz-sider>
+
+    <nz-layout style="padding:20px;">
+      <nz-header style="background-color: transparent;height: 50px;">
+        <nz-tabset [nzType]="'card'" [(nzSelectedIndex)]="index" (nzSelectedIndexChange)="tabChange($event)"
+                   cdkDropListGroup>
+          <nz-tab [nzTitle]="titleTemplate" *ngFor="let tab of tabs;let indextab =index" >
+            <ng-template #titleTemplate>
+              <div class='container-tab' cdkDropList
+                   [cdkDropListData]="{item:indextab,index:indextab}" (cdkDropListDropped)="drop($event)">
+                <div class="tab-item" (contextmenu)="contextmenu($event,indextab)" cdkDrag>
+                  <span *cdkDragPlaceholder></span>
+                  <div> {{tab.text}}
+                    <i nz-icon nzType="close" class="ant-tabs-close-x" (click)="closeTab(tab,$event)"
+                       style="color: #1890ff;"></i>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </nz-tab>
+        </nz-tabset>
+        <div id="menu-tab" #menuClick>
+          <div class='menu-item' (click)='closeTabs()'>关闭所有</div>
+          <div class='menu-item' (click)='closeTabs("other")'>关闭其他</div>
+          <div class='menu-item' (click)='closeTabs("right")'>关闭右侧</div>
+          <div class='menu-item' (click)='closeTabs("left")'>关闭左侧</div>
+        </div>
+      </nz-header>
+
+      <nz-content style="overflow: auto;background-color: white;width: 100%;height: 100%;">
+        <router-outlet></router-outlet>
+      </nz-content>
+    </nz-layout>
+  </nz-layout>
+</nz-layout>

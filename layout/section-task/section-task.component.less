@@ -1,0 +1,34 @@
+@import '../../core/less/variable.less';
+@import '../../core/less/public.less';
+
+
+:host {
+  width: 100%;
+  height: 100%;
+  display: block;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+
+  .header-box {
+    width: 100%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .header-tilte {
+      font-size: 16px;
+    }
+    .header-status{
+      color: #00AB84;
+    }
+  }
+
+  app-task-list{
+    height: 100%;
+  }
+}

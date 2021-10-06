@@ -1,0 +1,173 @@
+<div class="container">
+  <section class="resource-container">
+    <section class="left-tree"
+             nz-resizable
+             [style.width.px]="width"
+             (nzResize)="onResize($event)">
+      <p style='margin-bottom:15px;font-size: 15px;'>选择知识点(不支持跨学科知识点)</p>
+      <div #treeContainer style='display:inline-block;overflow:hidden;margin-right: 30px;'>
+        <qkc-tree-knowledgegraph
+          model="check"
+          [professionId]="professionId"
+          [defaultCheckedKeys]="defaultTreeKey"
+          (nodeChange)="nodeChange($event)"
+          [fullNode]='true'
+          [allNodes]='true'
+          #treeknowledge>
+        </qkc-tree-knowledgegraph>
+      </div>
+      <nz-resize-handle nzDirection="right">
+        <div class="right-wrap">
+          <i class="right" nz-icon nzType="more" nzTheme="outline"></i>
+        </div>
+      </nz-resize-handle>
+    </section>
+    <section class="right-resource">
+      <p style='margin-bottom:15px;font-size: 18px;'>{{title}} <i nz-icon  nzType="question-circle" nzTheme="outline" nz-tooltip [nzTooltipTitle]="titleTip" *ngIf='coursewareType==="101"' class='font-question' [nzTooltipOverlayStyle]='{"max-width": "800px"}'></i>
+      </p>
+      <ng-template #titleTip>
+        <div>1、建议优先WPS制作PPT；</div>
+        <div>2、尽量少用第三模板；</div>
+        <div>3、PPT的文件大小应控制在100M之内</div>
+      </ng-template>
+      <form class="case-form" nz-form [formGroup]="validateForm">
+        <div nz-row *ngIf='isEdit'>
+          <div nz-col nzSpan="15">
+            <nz-form-item>
+              <nz-form-label [nzSm]="6" [nzXs]="24" style="text-align: left;">创建人
+              </nz-form-label>
+              <nz-form-control [nzSm]="18" [nzXs]="24">
+                <input nz-input [(ngModel)]="createrName" [ngModelOptions]="{standalone: true}" [disabled]='true'/>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div nz-row>
+          <div nz-col nzSpan="15">
+            <nz-form-item>
+              <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired style="text-align: left;"
+                             nzFor="learningGoalCode">学习目标
+              </nz-form-label>
+              <nz-form-control [nzSm]="18" [nzXs]="24" nzErrorTip="请选择学习目标" nzHasFeedback>
+                <nz-select formControlName="learningGoalCode" nzAllowClear
+                           nzPlaceHolder="请选择学习目标">
+                  <nz-option *ngFor="let opt of learnTargetArr"
+                             [nzValue]="opt.id" [nzLabel]="opt.name"></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div nz-row>
+          <div nz-col nzSpan="15" *ngIf="isEdit">
+            <nz-form-item>
+              <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired style="text-align: left;"
+                             nzFor="title">资源标题
+              </nz-form-label>
+              <nz-form-control [nzSm]="18" [nzXs]="24" [nzErrorTip]="titleTpl" nzHasFeedback>
+                <input nz-input formControlName="title"
+                       placeholder="请输入标题..."
+                       style="width: calc(100% - 80px);" (keyup.enter)='submitForm()'/>
+                <span style="margin-left: 10px;">{{validateForm.value.title?.length}}/30</span>
+                <ng-template #titleTpl let-control>
+                  <ng-container *ngIf="control.hasError('maxlength')">资源标题不能超过30个字</ng-container>
+                  <ng-container *ngIf="control.hasError('required')">资源标题不能为空</ng-container>
+                </ng-template>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div nz-row>
+          <div nz-col nzSpan="15">
+            <nz-form-item nz-row nzSpan="15">
+              <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="uploadFileArr" nzRequired style="text-align: left;">添加文件
+              </nz-form-label>
+              <nz-form-control [nzSm]="18" [nzXs]="24" nzErrorTip="请上传文件">
+                <qkc-upload
+                  style='width:100%;'
+                  [isDrag]="true"
+                  [multiple]="true"
+                  materialType='other'
+                  [maxSize]='coursewareType=="101"?100:undefined'
+                  [limit]="10"
+                  type="{{ isEdit? 'other-edit':'other-add' }}"
+                  [acceptType]="coursewareType=='103'?'mp4':'png,jpg,jpeg,ppt,pptx,doc,docx,pdf,xls,xlsx,rar,zip'"
+                  formControlName="uploadFileArr">
+                  <p class="ant-upload-drag-icon">
+                    <i nz-icon nzType="inbox"></i>
+                  </p>
+                  <p class="ant-upload-text">点击或将文件拖曳到这里上传</p>
+                  <p class="ant-upload-hint">
+                    支持扩展名: {{coursewareType == '103' ? 'mp4' : 'png、jpg、jpeg、ppt、pptx、doc、docx、pdf、xls、xlsx、rar、zip'}}
+                  </p>
+                </qkc-upload>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div nz-row>
+          <div nz-col nzSpan="15" >
+            <nz-form-item>
+              <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired style="text-align: left;"
+                             nzFor="title">作者名称
+              </nz-form-label>
+              <nz-form-control [nzSm]="18" [nzXs]="24" [nzErrorTip]="titleTpl" nzHasFeedback>
+                <input nz-input formControlName="authorName"
+                       placeholder="请输入作者名称..."
+                       style="width: calc(100% - 80px);" (keyup.enter)='submitForm()'/>
+                <span style="margin-left: 10px;">{{validateForm.value.authorName?.length}}/30</span>
+                <ng-template #titleTpl let-control>
+                  <ng-container *ngIf="control.hasError('maxlength')">作者名称不能超过30个字</ng-container>
+                  <ng-container *ngIf="control.hasError('required')">作者名称不能为空</ng-container>
+                </ng-template>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div nz-row>
+          <div nz-col nzSpan="15" >
+            <nz-form-item>
+              <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired style="text-align: left;"
+                             nzFor="title">水印开关
+              </nz-form-label>
+              <nz-form-control [nzSm]="18" [nzXs]="24" nzHasFeedback>
+                <nz-radio-group formControlName="isWatermark">
+                  <label nz-radio nzValue="1">开启</label>
+                  <label nz-radio nzValue="0">关闭</label>
+                </nz-radio-group>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div nz-row *ngIf='validateForm.value.isWatermark==="1"'>
+          <div nz-col nzSpan="15" >
+            <nz-form-item>
+              <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired style="text-align: left;"
+                             nzFor="title">水印文字
+              </nz-form-label>
+              <nz-form-control [nzSm]="18" [nzXs]="24" [nzErrorTip]="titleTpl" nzHasFeedback>
+                <input nz-input formControlName="watermarkText"
+                       placeholder="请输入水印文字..."
+                       style="width: calc(100% - 80px);" (keyup.enter)='submitForm()'/>
+                <span style="margin-left: 10px;">{{validateForm.value.watermarkText?.length}}/30</span>
+                <ng-template #titleTpl let-control>
+                  <ng-container *ngIf="control.hasError('maxlength')">水印文字不能超过30个字</ng-container>
+                  <ng-container *ngIf="control.hasError('required')">水印文字不能为空</ng-container>
+                </ng-template>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+      </form>
+      <div class="submit-footer">
+        <button nz-button nzType="default" (click)="goBack()"
+                style="margin-right: 20px;">返回
+        </button>
+        <button nz-button nzType="primary" [nzLoading]="isSaveLoading"
+                (click)="submitForm()">保存
+        </button>
+      </div>
+    </section>
+  </section>
+
+</div>

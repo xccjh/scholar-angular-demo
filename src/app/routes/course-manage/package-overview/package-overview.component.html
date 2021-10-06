@@ -1,0 +1,149 @@
+<nz-layout>
+  <div class='main-header'>
+    课包概况
+    <button nz-button class="back-btn" nzType="default" (click)="goback()">返回</button>
+  </div>
+  <div class='header'>
+    <div class='header-container'>
+      <div class='header-item'>
+        <div class='num'>189</div>
+        <div class='text'>讲义数量</div>
+      </div>
+      <div class='header-item'>
+        <div class='num'>1230</div>
+        <div class='text'>任务数量</div>
+      </div>
+      <div class='header-item'>
+        <div class='num'>189</div>
+        <div class='text'>资料数量</div>
+      </div>
+      <div class='header-item'>
+        <div class='num'>189</div>
+        <div class='text'>总课次</div>
+      </div>
+      <div class='header-item'>
+        <div class='num'>189</div>
+        <div class='text'>排课计划</div>
+      </div>
+    </div>
+  </div>
+  <nz-content style='padding: 0px;'>
+    <div class="course-header">
+      <div class='tab' [class.active]='type==="0"' (click)='changeType("0")'>
+        讲义
+      </div>
+      <div class='tab' [class.active]='type==="1"' (click)='changeType("1")'>
+        任务
+      </div>
+      <div class='tab' [class.active]='type==="2"' (click)='changeType("2")'>
+        资料
+      </div>
+    </div>
+    <div class="table-container" id='tableScroll' [class.no-scoll]='!data?.length'>
+      <nz-table #basicTable [nzData]="data" [nzFrontPagination]="false"
+                [nzPageSizeOptions]='[15, 20, 30, 40, 50]'
+                [nzShowSizeChanger]="true"
+                [nzScroll]='{x:"1240px",y : height+"px"}'
+                [nzShowTotal]="totalTemplate" [nzLoading]="isLoading" [nzTotal]="total"
+                [(nzPageIndex)]="pageIndex"
+                [(nzPageSize)]="pageSize" (nzPageIndexChange)="searchData()"
+                (nzPageSizeChange)="searchData()" *ngIf='type==="0"'>
+        <thead>
+        <tr>
+          <th nzWidth='120px'>章名称</th>
+          <th nzWidth='200px'>节名称</th>
+          <th nzWidth='120px'>讲义名称</th>
+          <th nzWidth='120px' [nzShowSort]='true' [nzSortOrder]='orderJy' nzWidth='100px'
+              (nzSortOrderChange)='nzSortOtrderChangeJy($event)'>使用率 <i nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip
+                                     [nzTooltipTitle]="detailJy"
+                                     nzTooltipTrigger='click' class='font-question'
+                                                                        [nzTooltipOverlayStyle]='{"max-width": "255px"}'></i></th>
+          <th nzWidth='120px'>排课计划</th>
+          <th nzWidth='120px'>详情</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of basicTable.data;let idx=index;">
+          <td><span class='synopsis-text'>{{ data.code }}</span></td>
+          <td><span class='synopsis-text'>{{ data.name }}</span></td>
+          <td><span class='synopsis-text'>{{ data.leaderName }}</span></td>
+          <td><span class='synopsis-text'>{{ data.leaderName }}</span></td>
+          <td><span class='synopsis-text'>{{ data.leaderName }}</span></td>
+          <td><span class='synopsis-text'>{{ data.leaderName }}</span></td>
+        </tr>
+        </tbody>
+      </nz-table>
+      <ng-template #detailJy>
+        <div>
+          使用率 = 使用该课包的排课计划 / 全部排课计划
+        </div>
+        <div>
+          讲师停留在讲义的时间超过1分钟，即该讲师使用看该讲义
+        </div>
+      </ng-template>
+      <nz-table #basicTable [nzData]="data" [nzFrontPagination]="false"
+                [nzPageSizeOptions]='[15, 20, 30, 40, 50]'
+                [nzShowSizeChanger]="true"
+                [nzScroll]='{x:"1240px",y : height+"px"}'
+                [nzShowTotal]="totalTemplate" [nzLoading]="isLoading" [nzTotal]="total"
+                [(nzPageIndex)]="pageIndex"
+                [(nzPageSize)]="pageSize" (nzPageIndexChange)="searchData()"
+                (nzPageSizeChange)="searchData()" *ngIf='type==="1"'>
+        <thead>
+        <tr>
+          <th nzWidth='120px'>章名称</th>
+          <th nzWidth='200px'>节名称</th>
+          <th nzWidth='120px'>任务名称</th>
+          <th nzWidth='120px' [nzShowSort]='true' [nzSortOrder]='orderRw' nzWidth='100px'
+              (nzSortOrderChange)='nzSortOtrderChangeRw($event)' >完成率<i nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip
+                                                                        nzTooltipTitle="完成率 = 完成任务的学员/ 学员数"
+                                                                        nzTooltipTrigger='click' class='font-question'
+                                                                        [nzTooltipOverlayStyle]='{"max-width": "255px"}'></i></th>
+          <th nzWidth='120px'>学员数</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of basicTable.data;let idx=index;">
+          <td><span class='synopsis-text'>{{ data.code }}</span></td>
+          <td><span class='synopsis-text'>{{ data.name }}</span></td>
+          <td><span class='synopsis-text'>{{ data.leaderName }}</span></td>
+          <td><span class='synopsis-text'>{{ data.leaderName }}</span></td>
+          <td><span class='synopsis-text'>{{ data.leaderName }}</span></td>
+        </tr>
+        </tbody>
+      </nz-table>
+      <nz-table #basicTable [nzData]="data" [nzFrontPagination]="false"
+                [nzPageSizeOptions]='[15, 20, 30, 40, 50]'
+                [nzShowSizeChanger]="true"
+                [nzScroll]='{x:"1240px",y : height+"px"}'
+                [nzShowTotal]="totalTemplate" [nzLoading]="isLoading" [nzTotal]="total"
+                [(nzPageIndex)]="pageIndex"
+                [(nzPageSize)]="pageSize" (nzPageIndexChange)="searchData()"
+                (nzPageSizeChange)="searchData()" *ngIf='type==="2"'>
+        <thead>
+        <tr>
+          <th nzWidth='120px'>章名称</th>
+          <th nzWidth='200px'>节名称</th>
+          <th nzWidth='120px'>资料名称</th>
+          <th nzWidth='120px' [nzShowSort]='true' [nzSortOrder]='orderZl' nzWidth='100px'
+              (nzSortOrderChange)='nzSortOtrderChangeZl($event)'>下载率 <i nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip
+                                     nzTooltipTitle="下载率 = 下载该的学员/ 学员数"
+                                     nzTooltipTrigger='click' class='font-question'
+                                     [nzTooltipOverlayStyle]='{"max-width": "255px"}'></i></th>
+          <th nzWidth='120px'>学员数</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of basicTable.data;let idx=index;">
+          <td><span class='synopsis-text'>{{ data.code }}</span></td>
+          <td><span class='synopsis-text'>{{ data.name }}</span></td>
+          <td><span class='synopsis-text'>{{ data.leaderName }}</span></td>
+          <td><span class='synopsis-text'>{{ data.leaderName }}</span></td>
+          <td><span class='synopsis-text'>{{ data.leaderName }}</span></td>
+        </tr>
+        </tbody>
+      </nz-table>
+    </div>
+    <ng-template #totalTemplate let-total>共 {{ total }} 条记录</ng-template>
+  </nz-content>
+</nz-layout>

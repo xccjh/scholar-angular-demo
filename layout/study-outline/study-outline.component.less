@@ -1,0 +1,129 @@
+@safe-width: 1200px;
+@primary-color: rgb(0, 171, 132);
+
+:host {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h2 {
+  width: @safe-width;
+  text-align: left;
+  padding-left: 2rem;
+  font-size: 26px;
+  color: #3A3C42;
+  margin-top: 3rem;
+}
+
+.outline-container {
+  display: flex;
+  flex-direction: column;
+  color: rgb(0, 0, 0);
+  width: @safe-width;
+  margin: auto;
+  border-radius: 1rem;
+  margin-bottom: 1rem;
+
+  & > .item {
+    background: rgba(204, 245, 223, .63);
+    padding: 1rem 2.5rem;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 1rem;
+    cursor: pointer;
+
+    &.close {
+      border-radius: 1rem 1rem 0 0;
+    }
+
+    i {
+      color: @primary-color;
+    }
+  }
+}
+
+.outline-detail {
+  display: flex;
+  flex-direction: column;
+  background: rgb(250, 250, 250, .7);
+  padding: 0 2rem;
+  border-radius: 0 0 1rem 1rem;
+  overflow: hidden;
+
+  .chapters:last-child {
+    padding-bottom: 1rem;
+  }
+}
+
+.section-name {
+  padding: 2rem 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .name {
+    margin-right: 1rem;
+    font-size: 1.2rem;
+    color: rgb(85, 85, 85);
+  }
+
+  .size {
+    color: rgb(153, 153, 153);
+  }
+
+  .document {
+    color: @primary-color;
+    cursor: pointer;
+  }
+
+  i {
+    margin-right: .5rem;
+  }
+}
+
+.section {
+  display: flex;
+  flex-wrap: wrap;
+  cursor: pointer;
+
+  .item {
+    background-color: rgb(255, 255, 255);
+    border-radius: 0.3rem;
+    padding: 1rem 2rem;
+    margin: .5rem;
+    box-shadow: 0 0 20px rgba(225, 225, 225, 0.522);
+    display: flex;
+    width: calc((100% - 3rem) / 3);
+
+    &.lock,
+    &.lock .time {
+      color: rgb(204, 204, 204);
+    }
+
+    i {
+      padding: .3rem .5rem 0 0;
+    }
+
+    .description {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .name {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      color: #3A3C42;
+    }
+
+    .time {
+      margin-top: .5rem;
+      color: #A3ABB8
+    }
+  }
+}

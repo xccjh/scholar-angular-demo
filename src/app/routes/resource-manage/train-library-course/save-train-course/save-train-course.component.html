@@ -1,0 +1,70 @@
+<div class='header-container'>
+  实训设置
+  <button nz-button [nzType]="'primary'" (click)="onContine(true)" [nzLoading]='isLoading' style='float: right;margin:14px 10px 0 0; '
+  >保存
+  </button>
+  <button nz-button [nzType]="'primary'" (click)="onContine()" style='float: right;margin:14px 10px 0 0;'
+          *ngIf='this.type==="add"' [nzLoading]='isLoading'>保存并继续添加
+  </button>
+  <button nz-button class="margin-btn" (click)="goBack()"  style='float: right;margin:14px 10px 0 0;'>返回</button>
+</div>
+<section class="resource-container">
+  <section class="left-tree" nz-resizable [style.width.px]="width"
+           (nzResize)="onResize($event)" [hidden]="this.type === 'edit'">
+    <div #treeContainer style='display:inline-block;overflow:hidden;margin-right: 30px;'>
+      <qkc-tree-knowledgegraph
+        model="custom"
+        [practice]='true'
+        [professionId]="curProfessor?.id"
+        [defaultCheckedKeys]='defaultTreeKey'
+        [allNodes]='true'
+        (nodeChange)="nodeChange($event)"
+        #tree
+      >
+      </qkc-tree-knowledgegraph>
+    </div>
+    <nz-resize-handle nzDirection="right">
+      <div class="right-wrap">
+        <i class="right" nz-icon nzType="more" nzTheme="outline"></i>
+      </div>
+    </nz-resize-handle>
+
+  </section>
+  <section class="right-resource" [ngStyle]="this.type === 'edit'?{border:'none','padding-left':'10px'}:{}">
+    <nz-spin [nzSpinning]="isLoading" [nzDelay]="0">
+      <div class="title">{{type === 'add' ? '新增' : '编辑'}}实训</div>
+      <form nz-form [formGroup]="modalForms" class="search-container">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="3" nzRequired>实训标题</nz-form-label>
+          <nz-form-control [nzSpan]="15" nzHasFeedback nzErrorTip="标题不能为空，并且不能超过30个字符">
+            <input nz-input type="text" formControlName="title" placeholder="请输入标题......" (keyup.enter)="onContine()"/>
+          </nz-form-control>
+          <span style="line-height: 40px;margin-left: 10px;">{{titleContent || 0}}/30</span>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="3" nzRequired>学习目标</nz-form-label>
+          <nz-form-control [nzSpan]="15" nzHasFeedback nzErrorTip="学习目标不能为空">
+            <nz-select style="width: 100%" nzPlaceHolder="请选择" formControlName="learningGoalCode">
+              <nz-option *ngFor="let option of learningTarget" [nzLabel]="option.name" [nzValue]="option.id">
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="3" nzRequired>实习系统</nz-form-label>
+          <nz-form-control [nzSpan]="15" nzHasFeedback nzErrorTip="实习系统不能为空">
+            <nz-select style="width: 100%" nzPlaceHolder="请选择实习系统" formControlName="authorUnit">
+              <nz-option nzLabel="恒企实习系统" nzValue="1"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="3" nzRequired>账期ID</nz-form-label>
+          <nz-form-control [nzSpan]="15" nzHasFeedback nzErrorTip="账期ID不能为空">
+            <input nz-input type="text" formControlName="accountId" placeholder="请输入账期ID" (keyup.enter)="onContine()">
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+    </nz-spin>
+  </section>
+</section>

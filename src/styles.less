@@ -1,0 +1,784 @@
+@import "ng-zorro-antd/resizable/style/entry.less";
+@import "reset";
+/* You can add global styles to this file, and also import other style files */
+html, body {
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  min-width: 1200px;
+}
+
+.fl {
+  float: left;
+}
+
+.fr {
+  float: right;
+}
+
+
+
+td.ant-picker-cell, th.ant-picker-cell {
+  text-align: center;
+}
+
+.edui-editor {
+  width: 100% !important;
+}
+
+.drawer-footer {
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+  border-top: 1px solid rgb(232, 232, 232);
+  padding: 10px 16px;
+  text-align: right;
+  left: 0px;
+  background: #fff;
+  z-index: 99999;
+}
+
+.affix {
+  width: 100%;
+  height: 52px;
+}
+
+.red {
+  color: red;
+}
+
+.ant-drawer-body::-webkit-scrollbar { /*滚动条整体样式*/
+  width: 5px !important; /* remove scrollbar space */
+  height: 5px !important;
+  // background: transparent;
+}
+
+.ant-drawer-body::-webkit-scrollbar-track {
+  width: 5px !important;
+}
+
+.ant-drawer-body::-webkit-scrollbar-thumb { //最后改变body的滚动条滑轨相关的样式
+  background: #1890ff;
+  border-radius: 2px;
+}
+
+.ant-select-disabled .ant-select-selection {
+  background: #fff !important;
+  cursor: text !important;
+}
+
+div {
+  // padding-bottom:70px;
+  -ms-overflow-style: none;
+  overflow: -moz-scrollbars-none;
+}
+
+div::-webkit-scrollbar, section::-webkit-scrollbar { /*滚动条整体样式*/
+  width: 5px !important; /* remove scrollbar space */
+  height: 5px !important;
+  // background: transparent;
+}
+
+div::-webkit-scrollbar-track, section::-webkit-scrollbar-track {
+  width: 5px !important;
+}
+
+
+div::-webkit-scrollbar-thumb, section::-webkit-scrollbar-thumb { //最后改变body的滚动条滑轨相关的样式
+  background: #c1c0c0;
+  border-radius: 2px;
+}
+
+nz-table {
+  div::-webkit-scrollbar-thumb, section::-webkit-scrollbar-thumb { //最后改变body的滚动条滑轨相关的样式
+    background: transparent;
+  }
+}
+
+nz-table:hover {
+  div::-webkit-scrollbar-thumb, section::-webkit-scrollbar-thumb { //最后改变body的滚动条滑轨相关的样式
+    background: #edeff3;
+  }
+}
+
+.ant-tree li .title, .ant-tree li .ant-tree-title {
+  display: inline-block;
+  width: 170px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ql-snow .ql-picker {
+  height: auto !important;
+}
+
+// ::ng-deep .ant-tree li > span{
+//   background-color: #F0F1F3 !important;
+// }
+.header .title {
+  font-size: 20px;
+}
+
+// loading
+
+.qkc-spin-container {
+  position: relative;
+  transition: opacity 0.3s;
+
+  &::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+    display: ~'none \9';
+    width: 100%;
+    height: 100%;
+    background: #e6f7ff;
+    opacity: 0;
+    transition: all 0.3s;
+    content: '';
+    pointer-events: none;
+  }
+}
+
+.qkc-spin-blur {
+  clear: both;
+  overflow: hidden;
+  opacity: 0.5;
+  user-select: none;
+  pointer-events: none;
+
+  &::after {
+    opacity: 0.4;
+    pointer-events: auto;
+  }
+}
+
+
+.loader-03 {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  color: inherit;
+  vertical-align: middle;
+  pointer-events: none;
+
+  border: 4px solid #1890ff;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  animation: 1s loader-03 linear infinite;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -20px 0 0 -20px;
+}
+
+@keyframes loader-03 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+.offical-video-model {
+  min-width: 800px !important;
+  max-width: 1000px !important;
+
+  .ant-modal-body {
+    padding: 5px;
+  }
+
+  .ant-modal-content {
+    max-height: 100%;
+  }
+
+  .ant-modal {
+    min-width: 1000px;
+  }
+}
+
+.offical-banner-model {
+  min-width: 800px !important;
+  max-width: 1000px !important;
+
+  .ant-modal-body {
+    padding: 5px;
+  }
+}
+
+span.icon-title {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
+  text-align: center;
+  font-size: 14px;
+  background: rgb(0, 134, 255);
+  color: #fff;
+  margin-top: 2px;
+  border-radius: 2px;
+
+  span.text {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    text-align: center;
+    transform: scale(0.571429);
+    // transform: scale(0.571429) translateX(-50%);
+  }
+}
+
+.del-btn {
+  color: #FF675F !important;
+}
+
+.normal-btn {
+  color: #0086FF !important;
+}
+
+
+.gray-text {
+  color: #818EA5 !important;
+}
+
+
+.ant-notification {
+  min-width: 300px;
+  width: auto;
+}
+
+// 通知弹窗  资料弹窗
+.notice, .data {
+  height: 80%;
+  padding: 0 !important;
+
+  .ant-modal {
+    height: 100%;
+  }
+
+  .ant-modal-content {
+    height: 100%;
+    overflow: hidden;
+    border-radius: 12px !important;
+  }
+
+  .ant-modal-header {
+    border: none;
+    padding: 24px;
+    font-size: 24px;
+    line-height: 31px;
+    color: #3A3C42;
+  }
+
+  .ant-modal-title {
+    text-align: center;
+  }
+
+  .ant-modal-body {
+    height: calc(100% - 70px);
+  }
+}
+
+//资料弹窗
+.data {
+  .ant-modal-title {
+    font-size: 24px;
+    font-family: Microsoft YaHei;
+    color: #3A3C42;
+    text-align: center;
+  }
+
+  .ant-modal-body {
+    padding: 0 0 30px 0;
+
+    .box-inner {
+      padding: 0 24px;
+      height: 100%;
+      overflow-y: scroll;
+
+      ul {
+        padding: 0;
+        margin: 0;
+
+        li {
+          height: 80px;
+          line-height: 80px;
+          padding: 0 27px 0 18px;
+          background: #FFFFFF;
+          border: 1px solid #EDEDED;
+          box-shadow: 0px 4px 10px rgba(204, 204, 204, 0.24);
+          border-radius: 6px;
+          margin-bottom: 18px;
+          font-size: 18px;
+          font-family: Microsoft YaHei;
+          font-weight: bold;
+          color: #3A3C42;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+
+          img {
+            height: 16px;
+            width: 16px;
+            margin-right: 12px;
+          }
+        }
+
+        li:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+
+}
+
+.notice {
+  .ant-modal-title {
+    font-size: 24px;
+  }
+
+  .ant-modal-body {
+    padding: 0 24px 30px;
+    overflow-y: scroll;
+
+    ul {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+
+      li {
+        position: relative;
+        margin-bottom: 18px;
+        padding: 24px 26px 24px 18px;
+        background: #FFFFFF;
+        border: 1px solid #EDEDED;
+        box-shadow: 0px 4px 10px rgba(204, 204, 204, 0.24);
+        border-radius: 6px;
+
+        img {
+          margin-right: 6px;
+        }
+
+        div:first-child {
+          display: flex;
+          margin-bottom: 6px;
+
+          i {
+            font-size: 16px;
+            margin-right: 6px;
+          }
+
+          p {
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 17px;
+            color: #00AB84;
+            margin: 0;
+          }
+        }
+
+        div:nth-child(2) {
+          margin-left: 20px;
+          max-height: 41px;
+          font-size: 12px;
+          line-height: 22px;
+          color: #6C7179;
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 2;
+          overflow: hidden;
+          transition: all 0.5s;
+        }
+
+        span {
+          position: absolute;
+          right: 24px;
+          bottom: 10px;
+          line-height: 14px;
+          font-size: 12px;
+          color: #00AB84
+        }
+
+        .open {
+          max-height: initial !important;
+          -webkit-box-orient: initial !important;
+        }
+      }
+
+      li:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+  }
+
+  .ant-modal-body::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width: 5px !important;
+    /* remove scrollbar space */
+    height: 5px !important;
+  }
+
+  .ant-modal-body::-webkit-scrollbar-track {
+    width: 5px !important;
+  }
+
+  .ant-modal-body::-webkit-scrollbar-thumb {
+    //最后改变body的滚动条滑轨相关的样式
+    background: #00AB84;
+    border-radius: 2px;
+  }
+
+}
+
+// 学习报告弹窗
+.report {
+  padding: 0 !important;
+
+  .ant-modal-content {
+    height: 420px;
+    overflow: hidden;
+    border-radius: 12px !important;
+  }
+
+  .ant-modal-body {
+    padding: 0 !important
+  }
+
+  .title {
+    padding: 68px 48px 41px;
+    line-height: 45px;
+    font-size: 34px;
+    font-weight: bold;
+    color: #FFFFFF;
+  }
+
+  .info {
+    margin: 0 auto;
+    width: 472px;
+    height: 237px;
+    background: #FFFFFF;
+    box-shadow: 0px 4px 10px rgba(204, 204, 204, 0.24);
+    border-radius: 6px;
+
+    .sub-title {
+      padding: 30px 30px 36px;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 21px;
+      color: #3A3C42;
+
+      span {
+        color: #00AB84
+      }
+    }
+
+    .content {
+      .item:first-child {
+        margin-bottom: 24px;
+      }
+
+      .item {
+        display: flex;
+        align-items: center;
+
+        > span:first-child {
+          margin: 0 44px 0 105px;
+          font-size: 18px;
+          font-weight: bold;
+          line-height: 24px;
+          color: #3A3C42;
+        }
+
+        > div {
+          display: flex;
+          justify-items: center;
+
+          span:first-child {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            i {
+              font-size: 20px;
+            }
+          }
+
+          span:nth-child(2) {
+            font-size: 30px;
+            font-weight: bold;
+            line-height: 40px;
+          }
+        }
+
+        .green {
+          span:first-child {
+            color: #00AB84;
+            background: rgba(0, 171, 132, 0.1);
+          }
+
+          span:nth-child(2) {
+            color: #00AB84;
+          }
+        }
+
+        .red {
+          span:first-child {
+            color: #FC3F4C;
+            background: rgba(252, 63, 76, 0.1);
+          }
+
+          span:nth-child(2) {
+            color: #FC3F4C;
+          }
+        }
+
+      }
+    }
+  }
+}
+
+// 章节学习页老师切换
+.switch-teacher {
+  width: 400px !important;
+  height: 310px;
+  padding: 0 !important;
+
+  .ant-modal-content {
+    border-radius: 12px !important;
+  }
+
+  .ant-modal-body {
+    padding: 0 !important;
+  }
+
+  .content {
+    padding: 78px 74px 57px;
+
+    .name {
+      height: 21px;
+      font-size: 16px;
+      line-height: 21px;
+      color: #3A3C42;
+      margin-bottom: 36px;
+
+      span {
+        margin-left: 40px;
+        color: #A3ABB8;
+      }
+    }
+
+    .switch {
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      color: #333333;
+
+      label {
+        margin-right: 12px;
+      }
+
+      nz-select {
+        width: 160px;
+
+        .ant-select-selector {
+          height: 42px !important;
+
+          .ant-select-selection-item {
+            line-height: 42px;
+          }
+
+        }
+
+      }
+    }
+  }
+
+  .button {
+    height: 78px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top: 1px solid #EDEDED;
+
+    div {
+      width: 160px;
+      height: 36px;
+      line-height: 36px;
+      background: #00AB84;
+      border-radius: 18px;
+      text-align: center;
+      font-size: 14px;
+      color: #FFFFFF;
+      border: none;
+      cursor: pointer;
+    }
+  }
+}
+
+
+p {
+  word-break: break-all;
+}
+
+app-smart-question .question-stem .subject p {
+  color: #3a3c42;
+  font-size: 16px;
+}
+
+app-smart-question .resolve .desc p {
+  color: #6c7179;
+  font-size: 16px;
+}
+
+.ant-modal-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .ant-modal {
+    top: 0
+  }
+}
+
+.loading-style {
+  height: 18px;
+  background: #EDEDED;
+}
+
+.training-spin {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+}
+
+
+.test-modal-lsf {
+  .ant-modal-body {
+    padding: 0 !important
+  }
+
+  .ant-modal-content {
+    border-radius: 12px;
+  }
+}
+
+.test-modal-lsf .test-modal-container {
+  position: relative;
+  height: 530px;
+  background-color: #fafafa;
+  border-radius: 12px;
+
+  img {
+    height: 226px;
+    width: 100%;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .modal-title {
+    position: absolute;
+    top: 52px;
+    left: 48px;
+    color: #fff;
+    font-size: 35px;
+    font-weight: bold;
+  }
+
+  .test-modal-m {
+    position: absolute;
+    width: 90%;
+    top: 154px;
+    left: 50%;
+    background-color: #fff;
+    transform: translateX(-50%);
+    border-radius: 8px;
+    text-align: center;
+
+    .modal-cont {
+      margin: 36px auto 10px;
+      width: 340px;
+      background-color: #fafafa;
+      padding: 30px 0;
+      color: #3A3C42;
+      font-size: 16px;
+      border-radius: 8px;
+
+      p {
+        line-height: 21px;
+        margin-bottom: 12px;
+        text-align: left;
+
+        span {
+          display: inline-block;
+          width: 96px;
+          margin-left: 90px;
+          text-align: left;
+        }
+      }
+
+      p:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    .modal-tip {
+      font-size: 15px;
+      color: #A3ABB8;
+      margin-bottom: 35px;
+    }
+
+    .button {
+      padding: 18px 0;
+      border-top: 1px solid #EDEDED;
+    }
+
+    .modal-btn {
+      background-color: #00AB84;
+      margin: 0 auto;
+      width: 240px;
+    }
+  }
+}
+
+.ant-table-footer, .ant-table-thead > tr > th {
+  background: #f4f6fa !important;
+}
+
+.ant-table-column-sorters {
+  padding: 0 !important;
+}
+
+.red {
+  color:#fe5500
+}
+.green {
+  color:#2eba07
+}
+.orange {
+  color:#fa7d00
+}

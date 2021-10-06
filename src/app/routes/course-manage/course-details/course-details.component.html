@@ -1,0 +1,222 @@
+<!--<div class='header-container'>-->
+<!--  <div class='title'>课程建设</div>-->
+<!--  <button (click)='cancel()' nz-button nzType="primary" style='float:right;margin:9px 20px 0 0;'>返回</button>-->
+<!--  <button nz-button nzType="primary" style='float:right;margin:9px 20px 0 0;' (click)='save()'>保存</button>-->
+<!--</div>-->
+<nz-spin [nzSpinning]="initPage" [nzDelay]="0">
+  <form nz-form [formGroup]="fg" style='margin-top: 38px;padding-right:48px;'>
+    <div nz-col>
+      <nz-form-item style='width:100%;' class='item-control-self'>
+        <nz-form-label nzRequired style='min-width:130px;'>课程组成员</nz-form-label>
+        <!--      <nz-form-control [nzSm]="16" [nzXs]="24" nzErrorTip="请选择课程组成员">-->
+        <!--        (ngModelChange)='courseMemberUserIdListChange($event)'-->
+        <!--        <nz-select formControlName="courseMemberUserIdList" nzMode="multiple">-->
+        <!--          <nz-option [nzValue]="option.id" [nzLabel]="option.nickName+'('+ option.telphone +')'"-->
+        <!--                     *ngFor='let option of roleArr;let i=index'></nz-option>-->
+        <!--        </nz-select>-->
+        <!--      </nz-form-control>-->
+        <nz-form-control [nzSm]="16" [nzXs]="24" nzErrorTip="请选择课程组成员" style='min-width: calc(100% - 150px);'>
+          <input formControlName="courseMemberUserIdList" style='display:none'/>
+          <div class='item-contianer'>
+            <div class='item-member' *ngFor='let item of getSelect' nz-tooltip
+                 [nzTooltipTitle]="(item.nickName ? item.nickName :'匿名' )+'('+ item.telphone +')'">
+              <div class='text-box'>
+                {{(item.nickName ? item.nickName : '匿名')}}
+              </div>
+              <div class='cross' (click)='selectItem(item)'>
+                x
+              </div>
+            </div>
+            <div class='item-member add-member' (click)='addMember()'>
+              <i nz-icon nzType="plus" nzTheme="outline" class='add-member-icon'></i>
+              成员
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <!--  <div nz-col [nzSpan]="12">-->
+    <!--    <nz-form-item>-->
+    <!--      <nz-form-label [nzSm]="6" [nzXs]="24">评审组成员</nz-form-label>-->
+    <!--      <nz-form-control [nzSm]="16" [nzXs]="24" nzErrorTip="请选择评审组成员">-->
+    <!--        <nz-select formControlName="courseAuditUserIdList" nzMode="multiple" >-->
+    <!--          <nz-option [nzValue]="option.id" [nzLabel]="option.nickName+'('+ option.telphone +')'"-->
+    <!--                     *ngFor='let option of roleArr;let i=index'></nz-option>-->
+    <!--        </nz-select>-->
+    <!--      </nz-form-control>-->
+    <!--    </nz-form-item>-->
+    <!--  </div>-->
+    <div nz-col style='margin-top:-20px'>
+      <nz-form-item>
+        <nz-form-label style='min-width:130px;'>习题审核人员</nz-form-label>
+        <nz-form-control [nzSm]="16" [nzXs]="24" style='min-width: calc(100% - 150px);'>
+          <div class='item-contianer'>
+            <div class='item-member' *ngFor='let item of getAdustList;let i=index' nz-tooltip
+                 [nzTooltipTitle]="(item.nickName ? item.nickName :'匿名' )+'('+ item.telphone +')'">
+              <div class='text-box'>
+                {{(item.nickName ? item.nickName : '匿名')}}
+              </div>
+              <div class='cross' (click)='selectAduitItem(item,i)'>
+                x
+              </div>
+            </div>
+            <div class='item-member add-member' (click)='addAduitMember()'>
+              <i nz-icon nzType="plus" nzTheme="outline" class='add-member-icon'></i>
+              成员
+            </div>
+          </div>
+        </nz-form-control>
+        <!--      -->
+        <!--      <nz-form-control [nzSm]="16" [nzXs]="24" nzErrorTip="评习题审核人员不能为空">-->
+        <!--        <nz-spin [nzSpinning]="isExerciseReviewLoading" [nzDelay]="0">-->
+        <!--          &lt;!&ndash;          (ngModelChange)='exercisesAuditUserIdListChange($event)'&ndash;&gt;-->
+        <!--          <nz-tree-select-->
+        <!--            [nzDropdownStyle]='{height:"300px",overflow:"auto"}'-->
+        <!--            style="width: 400px"-->
+        <!--            [nzNodes]="nodes"-->
+        <!--            nzShowSearch-->
+        <!--            nzPlaceHolder="请选择评习题审核人员"-->
+        <!--            formControlName="exercisesAuditUserIdList"-->
+        <!--            nzCheckable-->
+        <!--            #treeSelect-->
+        <!--            [nzHideUnMatched]='true'-->
+        <!--          >-->
+        <!--          </nz-tree-select>-->
+        <!--        </nz-spin>-->
+        <!--      </nz-form-control>-->
+      </nz-form-item>
+    </div>
+
+    <div nz-col style='margin-top:-19px'>
+      <nz-form-item style='margin:0'>
+        <nz-form-label nzFor="coverArr" style='min-width:130px;'
+                       nzRequired>课程封面
+        </nz-form-label>
+        <nz-form-control
+          style='min-width: calc(100% - 150px);'
+          nzHasFeedback
+          [nzExtra]="courseTpl"
+          nzErrorTip="请上传文件">
+          <!--      (ngModelChange)='coverPathChange($event)'-->
+          <qkc-upload
+            uploadDir="user/phone"
+            limit="1"
+            maxSize='2'
+            listType="picture-card"
+            acceptType="jpg,jpeg,png"
+            formControlName="coverPath"
+          >
+            <i nz-icon nzType="plus"></i>
+            <div class="ant-upload-text">上传</div>
+          </qkc-upload>
+          <ng-template #courseTpl>
+            <div style='position:absolute;top: 0;left: 112px;'>
+              <div style='height: 45px;'>仅限一个，支持扩展名：jpg 、jpeg 、png</div>
+              <div>最佳设计尺寸大于640*360 ，大小小于2M</div>
+            </div>
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col style='margin-top:-2px'>
+      <nz-form-item>
+        <nz-form-label nzRequired style='min-width:130px;'>课程简介
+        </nz-form-label>
+        <nz-form-control nzHasFeedback [nzErrorTip]="introductionTpl" style='min-width: calc(100% - 150px);'>
+          <textarea rows="4" nz-input
+                    formControlName="introduction"
+                    class="input-width">
+      </textarea>
+          <span style="margin-left: 10px;">{{fg.value?.introduction?.length || 0}}/200</span>
+          <ng-template #introductionTpl let-control>
+            <ng-container *ngIf="control.hasError('maxlength')">课程简介不能超过200个字</ng-container>
+            <ng-container *ngIf="control.hasError('required')">课程简介不能为空</ng-container>
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </form>
+</nz-spin>
+<qkc-attachment-show-modal
+  [(isShow)]="previewVisible"
+  [url]="previewPath">
+</qkc-attachment-show-modal>
+
+
+<nz-modal [(nzVisible)]="courseStaff" [nzMaskClosable]="false" nzTitle="添加课程组成员"
+          (nzOnCancel)="courseCancel()"
+          [nzFooter]='null'
+          nzClassName='member-modal'
+          [nzBodyStyle]='{padding:0,"overflow": "hidden",maxHeight:"600px"}' [nzWidth]='785'>
+  <nz-spin [nzSpinning]="courseStaffLoading" [nzDelay]="0">
+    <div class='button-operating'>
+      <input nz-input
+             class='button-input'
+             placeholder="请输入关键字"
+             clearable
+             [(ngModel)]="courseKey"
+             (keyup.enter)='courseSearch()'/>
+      <button nz-button (click)='courseSearch()' class='button-seach' nzType='primary'>搜索</button>
+    </div>
+    <div class='item-member-container'>
+<!--      (dblclick)='innnerSelectDouble(option)'-->
+      <div class='item-member' nz-tooltip
+           [nzTooltipTitle]="(option.nickName ? option.nickName :'匿名' )+'('+ option.telphone +')'"
+           (click)='itemSelectInner(option)'
+           *ngFor='let option of roleArrBak;let i=index' [class.select]='option.isSelected'>
+        {{(option.nickName ? option.nickName : '匿名')}}
+      </div>
+    </div>
+    <div class='button-container'>
+      <button nz-button (click)="courseCancel()" class='cancel'>取消</button>
+      <button nz-button (click)="courseComfirm()" nzType='primary' class='comfirm'>确定</button>
+    </div>
+  </nz-spin>
+</nz-modal>
+
+
+<nz-modal [(nzVisible)]="aduitStaff" [nzMaskClosable]="false" nzTitle="添加习题审核人员"
+          (nzOnCancel)="auditCancel()"
+          [nzFooter]='null'
+          nzClassName='member-modal'
+          [nzBodyStyle]='{padding:0,"overflow": "hidden",maxHeight:"600px"}'
+          [nzWidth]='785'>
+  <nz-spin [nzSpinning]="aduitStaffLoading" [nzDelay]="0">
+    <div class='button-operating'>
+      <input nz-input
+             class='button-input'
+             placeholder="请输入关键字"
+             clearable
+             [(ngModel)]="aduitKey"
+             (keyup.enter)='AduitSearch()'/>
+      <button nz-button (click)='AduitSearch()' class='button-seach' nzType='primary'>搜索</button>
+    </div>
+    <div class='item-member-container'>
+      <div class='item-content' *ngFor='let itemP of nodesBak;let j=index'>
+        <div class='item-label'>
+          <span (click)='clickAduit(itemP,j)'
+                class='label-text'>{{itemP.name}}</span>
+          <i nz-icon nzType="down" nzTheme="outline" class='up-icon'
+             (click)='itemP.expand=true;nodesInit[j].expand=true'
+             *ngIf='!itemP.expand'></i>
+          <i nz-icon nzType="up" nzTheme="outline" class='down-icon'
+             (click)='itemP.expand=false;nodesInit[j].expand=false'
+             *ngIf='itemP.expand'></i></div>
+        <ng-container *ngIf='itemP.expand'>
+          <div class='item-member' nz-tooltip
+               [nzTooltipTitle]="(option.nickName ? option.nickName :'匿名' )+'('+ option.telphone +')'"
+               (click)='selectAduitItemInner(option)'
+               *ngFor='let option of itemP.teacherList;let i=index' [class.select]='option.isSelected'>
+            {{(option.nickName ? option.nickName : '匿名')}}
+          </div>
+        </ng-container>
+      </div>
+    </div>
+    <div class='button-container'>
+      <button nz-button (click)="auditCancel()" class='cancel'>取消</button>
+      <button nz-button (click)="auditComfirm()" nzType='primary' class='comfirm'>确定</button>
+    </div>
+  </nz-spin>
+</nz-modal>
+
+

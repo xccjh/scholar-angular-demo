@@ -1,0 +1,134 @@
+<nz-layout>
+  <div class='main-header'>
+    课包查询
+  </div>
+  <div class='header'>
+    <div class='header-container mb20'>
+      <div class='header-item'>
+        <label style='min-width: 80px;display: inline-block;'>关键词搜索: </label>
+        <input nz-input placeholder="支持课包编号/名称" [(ngModel)]="searchWordVal" style='margin-right: 20px;'
+               (keyup.enter)='searchData("button")' (ngModelChange)='storingData()'/>
+      </div>
+      <!--      <div class='header-item ml40'>-->
+      <!--        <label style='min-width: 80px;display: inline-block;'>课包状态: </label>-->
+      <!--        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="请选择课包状态" [(ngModel)]="selectedVal"-->
+      <!--                   style='margin-right: 20px;width:250px'>-->
+      <!--          <nz-option nzValue="" nzLabel="全部"></nz-option>-->
+      <!--          <nz-option nzValue="0" nzLabel="草稿"></nz-option>-->
+      <!--          <nz-option nzValue="1" nzLabel="待审批"></nz-option>-->
+      <!--          <nz-option nzValue="2" nzLabel="标准"></nz-option>-->
+      <!--          <nz-option nzValue="3" nzLabel="未通过"></nz-option>-->
+      <!--        </nz-select>-->
+      <!--      </div>-->
+      <div class='header-item'>
+        <label style='min-width: 80px;display: inline-block;'>提交时间：</label>
+        <nz-range-picker [(ngModel)]="dateRangeVal" (ngModelChange)='storingData()'></nz-range-picker>
+      </div>
+      <button nz-button nzType="primary" (click)="searchData('button')" class='ml40'>查询</button>
+      <button nz-button nzType="primary"  (click)="resetData()">重置</button>
+      <button nz-button nzType="primary" (click)="approvBatchPre()"   [disabled]="!setOfCheckedId.size">审批</button>
+    </div>
+    <!--    <div class='header-container'>-->
+    <!--    </div>-->
+  </div>
+  <nz-content style='padding: 20px 20px;'>
+    <div class='table-container' id='tableScroll' [class.no-scoll]='!data.length'>
+      <nz-table #basicTable [nzData]="data" [nzFrontPagination]="false" [nzScroll]="{ y: '500px' }"
+                [nzShowSizeChanger]="true"
+                (nzCurrentPageDataChange)='onCurrentPageDataChange($event)'
+                [nzPageSizeOptions]='[15, 20, 30, 40, 50]'
+                [nzScroll]='{x:"1430px", y : height+"px"}'
+                [nzShowTotal]="totalTemplate" [nzLoading]="isLoading" [nzTotal]="total"
+                [(nzPageIndex)]="pageIndex"
+                [(nzPageSize)]="pageSize" (nzPageIndexChange)="searchData()"
+                (nzPageSizeChange)="searchData()">
+        <thead>
+        <tr>
+          <th [nzChecked]="checked" [nzIndeterminate]="indeterminate" (nzCheckedChange)="onAllChecked($event)"
+              nzWidth='60px' nzLeft></th>
+          <th nzWidth='200px' nzLeft>课包编号</th>
+          <th nzWidth='200px' nzLeft>课包名称</th>
+          <th nzWidth='200px'>所属课程</th>
+          <th nzWidth='200px'>{{orgCode === 'zksd' ? '所属专业' : '所属学科'}}</th>
+          <th nzWidth='120px'>提交人</th>
+          <th nzWidth='120px'>提交时间</th>
+          <th nzWidth='120px'>审批时间</th>
+          <th nzWidth='120px'>审核状态</th>
+          <th nzWidth='150px' nzRight>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of basicTable.data;let idx=index;">
+          <td
+            [nzChecked]="setOfCheckedId.has(data.id)"
+            [nzDisabled]="data.auditStatus !== '1'"
+            (nzCheckedChange)="onItemChecked(data.id, $event)"
+            nzLeft
+          ></td>
+          <td nzLeft><span class='synopsis-text' >{{ data.pcode }}</span></td>
+          <td nzLeft><span class='synopsis-text'>{{ data.name }}</span></td>
+          <td><span class='synopsis-text' >{{ data.courseName }}</span></td>
+          <td><span class='synopsis-text'>{{ data.majorName }}</span></td>
+          <td><span class='synopsis-text'>{{ data.nickName }}</span></td>
+          <td>{{ getDate(data?.billDate)}}</td>
+          <td>{{ getDate(data?.auditDate)}}</td>
+          <td [class.red]='data.auditStatus === "3"' [class.green]='data.auditStatus === "2"' [class.orange]='data.auditStatus === "1"'>{{ getAuditStatus(data.auditStatus) }}</td>
+          <td nzRight>
+            <nz-space>
+              <ng-container *ngIf='delIf(data)'>
+                <nz-space-item style='width:28px'>
+                  <a (click)="goPrepare(data,true)">预览</a>
+                </nz-space-item>
+                <nz-space-item style='width:28px'>
+                  <a (click)="share(data)">分享</a>
+                </nz-space-item>
+              </ng-container>
+              <nz-space-item style='width:28px' *ngIf='data.auditStatus==="1"'>
+                <a class="light-color" (click)="submitForApproval(data)">审批</a>
+              </nz-space-item>
+              <nz-space-item style='width:28px' *ngIf="!(delIf(data)||data.auditStatus==='1')">
+                --
+              </nz-space-item>
+            </nz-space>
+          </td>
+        </tr>
+        </tbody>
+      </nz-table>
+    </div>
+    <ng-template #totalTemplate let-total>共 {{ total }} 条记录</ng-template>
+  </nz-content>
+</nz-layout>
+<ng-template #modalCheck>
+  <span>
+      课包审批通过后，可进入教务排课与网校销售阶段。
+  </span>
+  <div style='margin:20px 0 0;text-align:right;'>
+    <button nz-button style="margin-right: 15px;" (click)="approveAll(curdata, '3')" [nzLoading]='approveAllLoading'>
+      不通过
+    </button>
+    <button nz-button nzType="primary" style="margin-right: 15px;" (click)="approveAll(curdata, '2')"
+            [nzLoading]='approveAllLoading'>通过
+    </button>
+  </div>
+</ng-template>
+
+<!-- 分享课包 -->
+<nz-modal [(nzVisible)]="isShareVisible" [nzMaskClosable]="false" nzTitle="课包效果分享" (nzOnCancel)="closeShareModal()"
+          [nzFooter]='null'>
+  <div class='share-line'>
+    <label style='margin:0 10px 0 20px;display:inline-block;width:56px'>链接：</label> <input nz-input type="text"
+                                                                                           [(ngModel)]="shareLink"
+                                                                                           style="max-width:304px"/>
+    <span style="margin-left: 10px;">15天后失效</span>
+  </div>
+  <div class='share-line'>
+    <label style='margin:0 10px 0 20px;display:inline-block;width:56px'>验证码：</label> <input nz-input type="text"
+                                                                                            [(ngModel)]="verificationCode"
+                                                                                            style="max-width:100px"/>
+    <button nzType='primary' style='margin-left: 40px;' nz-button (click)="refreshCode()">刷新</button>
+  </div>
+  <div class='share-button'>
+    <button nz-button (click)="closeShareModal()" style='margin-right:20px'>取消</button>
+    <button nz-button nzType="primary" (click)="copyLinkAndVerificationCode()">复制链接及验证码</button>
+  </div>
+</nz-modal>

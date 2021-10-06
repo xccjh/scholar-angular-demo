@@ -1,0 +1,244 @@
+@import 'common';
+
+.resource-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .title {
+    font-size: 18px;
+    padding: 15px 20px 0 20px;
+  }
+
+  .search-content {
+    align-items: center;
+    border-bottom: 20px solid #f0f2f5;
+    padding: 20px 20px 20px;
+
+    .search-label {
+      font-size: 14px;
+      margin-right: 10px;
+      min-width: 74px;
+    }
+
+    input {
+      width: 250px;
+    }
+  }
+
+
+  .table-container {
+    height: calc(100% - 90px);
+  }
+
+}
+
+.container {
+  background-color: white;
+  height: 100%;
+
+  .notice-btn {
+    margin-left: 20px;
+    float: right;
+  }
+
+  .header {
+
+    .search-content {
+      overflow:hidden;
+
+      .search-item {
+        width: 33.3%;
+        display: flex;
+        float: left;
+
+        .search-label {
+          &.pt5 {
+            padding-top: 5px;
+          }
+        }
+
+        input, .item-select {
+          max-width: 100%;
+          flex: 1;
+          margin-right: 20px;
+        }
+      }
+    }
+
+
+    .title-tree {
+      font-size: 18px;
+      position: relative;
+      padding-left: 20px;
+
+      &:after {
+        content: "";
+        position: absolute;
+        left: 0px;
+        width: 5px;
+        height: 24px;
+        background-color: #2697ff;
+
+      }
+    }
+  }
+
+  .course-header {
+    margin-bottom: 15px;
+  }
+
+}
+
+
+.course-header {
+  display: flex;
+  margin-bottom: 10px;
+
+
+  .course-title {
+    font-size: 16px;
+  }
+}
+
+
+.ml40 {
+  margin-left: 40px;
+}
+
+.mb20 {
+  margin-bottom: 10px;
+}
+
+
+.light-color {
+  color: red;
+}
+
+.submit-button {
+  border-top: 1px solid #f0f0f0;
+  height: 60px;
+  line-height: 60px;
+  position: absolute;
+  bottom: 0;
+  width: calc(100% + 20px);
+  left: 0;
+  text-align: center;
+}
+
+
+.operating {
+  margin-left: 10px;
+}
+
+.ml0 {
+  margin-left: 0;
+}
+
+.no-allow {
+  cursor: not-allowed;
+  color: #c5d5ef;
+}
+
+.table-container {
+  overflow: hidden;
+  height: calc(100% - 100px);
+}
+
+.mt10 {
+  margin-top: 10px;
+}
+
+.mt20 {
+  margin-top: 20px;
+}
+
+.mlf40 {
+  margin-left: -40px;
+}
+
+.font-question {
+  font-size: 20px;
+  margin: 0 10px;
+  cursor: pointer;
+  color: #1890ff;
+  border-radius: 50%;
+  font-weight: 300;
+  vertical-align: middle;
+
+}
+
+:host ::ng-deep .ant-avatar {
+  width: 50px;
+  height: 50px;
+  font-size: 44px;
+}
+
+.teacher-preview {
+  overflow: hidden;
+
+  .list-item {
+    overflow: hidden;
+    padding: 10px 0;
+
+    .list-label {
+      float: left;
+      width: 100px;
+      padding-right: 10px;
+      vertical-align: middle;
+
+      &.pl10 {
+        padding: 0 10px;
+      }
+
+      &.mt10 {
+        margin-top: 0px;
+      }
+    }
+
+    .list-content {
+      vertical-align: middle;
+      max-width: calc(1000% - 100px);
+      float: left;
+      width: calc(100% - 100px);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      .blue-text {
+        color: #1890ff;
+
+        &:hover {
+          color: #40a9ff;
+          cursor: pointer
+        }
+      }
+
+      &.numRom {
+        white-space: normal;
+      }
+
+      .numRom {
+        display: block;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      &.pl25 {
+        padding-top: 25px;
+      }
+    }
+  }
+}
+
+
+.blc {
+  color: #1890ff;
+
+  &:hover {
+    color: #40a9ff;
+    cursor: pointer
+  }
+}

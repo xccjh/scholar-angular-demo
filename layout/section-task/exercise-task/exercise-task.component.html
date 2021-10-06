@@ -1,0 +1,194 @@
+<nz-layout class="l-main" style="width: 100%;height:100%;">
+  <nz-header class="section-header border">
+    <div class="package-name">
+      <span class="section-header-title">{{ curTask?.taskName || curTask?.name }}</span>
+      <span class="on-save" *ngIf="isCahceExe">(自动保存中)</span>
+    </div>
+
+    <div class="section-header-btn padding-right">
+      <span *ngIf="curTask.endType == 2">{{ curTask?.endTime | date:'yyyy-MM-dd'}}到期</span>
+    </div>
+  </nz-header>
+  <nz-spin [nzSpinning]="passRecord" [nzDelay]="0" style='height:100%'>
+    <!-- 没有习题 -->
+    <nz-layout *ngIf="exerciseList.length === 0&&!passRecord" style="height: 100%;width:100%">
+      <nz-content>
+        <nz-result *ngIf="exeMode !== 'wrong'" nzStatus="warning" nzTitle="试卷没有习题">
+        </nz-result>
+
+        <nz-result *ngIf="exeMode === 'wrong'" nzStatus="warning" nzTitle="试卷没有错习题">
+        </nz-result>
+      </nz-content>
+    </nz-layout>
+    <!-- 有习题 -->
+    <nz-layout *ngIf="exerciseList.length !== 0&&!passRecord" style="height: 100%;width:100%">
+      <nz-sider class="exercise-sider" [nzWidth]="300">
+        <app-exercise-radio
+          #appExerciseRadio
+          [qcData]="exerciseList"
+          (qcSelectChange)="exerciseChange($event)">
+        </app-exercise-radio>
+      </nz-sider>
+      <nz-content class="white-bg full-height" style="padding-left: 18px;">
+        <div class="exercise-content">
+          <nz-tabset [nzSelectedIndex]="exeIdx" [nzTabBarStyle]="{display: 'none'}">
+            <nz-tab *ngFor="let exerciseItem of exerciseList;let idx=index;" [nzTitle]="idx+1">
+              <nz-spin [nzSpinning]="isSaveLoading" [nzDelay]="500" class="full-height">
+                <!-- 单选 多选 判断 -->
+                <app-choice-question
+                  *ngIf="['JudgeChoice', 'SingleChoice', 'MultipleChoice', 'TwiceChoice', 'IndefiniteMultiple'].includes(exerciseItem.exerciseKind)"
+                  [exerciseData]="exerciseItem">
+                </app-choice-question>
+
+                <!-- 填空 -->
+                <app-fill-blanks
+                  *ngIf="exerciseItem.exerciseKind === 'FillBlanks'"
+                  [exerciseData]="exerciseItem">
+                </app-fill-blanks>
+
+                <!-- 表格题 -->
+                <app-form-subject
+                  *ngIf="exerciseItem.exerciseKind === 'FormSubject'"
+                  [exerciseData]="exerciseItem">
+                </app-form-subject>
+
+                <!-- 分录题 -->
+                <app-entry-subject
+                  *ngIf="exerciseItem.exerciseKind === 'EntrySubject'"
+                  [exerciseData]="exerciseItem">
+                </app-entry-subject>
+
+                <!-- 问答 -->
+                <app-sketch
+                  *ngIf="exerciseItem.exerciseKind === 'Sketch'"
+                  [exerciseData]="exerciseItem">
+                </app-sketch>
+
+                <!-- 综合题 -->
+                <app-complex
+                  *ngIf="exerciseItem.exerciseKind === 'Complex'"
+                  [exerciseData]="exerciseItem">
+                </app-complex>
+              </nz-spin>
+            </nz-tab>
+          </nz-tabset>
+        </div>
+
+        <div class="fix-block">
+          <div>
+            <ng-container *ngIf="!collectionLoading">
+            <span class="collection-wrap" [class]="{ collected: exeCollected }" (click)="handleCollection()">
+              <i nz-icon nzType="heart" [nzTheme]="exeCollected ? 'fill' : 'outline'"></i>
+              {{ exeCollected ? '已收藏' : '收藏'}}
+            </span>
+            </ng-container>
+            <span *ngIf="collectionLoading">
+            <i nz-icon [nzType]="'loading'"></i>
+          </span>
+          </div>
+          <span *ngIf="exeShowAnswer" class="show-answer" (click)="showAnswer()">
+            <img class="answer-icon" src="assets/images/show_answer_icon.png" alt="显示答案" />
+            <span class="answer-btn">显示答案</span>
+          </span>
+          <ng-container *ngIf="tikuType !== 3">
+            <!-- 已完成 -->
+            <div *ngIf="exeStatus === 'selfEvalute' && exeEvalute">
+              <span class="evalute-text">请选择自评结果：</span>
+              <button nz-button nzType="primary" (click)="showEvaluateModal(true)">正确</button>
+              <button nz-button nzType="primary" class="warin-btn" (click)="showEvaluateModal(false)">错误</button>
+            </div>
+            <!-- 未完成或者重做 -->
+            <div *ngIf="exeStatus === 'init'|| exeStatus === 'ongoing'">
+              <button *ngIf="lastNum" nz-button nzType="primary" [nzLoading]="isSaveLoading"
+                      (click)="nextExercise({direction: 'next'})">下一题
+              </button>
+              <button nz-button nzType="primary" class="warin-btn" (click)="showConfirmSubmit()">交卷</button>
+            </div>
+            <!-- 重做 -->
+            <div *ngIf="exeStatus === 'finish' && exeMode === ''">
+              <button nz-button nzType="default"
+                      [style]="{'border-color': '#00AB84', color: '#00AB84', 'border-radius': '6px' }"
+                      (click)="redoExecrises()">
+                重新练习
+              </button>
+            </div>
+          </ng-container>
+        </div>
+      </nz-content>
+    </nz-layout>
+  </nz-spin>
+</nz-layout>
+
+<!-- 交卷确认-->
+<nz-modal [(nzVisible)]="isVisible" [nzClassName]="'redo-modal'" [nzWidth]="505"
+          [nzTitle]="''" [nzMaskClosable]="false" (nzOnCancel)="isVisible = false">
+  <div class="moadl-container">
+    <p class="large-title">{{ exeMode === 'redo' ? '重做交卷' : '交卷' }}</p>
+    <div class="mask-content">
+      <p class="normal-mask" *ngIf="unDoneExeNum === 0">确定交卷吗</p>
+      <p class="normal-mask" *ngIf="unDoneExeNum !== 0">当前还有{{unDoneExeNum}}道题未做完，确定交卷吗？</p>
+      <p class="gray-mask" *ngIf="exeMode !== 'redo'">*提交后作业会立刻结束，请谨慎检查</p>
+      <p class="read-mask" *ngIf="exeMode === 'redo'">*重做的作业交卷后不能修改</p>
+    </div>
+
+  </div>
+  <div *nzModalFooter>
+    <div class="redo-btn">
+      <button nz-button nzType="primary"
+              nzShape="round" nzBlock
+              [nzLoading]="isSubmitLoading"
+              (click)="confirmFinishPaper()">
+        {{ isContainSubjectQues ? '确认交卷并自评' : '确认'}}
+      </button>
+    </div>
+  </div>
+</nz-modal>
+
+<!-- 确认自评 -->
+<nz-modal [(nzVisible)]="evaluteModal.visible" [nzClassName]="'redo-modal'" [nzWidth]="505"
+          [nzTitle]="''" [nzMaskClosable]="false" (nzOnCancel)="evaluteModal.visible = false">
+  <div class="moadl-container">
+    <p class="large-title">自评</p>
+    <div class="mask-content">
+      <p class="normal-mask">
+        此题自评为：
+        <span [class]="{'right-text': evaluteModal.isRight, 'wrong-text': !evaluteModal.isRight }">
+          {{ evaluteModal.isRight ? '正确' : '错误' }}
+        </span>
+      </p>
+      <p class="read-mask">* 确认后不能修改自评结果</p>
+    </div>
+  </div>
+  <div *nzModalFooter>
+    <div class="redo-btn">
+      <button nz-button nzType="primary"
+              nzShape="round" nzBlock
+              [nzLoading]="isSubmitLoading"
+              (click)="confirmEvalute()">确定
+      </button>
+    </div>
+  </div>
+</nz-modal>
+
+<!-- 状态冲突 -->
+<nz-modal [(nzVisible)]="statusVisible" [nzClassName]="'redo-modal'" [nzWidth]="505"
+          [nzTitle]="''" [nzMaskClosable]="false" (nzOnCancel)="statusVisible = false">
+  <div class="moadl-container">
+    <p class="large-title">状态冲突</p>
+    <div class="mask-content">
+      <p class="normal-mask">
+        当前习题的状态与任务栏的状态冲突，是否要修正？
+      </p>
+    </div>
+
+  </div>
+  <div *nzModalFooter>
+    <div class="redo-btn">
+      <button nz-button nzType="primary"
+              nzShape="round" nzBlock
+              [nzLoading]="isSubmitLoading"
+              (click)="modifyTaskStatus()">确定</button>
+    </div>
+  </div>
+</nz-modal>
+

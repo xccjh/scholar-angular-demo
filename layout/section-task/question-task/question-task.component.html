@@ -1,0 +1,44 @@
+<nz-layout style="width: 100%;height:100%;">
+  <nz-header class="section-header border">
+    <div class="package-name">
+      <span class="section-header-title">{{ data.taskType === '4' ? data.title : data?.taskName }}</span>
+    </div>
+
+    <div class="padding-right">
+      <button nz-button nzType="link" class="gray-text" [nzSize]="'small'" *ngIf="data.downloadType === '2'" (click)="download()">
+        <i nz-icon nzType="download" nzTheme="outline"></i>
+        下载到本地
+      </button>
+    </div>
+  </nz-header>
+
+  <div class="wrapper">
+    <div class="test-box">
+      <div class="test-title">
+        <h3>{{curTask.taskType === '6'?'调查问卷':'问卷测评'}}</h3>
+        <h5>{{data.taskFinish=='0'?'进行中':data.taskFinish=='1'?'已结束':''}}</h5>
+      </div>
+      <div class="test-info">
+        <ul *ngIf="curTask.taskType === '7'">
+          <!-- <li><span>考试类型</span><span>{{testType[data.paperType-1]}}</span></li> -->
+          <li><span>完成情况</span><span [ngClass]="{'red':true}">{{status[data.status]}}</span></li>
+          <!-- <li><span>经验值</span><span [ngClass]="{'green':true}">{{data.stuExp}}/{{data.exp}}</span></li> -->
+          <li><span>结束时间</span><span>{{data.endTime | date:'yyyy年MM月dd日'}}</span></li>
+        </ul>
+        <div class="test-operation" [ngClass]="{'check':curTask.taskType === '6'}">
+          <div class="no-end" *ngIf="data.taskFinish!=='1'">
+            <p><button nz-button
+              (click)="gotoTest()">{{curTask.taskType === '6'?'调查问卷':'问卷测评'}}</button>
+            </p>
+            <!-- <p><button nz-button (click)="gotoTest(true)">考试记录</button></p> -->
+          </div>
+          <div class="end" *ngIf="data.taskFinish=='1'">
+            <button nz-button >{{curTask.taskType === '6'?'调查问卷':'问卷测评'}}</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</nz-layout>
+

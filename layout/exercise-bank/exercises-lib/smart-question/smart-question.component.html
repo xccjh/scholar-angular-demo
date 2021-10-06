@@ -1,0 +1,72 @@
+<div [ngClass]='{"main-exercise":true,"max-screen":maxScreen,"min-screen":!maxScreen}'>
+  <div class='question-stem'>
+    <div class='title'>
+      <nz-tag [nzColor]="getColor()" class='tag-title'>{{smartQuestion[idx][currenType].showTypeName}}</nz-tag>
+      题目：<span>{{current}}/{{smartQuestion.length + '~' + (smartQuestion.length * 2)}}</span>
+    </div>
+    <div class='subject' [innerHTML]='smartQuestion[idx][currenType].title | safeHtml'>
+    </div>
+    <div class='resolve' *ngIf='submitted.flag'>
+      <div class='title'>
+        解析：
+      </div>
+      <div class='tags'>
+        <!--        *ngFor="let item of knowledgePoints;let j=index;"-->
+        <nz-tag [nzColor]="getKnoColor()" class='tag-knowledge' >{{name}}</nz-tag>
+      </div>
+      <div class='desc' [innerHTML]='smartQuestion[idx][currenType].textAnalysis | safeHtml'>
+      </div>
+      <button nz-button nzType="primary" (click)="showModal()" *ngIf='videoAnalysis'
+              style='margin-top: 20px;backgroundColor: #1db88e' >
+        查看讲解视频
+      </button>
+    </div>
+  </div>
+  <div class='answer'>
+    <div class='title'>选项</div>
+    <ng-container *ngFor='let itemx of smartQuestion[idx][currenType].questionOptions;let inx=index;'>
+      <div [ngClass]='{"options-item":true,error:ifError(itemx),success:ifSuccess(itemx)}' *ngIf='ifSelect(itemx)'
+           style='color: #1db88e;border: 1px solid #1db88e'
+           (click)='clickItem(itemx,inx)'>
+        <ng-container *ngTemplateOutlet='option;context:{itemx:itemx,inx:inx}'>
+        </ng-container>
+      </div>
+      <div [ngClass]='{"options-item":true,error:ifError(itemx),success:ifSuccess(itemx)}'
+           *ngIf='!ifSelect(itemx)'
+           (click)='clickItem(itemx,inx)'>
+        <ng-container *ngTemplateOutlet='option;context:{itemx:itemx,inx:inx}'>
+        </ng-container>
+      </div>
+    </ng-container>
+    <ng-template #option let-itemx="itemx" let-inx='inx'>
+      {{itemx.answerOption}}：
+      <div [innerHTML]='itemx.answerContent | safeHtml' class='option-item-span'></div>
+    </ng-template>
+    <div class='tips'>
+      <span class='error' *ngIf='answerCorrect(idx)'>
+        回答错误 ,
+      </span>
+      <span class='success' *ngIf='answerError(idx)' style='color: #1db88e'>
+        回答正确 ,
+      </span>
+      <ng-container *ngIf='smartQuestion[idx][currenType].isCorrect!==undefined'>
+         <span class='info'>
+        &nbsp;正确答案：
+      </span>
+        <span class='answer'  style='color: #1db88e'>
+      {{answer[currenType]}}
+      </span>
+      </ng-container>
+    </div>
+  </div>
+</div>
+
+<!--保利威预览-->
+<nz-modal [(nzVisible)]="isPreviewpolyway" (nzOnCancel)="showModalEmit.emit(false)" [nzFooter]='null' [nzTitle]='null'
+          nzWidth='1000px' [nzBodyStyle]='{padding:0,height:"600px"}' *ngIf='isPreviewpolyway'>
+  <iframe
+    allowfullscreen='true'
+    [src]="videoAnalysis"
+    style="width: 100%;border: none;height: 100%">
+  </iframe>
+</nz-modal>

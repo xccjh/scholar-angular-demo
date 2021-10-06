@@ -1,0 +1,256 @@
+<nz-layout>
+  <div class='main-header'>
+    课程查询
+  </div>
+  <div class='header'>
+    <div class='header-container'>
+      <div class='header-item fl2'>
+        <label class='header-label'>关键词搜索: </label>
+        <div class='input-container'>
+          <input nz-input [placeholder]="'支持课程编号/课程名称/负责人'" [(ngModel)]="searchWordVal" (ngModelChange)='storingData()'
+                 (keyup.enter)='searchData("button")'
+                 style='margin-right: 20px;'/>
+        </div>
+      </div>
+      <div class='header-item ml40 fl1'>
+        <label class='header-label'>课程状态: </label>
+        <div class='input-container'>
+          <nz-select nzShowSearch nzPlaceHolder="请输入课程状态" [(ngModel)]="selectedVal"
+                     (ngModelChange)='storingData()'
+                     style='margin-right: 20px;width:100%;'>
+            <nz-option nzValue="" nzLabel="全部"></nz-option>
+            <nz-option nzValue="0" nzLabel="草稿"></nz-option>
+            <nz-option nzValue="1" nzLabel="待审批"></nz-option>
+            <nz-option nzValue="2" nzLabel="标准"></nz-option>
+            <nz-option nzValue="3" nzLabel="未通过"></nz-option>
+          </nz-select>
+        </div>
+      </div>
+      <div class='header-item ml40 fl2'>
+        <label class='header-label'>更新时间: </label>
+        <nz-range-picker [(ngModel)]="dateRangeVal" (ngModelChange)='storingData()'></nz-range-picker>
+      </div>
+      <button nz-button nzType="primary" (click)="searchData('button')" class='ml40'>查询</button>
+      <button nz-button nzType="primary" style='margin-left:20px;' (click)="resetData()">重置</button>
+    </div>
+  </div>
+  <nz-content style='padding: 15px 20px 20px;'>
+    <div class="course-header">
+      <div>
+        <button nz-button nzType="primary" (click)="showCourseModal()">新增课程</button>
+      </div>
+    </div>
+    <div class="table-container" id='tableScroll' [class.no-scoll]='!data?.length'>
+      <nz-table #basicTable [nzData]="data" [nzFrontPagination]="false"
+                [nzPageSizeOptions]='[15, 20, 30, 40, 50]'
+                [nzShowSizeChanger]="true"
+                [nzScroll]='{x:"1320px",y : height+"px"}'
+                [nzShowTotal]="totalTemplate"
+                [nzLoading]="isLoading"
+                [nzTotal]="total"
+                [(nzPageIndex)]="pageIndex"
+                [(nzPageSize)]="pageSize"
+                (nzPageIndexChange)="searchData()"
+                (nzPageSizeChange)="searchData()">
+        <thead>
+        <tr>
+          <th nzWidth='120px'>课程编号</th>
+          <th nzWidth='200px'>课程名称</th>
+          <th *ngIf='orgCode==="zksd"' nzWidth='120px'>国家编码</th>
+          <th *ngIf='orgCode==="zksd"' nzWidth='120px'>课程属性</th>
+          <th nzWidth='200px'>{{orgCode === 'zksd' ? '所属专业' : '所属学科'}}</th>
+          <th nzWidth='120px'>负责人</th>
+          <th nzWidth='120px'>更新时间</th>
+          <th nzWidth='120px'>状态</th>
+          <th nzWidth='120px'>审批状态</th>
+          <th nzWidth='230px' nzRight>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of basicTable.data;let idx=index;">
+          <td><span class='synopsis-text'>{{ data.code }}</span></td>
+          <td><span class='synopsis-text'>{{ data.name }}</span></td>
+          <td *ngIf='orgCode==="zksd"'><span class='synopsis-text'>{{ data.gbCode }}</span></td>
+          <td *ngIf='orgCode==="zksd"'><span class='synopsis-text'>{{ data.courseTypeName }}</span></td>
+          <td><span class='synopsis-text'>{{ orgCode === "zksd" ? data.majorNames : data.majorName  }}</span></td>
+          <td><span class='synopsis-text'>{{ data.leaderName }}</span></td>
+          <td>{{ getDate(data?.lastModifiedTime)}}</td>
+          <td>{{ data.statusName}}</td>
+          <td [class.red]='data.auditStatus === "3"' [class.green]='data.auditStatus === "2"' [class.orange]='data.auditStatus === "1"'>{{ data.auditStatusName}}</td>
+          <td nzRight *ngIf='initButton(data)'>
+            <a class='operating' (click)="methodChange(data,i,'upButtonArr')"
+               [class.light-color]='button.method==="del"'
+               *ngFor='let button of data?.upButtonArr;let i= index;'>{{button.title}}</a>
+            <a nz-button nzType="link" nzSize="small"
+               *ngIf='data?.dropButtonArr?.length'
+               [nzTooltipTitle]='operationButton' nz-tooltip nzTooltipPlacement="bottom"
+               nzTooltipOverlayClassName='more-operating'
+               style='transform:rotateZ(90deg) scale(2) translateY(-4px)'>
+              <i nz-icon nzType="more" nzTheme="outline"></i>
+            </a>
+            <ng-template #operationButton>
+              <a class='operating' [class.light-color]='button.method==="del"'
+                 (click)="methodChange(data,i,'dropButtonArr')"
+                 *ngFor='let button of data?.dropButtonArr;let i= index;' style='display:block;'>{{button.title}}</a>
+            </ng-template>
+            <!--            <a class="light-color operating" (click)="submitForApproval(data)" *ngIf='data.status==="0"&&data.auditStatus!=="1"&&data.auditStatus!=="3"&&(data.leaderId===userId || isManager === "1")'>提交审批</a>-->
+            <!--            <a class="light-color operating" (click)="nailingApproval(data)"-->
+            <!--               *ngIf='data.status==="0"&&data.auditStatus!=="1"&&data.leaderId===userId'-->
+            <!--            >钉钉审批</a>-->
+            <!--             [ngClass]='{"no-allow":!(data.status==="0"&&data.auditStatus==="0"&&data.hasChildren===1)?true:false}'-->
+            <!--            <nz-space-item>-->
+            <!--              <a class="light-color" (click)="approved(data)">审批通过</a>-->
+            <!--            </nz-space-item>-->
+            <!--            <nz-space-item>-->
+            <!--              <a class="light-color" (click)="approvalFailed(data)">审批不通过</a>-->
+            <!--            </nz-space-item>-->
+            <!--            <a class="light-color operating" (click)="resubmit(data)" *ngIf='data.status==="0"&&data.auditStatus==="3"&&(data.leaderId===userId || isManager === "1")'>重新提交</a>-->
+            <!--            <nz-space-item>-->
+            <!--              <a class="light-color" (click)="antiApproval(data)">反审批</a>-->
+            <!--            </nz-space-item>-->
+            <!--            <nz-space-item>-->
+            <!--              <a class="light-color" (click)="withdrawApproval(data)">撤销审批-->
+            <!--              </a>-->
+            <!--            </nz-space-item>-->
+          </td>
+        </tr>
+        </tbody>
+      </nz-table>
+    </div>
+    <ng-template #totalTemplate let-total>共 {{ total }} 条记录</ng-template>
+  </nz-content>
+</nz-layout>
+
+
+<ng-template #modalContent>
+  <nz-spin [nzSpinning]="isModalLoading" [nzDelay]="0">
+    <form nz-form [formGroup]="modalForm">
+      <nz-form-item *ngIf='orgCode==="zksd"'>
+        <nz-form-label [nzSpan]="5" nzRequired>课程属性</nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="课程属性不能为空">
+          <nz-select formControlName="courseType" placeholder="请选择课程属性">
+            <nz-option nzValue="" nzLabel="请选择">
+            </nz-option>
+            <nz-option nzValue="1" nzLabel="专业课">
+            </nz-option>
+            <nz-option nzValue="2" nzLabel="公共课">
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5" nzRequired>课程名称</nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback [nzErrorTip]="nameTpl" style='max-width: 316px;'>
+          <input nz-input type="text" formControlName="name" placeholder="请输入课程名称" (keyup.enter)='confirm()'/>
+        </nz-form-control>
+        <span style="margin-left: 10px;" [style.color]='modalForm.controls.name.hasError("maxlength")?"red":"inherit"'>
+          {{modalForm?.value.name.length}}/50</span>
+        <ng-template #nameTpl let-control>
+          <div *ngIf="control.hasError('required')">
+            课程名称不能为空
+          </div>
+          <div *ngIf="control.hasError('maxlength')">{{'课程名称不能超过50个字符'}}</div>
+        </ng-template>
+      </nz-form-item>
+      <div style='transform: translate(27px, -11px);color: #b7adad;'>注意: 建议长度为25个字符，过长不能保证在学员端的展示效果哦~</div>
+      <nz-form-item *ngIf='orgCode==="zksd"'>
+        <nz-form-label [nzSpan]="5" nzRequired>国家编码</nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="国家编码不能为空">
+          <input nz-input type="text" formControlName="gbCode" placeholder="请输入国家编码" (keyup.enter)='confirm()'/>
+        </nz-form-control>
+      </nz-form-item>
+
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5" nzRequired>课程服务商</nz-form-label>
+        <nz-form-control nzHasFeedback nzErrorTip="课程服务商不能为空" style='max-width:354px;'>
+          <qkc-service-provider formControlName="courseProviderId" style='width:354px'
+                                placeholder="请选择课程服务商"></qkc-service-provider>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5" nzRequired>{{orgCode === 'zksd' ? '所属专业' : '所属学科' }}</nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback [nzErrorTip]="orgCode==='zksd'?'所属专业不能为空':'所属学科不能为空'">
+          <qkc-discipline-data [formControlName]='orgCode==="zksd"?"majorIdList":"majorId"'
+                               [placeholder]="'请选择'+(orgCode === 'zksd' ? '所属专业' : '所属学科')"></qkc-discipline-data>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5" nzRequired>课程负责人</nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="课程负责人不能为空">
+          <qkc-role-member formControlName="leaderId" role="ROLE-KECHENG"
+                           placeholder="请选择课程负责人"></qkc-role-member>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item *ngIf='orgCode==="zksd"'>
+        <nz-form-label [nzSpan]="5" nzRequired>学历层次</nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="学历层次不能为空">
+          <nz-select formControlName="eduLevel" nzMode='multiple' nzShowSearch nzAllowClear>
+            <nz-option nzValue="1" nzLabel="专科"></nz-option>
+            <nz-option nzValue="2" nzLabel="本科"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <!--      <nz-form-item *ngIf='orgCode==="zksd"'>-->
+      <!--        <nz-form-label [nzSpan]="5" nzRequired>地区</nz-form-label>-->
+      <!--        <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="地区不能为空" style='max-width:300px;'>-->
+      <!--          <nz-spin [nzSpinning]="isAreaLoading" [nzDelay]="0">-->
+      <!--            <nz-select formControlName="areaIdList" nzMode='multiple' style='width:300px' nzShowSearch nzAllowClear-->
+      <!--                       (ngModelChange)='modelChangeSelect($event)'>-->
+      <!--              <nz-option [nzValue]="item.id" [nzLabel]="item.name" *ngFor='let item of areaZk'></nz-option>-->
+      <!--            </nz-select>-->
+      <!--          </nz-spin>-->
+      <!--        </nz-form-control>-->
+      <!--        <label style='margin-top: 5px;margin-left: 10px;width: 62px;height: 20px;' nz-checkbox [(ngModel)]="checked"-->
+      <!--               (ngModelChange)='changeArea($event)'-->
+      <!--               [ngModelOptions]="{standalone: true}">全选</label>-->
+      <!--      </nz-form-item>-->
+      <!--      <nz-form-item>-->
+      <!--        <nz-form-label [nzSpan]="5">排序</nz-form-label>-->
+      <!--        <nz-form-control [nzSpan]="18">-->
+      <!--          <nz-input-number [nzStep]="1" formControlName="seq" [nzMin]='1' (keyup.enter)='confirm()' nzPrecisionMode='toFixed' [nzPrecision]='0'-->
+      <!--          ></nz-input-number>-->
+      <!--          <br>-->
+      <!--          <span style='display: inline-block;margin-top: 14px;font-size: 14px'>排序只是针对题库在学员端的展示顺序</span>-->
+      <!--        </nz-form-control>-->
+      <!--      </nz-form-item>-->
+    </form>
+    <div style='margin-top:10px;display:flex;padding-right: 20px;padding-bottom: 24px;' *ngIf='editFlag'>
+      <label style='flex:1;text-align:right;height: 32px;color: rgba(0,0,0,.85);font-size: 14px;line-height:32px;'>
+        创建人：
+      </label>
+      <input nz-input [(ngModel)]="create" [disabled]='editFlag' style='width:354px;'>
+    </div>
+  </nz-spin>
+</ng-template>
+
+
+<!--钉钉审批-->
+<ng-template #nailingTmp let-params>
+  <div class='mlf40'>
+    <div class='mt20'>
+      课程编码： {{params.data.code}}
+    </div>
+    <div class='mt10'>
+      课程名称： {{params.data.name}}
+    </div>
+    <div class='mt20'>
+      课程一经审批通过，课程将开放资源研发存储，课包建设权限。
+    </div>
+    <div class='mt10'>
+      请审批以下内容；审批通过将不影响以后修改。
+    </div>
+    <div class='mt10'>
+      1、课程内容是否完善
+    </div>
+    <div class='mt10'>
+      2、知识图谱是否已完善
+    </div>
+  </div>
+</ng-template>

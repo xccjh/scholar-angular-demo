@@ -1,0 +1,81 @@
+<nz-layout class="l-main full-height">
+  <nz-spin class="spin" nzSimple  nzTip="加载中..." [nzSpinning]="isLoading"></nz-spin>
+  <ng-container *ngIf="!isLoading" class="full-height">
+    <nz-header class="section-header border">
+      <div class="package-name">
+        <span class="section-header-title">{{ taskData?.taskName }}</span>
+      </div>
+
+      <div class="section-header-btn padding-right">
+        <button nz-button nzType="link" class="gray-text" [nzSize]="'small'" (click)="getAllSpeak()">
+          刷新
+        </button>
+        <button nz-button nzType="link" class="gray-text" [nzSize]="'small'" (click)="gotoCase()">
+          返回
+        </button>
+      </div>
+    </nz-header>
+
+    <nz-layout class="white-bg" style="overflow: hidden;height: calc(100% - 70px)">
+      <nz-content class="full-height white-bg" style="padding-left: 18px;">
+        <div *ngIf="taskData.speakwallAll[0]"  style="margin-top: 24px; height: calc(100% - 24px); overflow: hidden;overflow-y: auto;">
+          <ng-container  *ngFor="let item of scoreType">
+            <div class="reply-container" *ngIf="item.data[0]">
+              <p class="reply-title">{{item.scoreName}}</p>
+              <div class="reply-block">
+                <div class="reply" *ngFor="let item2 of item.data" (click)="selectedItem(item2)" [class.selected]="item2.id===selectedData.id" [style]="{'background': item2.color}">
+                  <ng-container *ngTemplateOutlet="speakTemp; context: {data:item2}"></ng-container>
+                </div>
+            </div>
+            </div>
+          </ng-container>
+        </div>
+        <div *ngIf="taskData.speakwallAll.length === 0" style="margin: 130px auto;width: 300px;">
+          <img src="assets/images/no-reply-wall.png" alt="无学生发言" style="width: 100%;">
+        </div>
+      </nz-content>
+      <nz-sider [nzWidth]="440" class="sider full-height white-bg" *ngIf="selectedData.id">
+        <div class="sider-header">
+          <div>{{selectedData?.studentName}}</div>
+          <!-- 待评分 -->
+          <div class="gray-bg" *ngIf="selectedData?.resultType === '0' ">{{resultName[selectedData?.resultType]}}</div>
+          <!-- 满分 -->
+          <div class="green-bg" *ngIf="selectedData?.resultType === '3'">{{resultName[selectedData?.resultType]}}</div>
+          <!-- 非满分 -->
+          <div class="red-bg" *ngIf="selectedData?.resultType !== '0' && selectedData?.resultType !== '3'">{{resultName[selectedData?.resultType]}}</div>
+        </div>
+
+        <pre class="sider-content" [innerHTML]="selectedData?.content"></pre>
+
+        <div class="sider-attachment" *ngIf="selectedData.children">
+          <ng-container *ngFor="let attachment of selectedData.caseAttch">
+            <div class="attach-block" (click)="previewAttachment(attachment)">
+              <div class="img-block">
+                <img [src]="attachment?.showPath" alt="thumbnail">
+              </div>
+              <p [title]="attachment.attachmentName">{{ attachment.attachmentName }}</p>
+            </div>
+          </ng-container>
+        </div>
+      </nz-sider>
+    </nz-layout>
+  </ng-container>
+</nz-layout>
+
+<qkc-attachment-show-modal
+  [(isShow)]="isShow"
+  [url]="curShowItem?.attachmentPath">
+</qkc-attachment-show-modal>
+
+<!--发言展示-->
+<ng-template #speakTemp let-item="data">
+  <div class="reply-header">
+    <img [src]="item.photo" *ngIf="item.photo" >
+    <img src="assets/images/user.png" *ngIf="!item.photo" >&nbsp;
+    {{item.studentName}}
+  </div>
+  <pre class="reply-body" [title]="item.content" [innerHTML]="item.content"></pre>
+  <div class="reply-attachment">
+    <p>附件：{{item.children?.length || 0}}</p>
+  </div>
+</ng-template>

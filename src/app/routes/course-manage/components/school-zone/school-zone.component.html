@@ -1,0 +1,18 @@
+<nz-tree-select
+  style="width: 80%"
+  [(ngModel)]="selectedValues"
+  [nzNodes]="opts"
+  [nzExpandedKeys]="expandKeys"
+  nzShowSearch
+  nzCheckable
+  [nzMultiple]="true"
+  [nzMaxTagCount]="10"
+  [nzMaxTagPlaceholder]="omittedPlaceHolder"
+  [nzDropdownStyle]="{'max-height': '400px'}"
+  (ngModelChange)="selectedChange($event)"
+  [nzHideUnMatched]='true'
+>
+</nz-tree-select>
+<label nz-checkbox [(ngModel)]="checkAll.flag" (ngModelChange)="checkAllStatus($event)"
+       style="margin-left: 10px;">全选</label>
+<ng-template #omittedPlaceHolder let-omittedValues> 还有 {{ omittedValues.length }} 个校区/大区...</ng-template>

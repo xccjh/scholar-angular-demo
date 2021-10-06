@@ -1,0 +1,37 @@
+<div class="container" cdkDropList (cdkDropListDropped)="drop($event)">
+
+  <div class="label-item" *ngFor="let item of labelArr" cdkDrag>
+    <div class="label-item-title">
+      <div>
+        <span *ngIf="!item.isEdit">{{ item?.tagName }}</span>
+        <input *ngIf="item.isEdit" type="text" nz-input [(ngModel)]="labelValue"
+          (keyup.enter)="inputEnter()" />
+      </div>
+
+      <div>
+        <i nz-icon nzType="edit" nzTheme="outline" (click)="edit(item)"></i>
+        &nbsp;
+        <i nz-icon nzType="minus-circle" nzTheme="outline"
+          (click)="del(item.id)"></i>
+        &nbsp;
+        <i nz-icon nzType="drag" nzTheme="outline" cdkDragHandle></i>
+      </div>
+    </div>
+
+    <qkc-profession-label-item
+      [pid]="item.id"
+      [tagType]="item.tagType"
+      [tagLevel]="1"
+      [labelArr]="item.child">
+    </qkc-profession-label-item>
+  </div>
+
+  <div>
+    <qkc-profession-label-add
+      [title]="'+学科标签类'" [level]="0"
+      [placeholder]="'请输入学科标签类名称...'"
+      (addChange)="add($event)">
+    </qkc-profession-label-add>
+  </div>
+
+</div>

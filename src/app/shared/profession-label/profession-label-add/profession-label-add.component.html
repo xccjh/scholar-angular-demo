@@ -1,0 +1,22 @@
+<div class="label-add" *ngIf="!isShow" (click)="add()">
+  {{ title }}
+</div>
+
+<ng-container *ngIf="isShow">
+  <div class="label-input-container">
+    <div class="label-input">
+      <input
+        type="text"
+        nz-input
+        placeholder="{{ placeholder }}"
+        [(ngModel)]="value"
+        (keyup.enter)="confirm()"/>
+    </div>
+
+    <div class="label-icon">
+      <i nz-icon nzType="check" nzTheme="outline" (click)="confirm()"></i>
+      <i nz-icon nzType="close" nzTheme="outline"
+        (click)="close()"></i>
+    </div>
+  </div>
+</ng-container>

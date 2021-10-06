@@ -1,0 +1,124 @@
+<div class='container'>
+  <div class="header">
+    <div class="title">
+      系列管理
+      <button nz-button class="back-btn" nzType="default" (click)="goback()">返回</button>
+    </div>
+    <div class='search-content'>
+      <div class='search-item'>
+        <div class='search-label pt5'>
+          所属课程：
+        </div>
+        <nz-select class='item-select' [(ngModel)]="selectedCourseVal" nzShowSearch
+                   (ngModelChange)='storingData()'>
+          <nz-option [nzValue]="item.id" [nzLabel]="item.name" [title]='item.name'
+                     *ngFor='let item of courseList;let i=index'></nz-option>
+        </nz-select>
+      </div>
+      <button nz-button class="notice-btn" nzType="primary" (click)="searchData('button')">查询</button>
+      <button nz-button class="notice-btn" nzType="primary" (click)="addSeries()">新增系列</button>
+    </div>
+  </div>
+  <div class="table-container" id='tableScroll' [class.no-scoll]='!data.length'>
+    <nz-table #editRowTable
+              [nzFrontPagination]="false"
+              [nzData]="labels"
+              [nzShowSizeChanger]="true"
+              [nzScroll]='{y : height+"px"}'
+              [nzPageSizeOptions]='[15, 20, 30, 40, 50]'
+              [nzShowTotal]="totalTemplate"
+              [nzLoading]="isLoading"
+              [nzTotal]="total"
+              [(nzPageIndex)]="pageIndex"
+              [(nzPageSize)]="pageSize"
+              (nzPageIndexChange)="searchData()"
+              (nzPageSizeChange)="searchData()">
+      <thead>
+      <tr>
+        <th nzWidth='200px'>序号</th>
+        <th>系列名称</th>
+        <th>排课规则</th>
+        <th>所属课程</th>
+        <th>课包数量</th>
+        <th>更新时间</th>
+        <th nzWidth='170px' nzRight>操作</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of editRowTable.data; let idx = index">
+        <td>{{ data.seqFont }}</td>
+        <td>{{ data.name }}</td>
+        <td>{{getRuleType(data.ruleType) }}</td>
+        <td>{{data.courseName }}</td>
+        <td>{{data.pkgNum }}</td>
+        <td>{{getDate(data.lastModifiedTime)}}</td>
+        <td nzRight>
+          <nz-button-group>
+            <a nz-button nzType="link" nzSize="small" (click)="labelEdit(data)">编辑</a>
+            <a nz-button nzType="link" nzSize="small" class="light-color" (click)="labelDel(data.id)">删除</a>
+          </nz-button-group>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+    <ng-template #totalTemplate let-total>共 {{ total }} 条记录</ng-template>
+  </div>
+</div>
+
+<!-- 新增系列 -->
+<nz-modal [(nzVisible)]="addSeriesVisibility" [nzMaskClosable]="false" [nzTitle]="edit?'编辑系列':'新增系列'"
+          (nzOnCancel)="addSeriesVisibility=false" [nzFooter]='null'>
+  <nz-spin [nzSpinning]="isAddLoading" [nzDelay]="0">
+    <form nz-form [formGroup]="fgLabel" style='height:100%;'>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5" nzRequired>系列名称</nz-form-label>
+        <nz-form-control [nzSpan]="18" [nzErrorTip]="nameTpl" nzHasFeedback>
+          <input type='text' nz-input formControlName="name" placeholder="请输入系列名称" (keyup.enter)='addLabel()'>
+        </nz-form-control>
+        <span style="margin:5px 0 0 10px;"
+              [style.color]='fgLabel.controls.name.hasError("maxlength")?"red":"inherit"'>
+          {{fgLabel.value.name.length}}/25</span>
+        <ng-template #nameTpl let-control>
+          <div *ngIf="control.hasError('required')">
+            系列名称不能为空
+          </div>
+          <div *ngIf="control.hasError('maxlength')">系列名称不能超过25个字符</div>
+        </ng-template>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired [nzSpan]="5">排课规则</nz-form-label>
+        <nz-form-control nzErrorTip="请选择排课规则" nzHasFeedback [nzSpan]="18">
+          <nz-select formControlName="ruleType">
+            <nz-option nzValue="" nzLabel="请选择"></nz-option>
+            <nz-option nzValue="1" nzLabel="自由排课"></nz-option>
+            <nz-option nzValue="2" nzLabel="只升不降"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired [nzSpan]="5">所属课程</nz-form-label>
+        <nz-form-control nzHasFeedback nzErrorTip="所属课程不能为空" [nzSpan]="18">
+          <nz-select formControlName="selectedCourse" nzShowSearch nzAllowClear>
+            <nz-option [nzValue]="item.id" [nzLabel]="item.name"
+                       *ngFor='let item of courseList;let i=index'></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+          <nz-form-item *ngIf='edit'>
+            <nz-form-label [nzSpan]="5" nzRequired>创建人
+            </nz-form-label>
+            <nz-form-control [nzSm]="18">
+              <input nz-input [(ngModel)]="currentLabel.createrName" [ngModelOptions]="{standalone: true}" [disabled]='true'/>
+            </nz-form-control>
+          </nz-form-item>
+    </form>
+    <div class="modal-footer">
+      <button nz-button (click)="addSeriesVisibility=false;" class='modal-footer-button mr0'>
+        取消
+      </button>
+      <button nz-button nzType="primary" (click)="addLabel()" class='modal-footer-button'>保存</button>
+    </div>
+  </nz-spin>
+</nz-modal>
+
+

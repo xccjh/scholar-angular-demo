@@ -1,0 +1,30 @@
+<ng-container *ngIf="isShow">
+  <ng-container *ngIf="type==='ow365' || type === 'ppt'">
+    <div class="container" >
+      <div class="top">
+        <p>{{filePreviewName}}</p>
+        <p *ngIf="type === 'ppt'"><a (click)="downLoad()">下载</a></p>
+      </div>
+      <div class="file-container" (click)="close()">
+        <div class="content" (click)="contentClick($event)">
+          <iframe allowfullscreen='true' [src]="safeUrl"></iframe>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <div  *ngIf="type==='image'">
+    <img id="__ATTACHMENT_IMAGE__" style="display: none;"  [src]="safeUrl" alt="picture" />
+  </div>
+
+  <nz-modal 
+    [(nzVisible)]="isShowVideo" 
+    [nzContent]="modalVideoContent" 
+    (nzOnCancel)="closeVideo()" 
+    class="video-modal"
+    [nzFooter]="null" >
+    <ng-template #modalVideoContent>
+      <qkc-media-video [url]="safeUrl"></qkc-media-video>
+    </ng-template>
+  </nz-modal>
+</ng-container>

@@ -1,0 +1,74 @@
+@import '../../less/public.less';
+@import '../../../../core/less/public.less';
+
+:host {
+  width: 100%;
+  height: 100%;
+  display: block;
+  pre{
+    margin-bottom: 0;
+  }
+}
+
+
+.reply-container {
+  .reply-title{
+    font-size: 20px;
+    color: #000000;
+  }
+  .reply-block{
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+  }
+}
+
+.reply {
+  position: relative;
+  color: #fff;
+  width: 216px;
+  height: 211px;
+  margin: 18px;
+  margin-left: 12px;
+  border-radius: 4px;
+  padding: 18px;
+  cursor: pointer;
+  &.selected{
+    background: #EBF9F5 !important;
+    color: #2E333A;
+    border: 1px solid #00A184;
+    .reply-attachment{
+      color: #818EA5;
+    }
+  }
+
+  &-header {
+    display: flex;
+    // justify-content: space-between;
+    align-items: center;
+    height: 46px;
+    font-size: 18px;
+    img{
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+    }
+  }
+
+  &-body {
+    height: calc(100% - 72px);
+    font-size: 16px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    overflow: hidden;
+    
+  }
+  &-attachment{
+    height: 22px;
+    line-height: 22px;
+    
+    font-size: 16px;
+  }
+}
+

@@ -1,0 +1,10 @@
+{
+  "/viewer":{
+    "target":"http://ky.qicourse.cn",
+    "secure":false,
+    "logLevel":"debug",
+    "changeOrigin":true,
+    "pathRewrite":{
+    }
+  }
+}

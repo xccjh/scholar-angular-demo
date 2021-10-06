@@ -1,0 +1,14 @@
+<nz-spin [nzSpinning]="isLoading" [nzDelay]="0">
+    <span *ngIf="!isLoading && professionArr.length===0" style="color: #999;">暂无课程</span>
+    <a nz-dropdown [nzDropdownMenu]="menu" class="btn">
+         切换
+        <i nz-icon nzType="down"></i>
+    </a>
+    <nz-dropdown-menu #menu="nzDropdownMenu">
+        <ul nz-menu nzSelectable [ngStyle]="{maxHeight:'300px',overflow:'auto'}">
+            <ng-container *ngFor="let item of professionArr">
+                <li nz-menu-item (click)="changeProfession(item)">{{ item?.name }}</li>
+            </ng-container>
+        </ul>
+    </nz-dropdown-menu>
+</nz-spin>

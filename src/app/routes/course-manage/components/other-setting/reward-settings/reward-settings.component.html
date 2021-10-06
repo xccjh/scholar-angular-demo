@@ -1,0 +1,22 @@
+<nz-spin [nzSpinning]="rewardSettingsLoading"
+         [nzDelay]="0">
+  <span style='max-width:100px;margin-right:16px;'>本地上传：</span>
+  <nz-upload
+    nzMultiple
+    [nzBeforeUpload]='beforeUpload'
+    [nzShowUploadList]=' { showPreviewIcon: true, showRemoveIcon: false, showDownloadIcon: false }'
+    [(nzFileList)]="nzFileList"
+    [nzCustomRequest]="customRewardRequest"
+  >
+    <button nz-button style='margin-bottom: 20px;'>
+      <i nz-icon nzType="upload" style='font-size:20px;'></i>上传文件
+    </button>
+  </nz-upload>
+  <button nz-button style='position:absolute;left:220px;top:0;'  (click)='resourceCall()'>
+    资源调用
+  </button>
+</nz-spin>
+<div *nzModalFooter>
+  <button nz-button (click)="cancel()">取消</button>
+  <button nz-button nzType="primary" (click)="save()" [nzLoading]="rewardSettingsLoading" >确定</button>
+</div>

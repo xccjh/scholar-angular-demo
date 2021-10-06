@@ -1,0 +1,11 @@
+<nz-spin [nzSpinning]="isMajorLoading" [nzDelay]="0">
+  <nz-select  nzShowSearch nzAllowClear
+             [nzMode]='orgCode==="zksd"?"multiple":"default"'
+             [(ngModel)]="disciplineId"
+             (ngModelChange)="disciplineDataChange($event)"
+             nzShowSearch nzAllowClear [nzPlaceHolder]="placeholder" [style]="style"
+  >
+    <nz-option [nzValue]="disciplineDataItem.id" [nzLabel]="disciplineDataItem.name"
+               *ngFor="let disciplineDataItem of disciplineData;"></nz-option>
+  </nz-select>
+</nz-spin>

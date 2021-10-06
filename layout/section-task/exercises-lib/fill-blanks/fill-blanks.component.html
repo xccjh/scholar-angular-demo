@@ -1,0 +1,49 @@
+<!-- 题干 -->
+<div class="question-header">
+  <div class="green-bg" *ngIf="!isComplex">{{ exerciseData.exerciseKindName }}</div>
+  <div class="ques-num" *ngIf="quesNum">{{quesNum}}、</div>
+  <div class="question-title" [innerHTML]="exerciseData.content | safeHtml"></div>
+  <div *ngIf="['finish','selfEvalute'].includes(exerciseData.status)" class="question-score">
+    <div>
+      {{ exerciseData.evaluateExp }}/{{ exerciseData.originalExp }}&nbsp;分
+    </div>
+  </div>
+</div>
+
+<div class="answer-list" *ngIf="exerciseData.mode !== 'collection'">
+  <ng-container *ngFor="let item of exerciseData.myAnswer;let idx= index">
+    <p class="fill-spacing">填空({{idx+1}})</p>
+    <nz-input-group class="spacing" >
+      <input nz-input
+        placeholder="请输入答案"
+        [disabled]="['finish','selfEvalute'].includes(exerciseData.status)"
+        [(ngModel)]="exerciseData.myAnswer[idx].answer" />
+    </nz-input-group>
+  </ng-container>
+</div>
+
+<!-- 正确答案 -->
+<div class="question-analysis" *ngIf="['finish','selfEvalute'].includes(exerciseData.status)">
+  <p class="analysis-title">正确答案：</p>
+  <ng-container *ngFor="let item of exerciseData.answer;let idx= index">
+    <p class="fill-answer">
+      （{{idx+1}}）{{item.answer}}
+    </p>
+  </ng-container>
+</div>
+
+<div class="score-description" *ngIf="!['finish','selfEvalute'].includes(exerciseData.status)">
+  得分说明：全对才得分
+</div>
+
+<!-- 解析 -->
+<div class="question-analysis" *ngIf="['finish','selfEvalute'].includes(exerciseData.status)">
+  <p class="analysis-title">解析：</p>
+  <div class="analysis-content" [innerHTML]="exerciseData.analysis | safeHtml"></div>
+  <a *ngIf="exerciseData.videoAnalysis" 
+    class="analysis-video-title" 
+    [href]="exerciseData.videoAnalysis" 
+    target="__blank">
+    点击视频观看解答
+  </a>
+</div>

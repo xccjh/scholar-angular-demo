@@ -1,0 +1,505 @@
+<div class='top-container'>
+  <button nz-button nzType="primary" class='operation-button ml20' nz-dropdown [nzDropdownMenu]="menu">
+    <i nz-icon nzType="filter" nzTheme="outline"></i>筛选
+  </button>
+  <nz-dropdown-menu #menu="nzDropdownMenu">
+    <ul nz-menu nzSelectable>
+      <li nz-menu-item (click)='filterKnowledgePoints("",$event)'>全部知识点</li>
+      <li nz-menu-item (click)='filterKnowledgePoints("0",$event)'>未完善知识点</li>
+      <li nz-menu-item (click)='filterKnowledgePoints("1",$event)'>已完成知识点</li>
+    </ul>
+  </nz-dropdown-menu>
+
+  <button nz-button nzType="primary" class='operation-button' (click)='importAtlas()' [nzLoading]='loading'
+          [disabled]='!((!IfExist(this.treeComponent?.nodes[0]?.children?.length))&&(auditStatus!=="1"))'
+  >
+    导入图谱
+  </button>
+  <button nz-button nzType="primary" class='operation-button' (click)='exportMap()' [nzLoading]='exportloading'
+          [disabled]='!IfExist(this.treeComponent?.nodes[0]?.children?.length)'
+  >导出图谱
+  </button>
+  <button nz-button nzType="primary" class='operation-button' (click)='exportKno()' [nzLoading]='exportKnoLoading'
+  >知识点详情导出
+  </button>
+
+  <!--  <button nz-button nzType="danger" [disabled]='(!treeComponent?.modify.flag)||status!=="1"||auditStatus==="1"'-->
+  <!--          class='operation-button'-->
+  <!--          (click)='submitForApproval()' title='能够审核的必要条件:1.该课程通过审核为标准2.不是待审核状态3.知识点状态有新增或删除'>-->
+  <!--    {{auditStatus === "3" ? '重新提交' : '提交审批'}}-->
+  <!--  </button>-->
+  <!--  <button nz-button nzType="danger" [disabled]='(!treeComponent?.modify.flag)||status!=="1"||auditStatus==="1"'-->
+  <!--          class='operation-button'-->
+  <!--          (click)='nailingApproval()' title='能够审核的必要条件:1.该课程通过审核为标准2.不是待审核状态3.知识点状态有新增或删除'>-->
+  <!--    钉钉审批-->
+  <!--  </button>-->
+  <!--  <button nz-button class='operation-button' (click)='saveKnowledgePoints()'-->
+  <!--          [disabled]='(!curNode)||curNode.origin.status==="3"||curNode.level===0||uploading'>-->
+  <!--    保存-->
+  <!--  </button>-->
+  <!--  <button nz-button class='operation-button' (click)='goback()'>返回</button>-->
+</div>
+<div class="container">
+  <div class="left-container"
+       nz-resizable
+       [style.width.px]="width"
+       (nzResize)="onResize($event)">
+    <div class="search-container">
+      <span class='search-text'>
+        <i nz-icon nzType="compress" nzTheme="outline" (click)='expendKnowledgeGraph()'
+           style='margin-right:10px;cursor: pointer;'
+           nz-tooltip nzTooltipTitle="重置条件并展开"
+        ></i></span>
+      <input nz-input placeholder="关键词搜索" [(ngModel)]="searchValue" style='flex: 1;'/>
+    </div>
+    <div class='tree-container-out'>
+      <div #treeContainer class='tree-container'>
+        <qkc-tree-knowledgegraph
+          *ngIf='showTree'
+          [allNodes]='true'
+          [defaultCheckedKeys]='defaultCheckedKeys'
+          [nzSearchValue]='searchValue'
+          (examWeightInThisChapterChange)='examWeightInThisChapterChange'
+          [examWeightInThisChapter]="examWeightInThisChapter"
+          [extendedData]='validateForm'
+          [status]='status'
+          [isExpandAll]='isExpandAll'
+          [professionId]="selectedProfesson?.id"
+          [fullNode]='true'
+          [isDraggable]='true'
+          [isShowLine]='true'
+          (nodeChange)="nodeChange($event)"
+          class='tree-kno'
+          model="custom"
+          (delEmit)='delete($event)'
+          #tree>
+        </qkc-tree-knowledgegraph>
+
+      </div>
+    </div>
+    <nz-resize-handle nzDirection="right">
+      <div class="right-wrap">
+        <i class="right" nz-icon nzType="more" nzTheme="outline"></i>
+      </div>
+    </nz-resize-handle>
+  </div>
+  <div class="right-container">
+    <nz-spin [nzSpinning]="isSaveing" [nzDelay]="0">
+      <div *ngIf="kType==='1'" style="height: 100%;">
+        <nz-result nzStatus="info" nzTitle="该页面无功能"></nz-result>
+      </div>
+      <div *ngIf="kType==='2'">
+        <span style='color:red;margin-right:5px;'>*</span>本章考试权重 ：
+        <nz-input-number [(ngModel)]="examWeightInThisChapter" [nzMin]="0" [nzMax]="100000"
+                         (input)="onInputVal($event)"
+
+                         [nzStep]="1"></nz-input-number>
+        <span style='margin-left:10px;'>
+        实际权重 = 本章权重/ 所有章节的权重之和
+      </span>
+      </div>
+      <div *ngIf="kType==='3'" style="height: 100%;">
+        <nz-result nzStatus="info" nzTitle="该页面无功能"></nz-result>
+      </div>
+      <div [hidden]="!(kType==='4')" style="height: 100%;">
+        <form nz-form [formGroup]="validateForm">
+          <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" style='max-width: 100px;'>知识点编码</nz-form-label>
+            <span class='code'>{{validateForm.value.code}}</span>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" style='max-width: 100px;'>知识点定义</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24" style='min-width: calc(100% - 100px);' class='richtext'
+                             nzErrorTip='请填写知识点定义'>
+              <nz-spin [nzSpinning]="isEditLoading" [nzDelay]="0" nzTip="文件上传中...">
+                <ckeditor [editor]="Editor" placeholder="请输入文章内容"
+                          [config]="config" formControlName='content'></ckeditor>
+                <span
+                  style='float:right'
+                  [style.color]='(getContentLength()<2000)?"rgb(95, 95, 95)":"red"'>{{getContentLength()}}
+                  /2000</span>
+              </nz-spin>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" style='max-width: 100px;'>重难点</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+              <nz-radio-group formControlName='keyLevel'>
+                <label nz-radio [nzValue]="1">1星</label>
+                <label nz-radio [nzValue]="2">2星</label>
+                <label nz-radio [nzValue]="3">3星</label>
+              </nz-radio-group>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" style='max-width: 100px;'>是否冲刺</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+              <nz-radio-group formControlName='isSprint'>
+                <label nz-radio [nzValue]="true">是</label>
+                <label nz-radio [nzValue]="false">否</label>
+              </nz-radio-group>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" style='max-width: 100px;'>是否巩固</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+              <nz-radio-group formControlName='isStable'>
+                <label nz-radio [nzValue]="true">是</label>
+                <label nz-radio [nzValue]="false">否</label>
+              </nz-radio-group>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" style='max-width: 100px;'>是否押题</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+              <nz-radio-group formControlName='isFinal'>
+                <label nz-radio [nzValue]="true">是</label>
+                <label nz-radio [nzValue]="false">否</label>
+              </nz-radio-group>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" style='max-width: 100px;'>知识点状态</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+              <nz-radio-group formControlName='opsType'>
+                <label nz-radio [nzValue]="0">不变</label>
+                <label nz-radio [nzValue]="1">新增</label>
+                <label nz-radio [nzValue]="2">变更</label>
+              </nz-radio-group>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" style='max-width: 100px;'>讲解视频</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip='请上传讲解视频' style='min-width: calc(100% - 100px);'>
+              <input nz-input formControlName='explanationVideo' type='hidden'/>
+              <button nz-button nzType="primary" style='margin:0 20px 0 0;' (click)='uploadExplanationVideo("polyway")'>
+                保利威
+              </button>
+              <button nz-button nzType="primary" (click)='uploadExplanationVideo("localVideo")'>本地上传</button>
+              <div class='list-self' cdkDropListGroup #listGroupexplanationVideo>
+                <!--                <div *ngFor='let itemFile of validateForm.value.explanationVideo;let itemFileIndex = index;'-->
+                <!--                     [cdkDropListData]="{item:itemFileIndex,index:itemFileIndex}"-->
+                <!--                     cdkDropList-->
+                <!--                     (cdkDropListDropped)="drop($event,'explanationVideo')"-->
+                <!--                     [title]='itemFile.attachmentName'-->
+                <!--                     class='item-top'-->
+                <!--                >-->
+                <!--                  <div class='item-left' cdkDrag>-->
+                <!--                    <span *cdkDragPlaceholder></span>-->
+                <!--                    <div class="item-text">-->
+                <!--                      {{itemFile.attachmentName}}-->
+                <!--                    </div>-->
+                <!--                    <i nz-icon nzType="edit" nzTheme="outline"-->
+                <!--                       class='edit-item'-->
+                <!--                       (click)='editItem(itemFile)'></i>-->
+                <!--                    <i nz-icon nzType="eye" nzTheme="outline"-->
+                <!--                       class='preview-item'-->
+                <!--                       (click)='previewItem(itemFile)'></i>-->
+                <!--                    <i nz-icon nzType="close-circle" nzTheme="outline"-->
+                <!--                       class='close-circle'-->
+                <!--                       (click)='removeFileItem(itemFile)'></i>-->
+                <!--                  </div>-->
+                <!--                </div>-->
+                <div class='item-top'
+                     cdkDropList
+                     [cdkDropListEnterPredicate]="drag('explanationVideo')"
+                     (cdkDropListDropped)="drop($event,'explanationVideo')"
+                     #placeholderexplanationVideo></div>
+                <div *ngFor='let itemFile of validateForm.value.explanationVideo;let itemFileIndex = index;'
+                     cdkDropList
+                     [cdkDropListEnterPredicate]="drag('explanationVideo')"
+                     (cdkDropListDropped)="drop($event,'explanationVideo')"
+                     [title]='itemFile.attachmentName'
+                     class='item-top'
+                >
+                  <div class='item-left' cdkDrag (cdkDragMoved)="dragMoved($event,'explanationVideo')">
+                    <div class="item-text">
+                      <img [src]="getPreview(itemFile)" alt="thumbnail" class='img-dec'
+                           [class.br5]='isPictureItem(itemFile)'
+                           nz-tooltip [nzTooltipTitle]='itemFile.attachmentName' (click)='previewItem(itemFile)'>
+                      <span class='img-desc'>
+                        {{itemFile.attachmentName}}
+                      </span>
+                    </div>
+                    <i nz-icon nzType="edit" nzTheme="outline"
+                       class='edit-item'
+                       (click)='editItem(itemFile)'></i>
+                    <i nz-icon nzType="eye" nzTheme="outline"
+                       class='preview-item'
+                       (click)='previewItem(itemFile)'></i>
+                    <i nz-icon nzType="close-circle" nzTheme="outline"
+                       class='close-circle'
+                       (click)='removeFileItem(itemFile)'></i>
+                  </div>
+                </div>
+              </div>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <div style='position: absolute;left: 210px;transform: translateY(2px)'
+            >（支持jpg,jpeg,png,bmp,xls,xlsx,docx,pdf,doc,pptx,ppt,mp3,mp4后缀名）</div>
+            <nz-form-label [nzSm]="6" [nzXs]="24" style='max-width: 100px;'>学习资料
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip='请上传学习资料'
+                             style='min-width: calc(100% - 100px);position:relative;'>
+              <nz-spin [nzSpinning]="uploading"
+                       [nzDelay]="0" style='width: 100px;'>
+                <qkc-upload
+                  (percentReport)='percentReport($event)'
+                  (optsChange)='uploading=false;percent=0;'
+                  (afterChange)='startUpload($event)'
+                  uploadDir="structure/learningMaterials"
+                  [showUploadList]='false'
+                  limit="10000"
+                  listType="picture"
+                  acceptType="jpg,jpeg,png,bmp,xls,xlsx,docx,pdf,doc,pptx,ppt,mp3,mp4"
+                  formControlName="learningMaterials">
+                  <div class='cube'>
+                    <i nz-icon nzType="plus" class='learning-materials'></i>
+                  </div>
+                </qkc-upload>
+              </nz-spin>
+              <nz-progress nzStrokeWidth="3" [nzFormat]='formatProgress' nzType="line"
+                           [nzPercent]="percent| number :'1.0-0'"
+                           *ngIf='uploading'
+                           nzSize="small" class='progress-learning-materials'></nz-progress>
+              <!--              <div class='list-self' cdkDropListGroup>-->
+              <!--                <div *ngFor='let itemFile of validateForm.value.learningMaterials;let itemFileIndex = index;'-->
+              <!--                     class='item-top'-->
+              <!--                     [title]='itemFile.name' cdkDropList-->
+              <!--                     [cdkDropListData]="{item:itemFileIndex,index:itemFileIndex}"-->
+              <!--                     (cdkDropListDropped)="drop($event,'learningMaterials')">-->
+              <!--                  <div class='item-left' cdkDrag>-->
+              <!--                    <span *cdkDragPlaceholder></span>-->
+              <!--                    <div class="item-text">-->
+              <!--                      {{itemFile.name}}-->
+              <!--                    </div>-->
+              <!--                    <i nz-icon nzType="eye" nzTheme="outline"-->
+              <!--                       style='position:absolute;cursor:pointer;right:30px;top: 22px;'-->
+              <!--                       (click)='previewItem(itemFile)'></i>-->
+              <!--                    <i nz-icon nzType="close-circle" nzTheme="outline"-->
+              <!--                       style='position:absolute;cursor:pointer;right:10px;top: 22px;'-->
+              <!--                       (click)='removeFileItem(itemFile)'></i>-->
+              <!--                  </div>-->
+              <!--                </div>-->
+              <!--              </div>-->
+              <div class='list-self' cdkDropListGroup #listGrouplearningMaterials>
+                <div class='item-top' cdkDropList [cdkDropListEnterPredicate]="drag('learningMaterials')"
+                     (cdkDropListDropped)="drop($event,'learningMaterials')" #placeholderlearningMaterials></div>
+                <div *ngFor='let itemFile of validateForm.value.learningMaterials;let itemFileIndex = index;'
+                     class='item-top'
+                     [title]='itemFile.name'
+                     cdkDropList
+                     [cdkDropListEnterPredicate]="drag('learningMaterials')"
+                     (cdkDropListDropped)="drop($event,'learningMaterials')"
+                >
+                  <div class='item-left' cdkDrag (cdkDragMoved)="dragMoved($event,'learningMaterials')">
+                    <div class="item-text">
+                      <img [src]="getPreview(itemFile)" alt="thumbnail" class='img-dec'
+                           [class.br5]='isPictureItem(itemFile)'
+                           nz-tooltip [nzTooltipTitle]='itemFile.name' (click)='previewItem(itemFile)'>
+                      <span class='img-desc'>
+                        {{itemFile.name}}
+                      </span>
+                    </div>
+                    <i nz-icon nzType="eye" nzTheme="outline"
+                       style='position:absolute;cursor:pointer;right:30px;top: 22px;'
+                       (click)='previewItem(itemFile)'></i>
+                    <i nz-icon nzType="close-circle" nzTheme="outline"
+                       style='position:absolute;cursor:pointer;right:10px;top: 22px;'
+                       (click)='removeFileItem(itemFile)'></i>
+                  </div>
+                </div>
+              </div>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" style='max-width: 100px;'>是否已完善</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+              <nz-radio-group formControlName='isDone'>
+                <label nz-radio [nzValue]="true">是</label>
+                <label nz-radio [nzValue]="false">否</label>
+              </nz-radio-group>
+            </nz-form-control>
+          </nz-form-item>
+        </form>
+      </div>
+    </nz-spin>
+  </div>
+
+</div>
+
+<!--保利威上传-->
+<ng-template #polywaymodal>
+  <form nz-form [formGroup]="polyway">
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzRequired>视频ID</nz-form-label>
+      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="视频ID不能为空">
+        <input nz-input type="text" formControlName="videoUrl" placeholder="请输入视频ID"
+               (keyup.enter)='confirmUpload("polyway")'/>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzRequired>视频名称</nz-form-label>
+      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="视频名称不能为空">
+        <input nz-input type="text" formControlName="attachmentName" placeholder="请输入视频名称"
+               (keyup.enter)='confirmUpload("polyway")'/>
+      </nz-form-control>
+    </nz-form-item>
+    <!--    <nz-form-item>-->
+    <!--      <nz-form-label [nzSpan]="5" nzRequired>指导讲师</nz-form-label>-->
+    <!--      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="指导讲师不能为空">-->
+    <!--        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="请选择指导讲师" formControlName="teacherId">-->
+    <!--          <nz-option [nzLabel]="item.name" [nzValue]="item.id" *ngFor='let item of teacherList;'></nz-option>-->
+    <!--        </nz-select>-->
+    <!--      </nz-form-control>-->
+    <!--    </nz-form-item>-->
+    <!--    <nz-form-item>-->
+    <!--      <nz-form-label [nzSpan]="5" nzRequired>排序</nz-form-label>-->
+    <!--      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="排序不能为空">-->
+    <!--        <nz-input-number formControlName="seq" (keyup.enter)='confirmUpload("polyway")'></nz-input-number>-->
+    <!--      </nz-form-control>-->
+    <!--    </nz-form-item>-->
+  </form>
+</ng-template>
+<!--本地上传-->
+<ng-template #localvideomodal>
+  <form nz-form [formGroup]="localVideo">
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzRequired>视频</nz-form-label>
+      <nz-form-control [nzSpan]="18" nzErrorTip="请上传视频">
+        <nz-spin [nzSpinning]="loading"
+                 [nzDelay]="0">
+          <qkc-upload
+            uploadDir="structure/learningMaterials"
+            limit="1"
+            listType="picture-card"
+            acceptType="mp4"
+            *ngIf='showLocalUpload'
+            formControlName="videoUrl"
+            (optsChange)='optsChange($event)'
+            #qkcupload>
+            <i nz-icon nzType="upload" style='font-size:20px;'></i>
+          </qkc-upload>
+          <div>(支持mp4视频类型,注意不要重名)</div>
+        </nz-spin>
+      </nz-form-control>
+    </nz-form-item>
+    <!--    <nz-form-item>-->
+    <!--      <nz-form-label [nzSpan]="5" nzRequired>指导讲师</nz-form-label>-->
+    <!--      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="指导讲师不能为空">-->
+    <!--        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="请选择指导讲师" formControlName="teacherId">-->
+    <!--          <nz-option [nzLabel]="item.name" [nzValue]="item.id" *ngFor='let item of teacherList;'></nz-option>-->
+    <!--        </nz-select>-->
+    <!--      </nz-form-control>-->
+    <!--    </nz-form-item>-->
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzRequired>视频名称</nz-form-label>
+      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="视频名称不能为空">
+        <input nz-input type="text" formControlName="attachmentName" placeholder="请输入视频名称"
+               (keyup.enter)='confirmUpload("localVideo")'/>
+      </nz-form-control>
+    </nz-form-item>
+
+    <!--    <nz-form-item>-->
+    <!--      <nz-form-label [nzSpan]="5" nzRequired>排序</nz-form-label>-->
+    <!--      <nz-form-control [nzSpan]="18">-->
+    <!--        <nz-input-number formControlName="seq" (keyup.enter)='confirmUpload("localVideo")'></nz-input-number>-->
+    <!--      </nz-form-control>-->
+    <!--    </nz-form-item>-->
+
+  </form>
+</ng-template>
+<!--导入图谱-->
+<ng-template #localuploadmodal>
+  <form nz-form [formGroup]="localUploadKnowledge">
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzRequired style='max-width:82px;'>知识图谱</nz-form-label>
+      <nz-form-control class='desc-container'>
+        <nz-spin [nzSpinning]="loading"
+                 [nzDelay]="0">
+          <nz-upload
+            class="upload-list-inline"
+            nzListType="picture"
+            [nzRemove]='removeFileSelf()'
+            [nzShowUploadList]='{showPreviewIcon: false, showRemoveIcon: true, showDownloadIcon: false}'
+            [nzBeforeUpload]="beforeKnowledgeUpload()"
+            [nzCustomRequest]="customKnowledgeRequest()"
+            #qkcupload
+          >
+            <button nz-button [disabled]='localUploadKnowledge.value.excelUrl===""?false:true'
+                    style='margin-bottom: 32px;'>
+              <span><i nz-icon nzType="upload" style='font-size:20px;'></i>上传文件</span>
+            </button>
+          </nz-upload>
+          <span class="desc">只有知识图谱为空时才能上传图谱</span>
+          <button nz-button style='position:absolute;left:126px;' (click)='downloadTemplate()'>
+          <span><i nz-icon nzType="snippets" style='font-size:20px;margin-right:20px'
+                   nzTheme="outline"></i>模板下载</span>
+          </button>
+        </nz-spin>
+        <ng-container *ngIf="knowledgeUploading">
+          <nz-progress nzStrokeWidth="3" [nzPercent]="uploadPercent | number :'1.0-0'" nzSize="small"></nz-progress>
+        </ng-container>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</ng-template>
+<!--保利威预览-->
+<!--<nz-modal [(nzVisible)]="isPreviewpolyway" (nzOnCancel)="isPreviewpolyway=false" [nzFooter]='null' [nzTitle]='null'-->
+<!--          nzWidth='600' [nzBodyStyle]='{padding:0,height:"500px"}' *ngIf='isPreviewpolyway'>-->
+<!--  <iframe-->
+<!--    allowfullscreen='true'-->
+<!--    [src]="resourceUrl"-->
+<!--    style="width: 100%;border: none;height: 100%">-->
+<!--  </iframe>-->
+<!--</nz-modal>-->
+
+<!--<nz-modal [(nzVisible)]="isPreviewpolyway || isPreviewOther" [nzFooter]='null'-->
+<!--          [nzTitle]='isPreviewOther?previewTitle:null'-->
+<!--          [nzClassName]='isPreviewOther&&fullscreen?"modal-wrap":undefined'-->
+<!--          [nzWidth]='modalWidth' [nzBodyStyle]='modalBodyStyle' *ngIf='isPreviewpolyway||isPreviewOther;'-->
+<!--          (nzOnCancel)="cancelFullscreen()">-->
+<!--  <iframe-->
+<!--    id='iframeVideo'-->
+<!--    allowfullscreen='true'-->
+<!--    [src]="resourceUrl"-->
+<!--    style="width: 100%;border: none;height: 100%">-->
+<!--  </iframe>-->
+<!--  <ng-container *ngIf='isPreviewOther'>-->
+<!--    <i nz-icon nzType="fullscreen" nzTheme="outline" (click)='enterFullscreen(false)' *ngIf='fullscreen'-->
+<!--       class='icon-fullscreen'></i>-->
+<!--    <i nz-icon nzType="fullscreen-exit" nzTheme="outline" (click)='enterFullscreen(true)' *ngIf='!fullscreen'-->
+<!--       class='icon-fullscreen'></i>-->
+<!--  </ng-container>-->
+<!--</nz-modal>-->
+<app-resource-preview-modal [isPreviewpolyway]='isPreviewpolyway' [previewTitle]='previewTitle'
+                            [resourceUrl]='resourceUrl' *ngIf='previewStart'
+                            (closePreview)='closePreview()'></app-resource-preview-modal>
+
+<!--阿里云预览-->
+<qkc-attachment-show-modal
+  [(isShow)]="previewVisible"
+  [url]="previewUrl">
+</qkc-attachment-show-modal>
+
+<!--钉钉审批-->
+<ng-template #nailingTmp let-params>
+  <div class='ml40'>
+    <div class='mt20'>
+      课程编码： {{code}}
+    </div>
+    <div class='mt10'>
+      课程名称： {{name}}
+    </div>
+    <div class='mt20'>
+      本次将对知识图谱以下内容进行审批
+    </div>
+    <div class='mt10'>
+      1、知识点新增了{{addKnowledgePoints}}个
+    </div>
+    <div class='mt10'>
+      2、知识点删除了{{delKnowledgePoints}}个
+    </div>
+  </div>
+</ng-template>

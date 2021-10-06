@@ -1,0 +1,53 @@
+@import '../less/exercises-lib.less';
+@import 'exercise.less';
+
+.form-table {
+  table-layout: fixed;
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  text-align: center;
+  border: 1px solid @border-color;
+
+  th,
+  td,
+  caption {
+    padding: 8px;
+    word-break: break-all;
+  }
+
+  td{
+    position: relative;
+  }
+
+  caption {
+    caption-side: top;
+    text-align: center;
+    border: 1px solid @border-color;
+    border-bottom: none;
+  }
+
+  th, td {
+    border: 1px solid @border-color;
+  }
+}
+
+.score-description{
+  padding:10px;
+  background: @gray-bg;
+  color: @input-placeholder-bg;
+}
+
+.right-anwser{
+  color: @primary-color;
+}
+
+.wrong-answer{
+  color:@wrong-color-text;
+}
+
+.icon{
+  position: absolute;
+  top: 2px;
+  right: 2px;
+}

@@ -1,0 +1,439 @@
+<div class="container">
+  <div class='item'>
+    <div class='item-left'>
+      <span style='color:red;margin-right:10px;' *ngIf='examTimeRequire&&intellectualAdaptation'>*</span>国家考试日期：
+    </div>
+    <nz-date-picker [(ngModel)]="examTime"
+                    (nzOnOpenChange)='timeOpen($event,"examTime")'
+                    (ngModelChange)="timeChange($event,'examTime')"
+                    style='margin-left:20px;width:200px' [disabled]='preview==="1"'></nz-date-picker>
+  </div>
+  <div class='item'>
+    <div class='item-left'>
+      <span style='color:red;margin-right:10px;'>*</span>智适应：
+    </div>
+    <nz-switch [(ngModel)]="intellectualAdaptation" nzCheckedChildren="开" nzUnCheckedChildren="关"
+               style='margin-left:20px;' [nzDisabled]='preview==="1"||isStandard'></nz-switch>
+  </div>
+  <ng-container *ngIf='intellectualAdaptation'>
+    <div class='item' *ngIf='teachType==="22"'>
+      <div class='item-left'>
+        <span style='color:red;margin-right:10px;'>*</span>指导讲师：
+      </div>
+      <ng-container *ngIf='teacherData.length'>
+        <div class='instructor-teach'
+             [class.active]='clickFlag[i]'
+             [ngStyle]='{cursor: preview==="0"?"":"not-allowed"}'
+             (click)='getflag(i,item)'
+             *ngFor='let item of teacherData;let i= index;'>
+          <div class='title'>
+            {{item.teacherName}}
+          </div>
+          <div class='sub-title'>
+            缺少{{item.lackVideoNum}}个主视频
+          </div>
+          <div class='icon-teacher'>
+            <i nz-icon nzType="check" nzTheme="outline"></i>
+          </div>
+        </div>
+      </ng-container>
+      <span *ngIf='!teacherData.length' style='margin-left: 10px;'>暂无数据</span>
+    </div>
+
+
+    <div class='item'>
+      <div class='item-left'>
+        <span style='color:red;margin-right:10px;'>*</span>章节绑定：
+      </div>
+      <button nz-button nzType="primary" style='margin-left:20px;' (click)='bind()' [disabled]='preview==="1"'>绑定
+      </button>
+      <nz-spin [nzSpinning]="untieLoading" [nzDelay]="0">
+        <nz-table #basicTable [nzData]="listOfData" style='margin:20px 0 0 130px' [nzPageSize]='5'>
+          <thead>
+          <tr>
+            <th>课包结构</th>
+            <th>知识图谱</th>
+            <th>操作</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let data of basicTable.data">
+            <td>{{ data.sectionName }}</td>
+            <td nz-tooltip [nzTooltipTitle]="data.knowledgeUnits">{{ getBingData(data.knowledgeUnits) }}</td>
+            <td>
+              <a (click)="modify(data)" style='margin-right:5px;'>修改</a>
+              <a (click)="untie(data)" style='color:red;'>解绑</a>
+            </td>
+          </tr>
+          </tbody>
+        </nz-table>
+      </nz-spin>
+      <nz-divider></nz-divider>
+
+      <ng-container *ngIf='teachType==="22"'>
+        <div class='item-left'>
+          <span style='color:red;margin-right:10px;'>*</span>学习计划：<i nz-icon nzType="question-circle" nzTheme="outline"
+                                                                     nz-tooltip nzTooltipTitle="学习周期不能大于课包中小节总数"
+                                                                     class='question-circle'
+                                                                     [nzTooltipOverlayStyle]='{"max-width": "255px"}'></i>
+        </div>
+        <nz-table style='margin:20px 0 0 130px' [nzFrontPagination]='false' [nzData]="dataSet">
+          <thead>
+          <tr>
+            <th>适用人群</th>
+            <th>学习周期(共{{totalSectionNum}}节）</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>
+              适合初学
+            </td>
+            <td>
+              <label nz-checkbox [(ngModel)]="applicableZeroBasis"
+                     [disabled]='preview==="1"'
+                     (ngModelChange)='applicableChange($event,"juniorWeekNum","applicableZeroBasisWeek")'
+                     style='margin-right:20px;'></label>计划1
+              <nz-input-number [disabled]="!applicableZeroBasis||preview==='1'" [(ngModel)]="applicableZeroBasisWeek"
+                               [nzMin]="1"
+                               (nzFocus)='applicableFocus("applicableZeroBasisWeek")'
+                               nzPlaceHolder='请输入周期'
+                               (nzBlur)='applicableWeekChange($event,"juniorWeekNum","applicableZeroBasisWeek")'
+                               [nzStep]="1" style='margin:0 10px;min-width:120px'></nz-input-number>
+              周
+            </td>
+          </tr>
+          <tr>
+            <td>
+              适合有基础
+            </td>
+            <td>
+              <label nz-checkbox [(ngModel)]="applicableHasAFoundation"
+                     [disabled]='preview==="1"'
+                     (ngModelChange)='applicableChange($event,"middleWeekNum","applicableHasAFoundationWeek")'
+                     style='margin-right:20px;'></label>计划2
+              <nz-input-number [disabled]="!applicableHasAFoundation||preview==='1'"
+                               [(ngModel)]="applicableHasAFoundationWeek"
+                               [nzMin]="1" [nzStep]="1" style='margin:0 10px;min-width:120px'
+                               nzPlaceHolder='请输入周期'
+                               (nzFocus)='applicableFocus("applicableHasAFoundationWeek")'
+                               (nzBlur)='applicableWeekChange($event,"middleWeekNum","applicableHasAFoundationWeek")'
+              ></nz-input-number>
+              周
+            </td>
+          </tr>
+          <tr>
+            <td>
+              适合速成
+            </td>
+            <td>
+              <label nz-checkbox [(ngModel)]="applicableExperts"
+                     [disabled]='preview==="1"'
+                     (ngModelChange)='applicableChange($event,"seniorWeekNum","applicableExpertsWeek")'
+                     style='margin-right:20px;'></label>计划3
+              <nz-input-number [disabled]="!applicableExperts||preview==='1'" [(ngModel)]="applicableExpertsWeek"
+                               [nzMin]="1"
+                               [nzStep]="1" style='margin:0 10px;min-width:120px'
+                               nzPlaceHolder='请输入周期'
+                               (nzFocus)='applicableFocus("applicableExpertsWeek")'
+                               (nzBlur)='applicableWeekChange($event,"seniorWeekNum","applicableExpertsWeek")'
+              ></nz-input-number>
+              周
+            </td>
+          </tr>
+          </tbody>
+        </nz-table>
+        <nz-divider></nz-divider>
+      </ng-container>
+      <!--      <div>-->
+      <!--        <div class='item-left'>-->
+      <!--          <span style='color:red;margin-right:10px;'>*</span>精讲阶段：-->
+      <!--        </div>-->
+      <!--        <nz-switch [(ngModel)]="isDailyOn" nzCheckedChildren="开"-->
+      <!--                   (ngModelChange)="isSwitchOnChange('isDailyOn')"-->
+      <!--                   nzUnCheckedChildren="关"-->
+      <!--                   style='margin-left:20px;' [nzDisabled]='preview==="1"||isStandard'></nz-switch>-->
+      <!--      </div>-->
+      <!--      <nz-divider></nz-divider>-->
+      <div>
+        <div class='item-left'>
+          <span style='color:red;margin-right:10px;'>*</span>冲刺阶段：
+        </div>
+        <nz-switch [nzDisabled]='preview==="1"||isStandard' [(ngModel)]="isSprintOn" nzCheckedChildren="开"
+                   nzUnCheckedChildren="关"
+                   (ngModelChange)="isSwitchOnChange('isSprintOn')"
+                   style='margin-left:20px;'></nz-switch>
+      </div>
+      <div *ngIf='isSprintOn' style='margin-top:20px'>
+        <div class='item-left'>
+          <span style='color:red;margin-right:10px;'>*</span>冲刺开始日期：
+        </div>
+        <nz-date-picker [(ngModel)]="sprintTime"
+                        (nzOnOpenChange)='timeOpen($event,"sprintTime")'
+                        (ngModelChange)="timeChange($event,'sprintTime')"
+                        style='margin-left:20px;width:200px' [disabled]='preview==="1"'></nz-date-picker>
+      </div>
+      <!--      <div class='item'>-->
+      <!--        <div class='item-left'>-->
+      <!--          <span style='color:red;margin-right:10px;'>*</span>冲刺考试：-->
+      <!--        </div>-->
+      <!--        <div class='list-container'>-->
+      <!--          <div class='list'>-->
+      <!--            <div style='float:left'>-->
+      <!--              <i nz-icon nzType="file-text" nzTheme="outline"></i>-->
+      <!--              <span style='margin-left:20px;'>试卷名称</span>-->
+      <!--            </div>-->
+      <!--            <div style='float:right'>-->
+      <!--              <div class='operat'>-->
+      <!--                <i nz-icon nzType="eye" nzTheme="outline" style='cursor:pointer;'></i>-->
+      <!--                <span class='icon-del'>预览</span>-->
+      <!--              </div>-->
+      <!--              <div class='operat' *ngIf='preview==="0"'>-->
+      <!--                <i nz-icon nzType="edit" nzTheme="outline" style='cursor:pointer;'></i>-->
+      <!--                <span class='icon-del'>编辑</span>-->
+      <!--              </div>-->
+      <!--              <div class='operat' *ngIf='preview==="0"'>-->
+      <!--                <i nz-icon nzType="delete" nzTheme="outline" style='cursor:pointer;'></i>-->
+      <!--                <span class='icon-del'>删除</span>-->
+      <!--              </div>-->
+      <!--            </div>-->
+      <!--          </div>-->
+      <!--        </div>-->
+
+      <!--      </div>-->
+      <!--      <button nz-button style='margin-left:100px' (click)='addVolume()' *ngIf='preview==="0"'>新增组卷</button>-->
+      <!--      <button nz-button style='margin-left:20px' *ngIf='preview==="0"'>试卷调用</button>-->
+      <nz-divider></nz-divider>
+      <div>
+        <div class='item-left'>
+          <span style='color:red;margin-right:10px;'>*</span>密押阶段：
+        </div>
+        <nz-switch [(ngModel)]="isFinalOn" nzCheckedChildren="开" nzUnCheckedChildren="关"
+                   (ngModelChange)="isSwitchOnChange('isFinalOn')"
+                   style='margin-left:20px;' [nzDisabled]='preview==="1"||isStandard'></nz-switch>
+      </div>
+
+
+      <div *ngIf='isFinalOn' style='margin-top:20px'>
+        <div class='item-left'>
+          <span style='color:red;margin-right:10px;'>*</span>密押开始日期：
+        </div>
+        <nz-date-picker [(ngModel)]="finalTime"
+                        (nzOnOpenChange)='timeOpen($event,"finalTime")'
+                        (ngModelChange)="timeChange($event,'finalTime')"
+                        style='margin-left:20px;width:200px' [disabled]='preview==="1"'></nz-date-picker>
+      </div>
+
+      <!--      <div class='item'>-->
+      <!--        <div class='item-left'>-->
+      <!--          <span style='color:red;margin-right:10px;'>*</span>押题考试：-->
+      <!--        </div>-->
+      <!--        <div class='list-container'>-->
+      <!--          <div class='list'>-->
+      <!--            <div style='float:left'>-->
+      <!--              <i nz-icon nzType="file-text" nzTheme="outline"></i>-->
+      <!--              <span style='margin-left:20px;'>试卷名称</span>-->
+      <!--            </div>-->
+      <!--            <div style='float:right'>-->
+      <!--              <div class='operat'>-->
+      <!--                <i nz-icon nzType="eye" nzTheme="outline" style='cursor:pointer;'></i>-->
+      <!--                <span class='icon-del'>预览</span>-->
+      <!--              </div>-->
+      <!--              <div class='operat'>-->
+      <!--                <i nz-icon nzType="edit" nzTheme="outline" style='cursor:pointer;' *ngIf='preview==="0"'></i>-->
+      <!--                <span class='icon-del'>编辑</span>-->
+      <!--              </div>-->
+      <!--              <div class='operat'>-->
+      <!--                <i nz-icon nzType="delete" nzTheme="outline" style='cursor:pointer;' *ngIf='preview==="0"'></i>-->
+      <!--                <span class='icon-del'>删除</span>-->
+      <!--              </div>-->
+      <!--            </div>-->
+      <!--          </div>-->
+      <!--        </div>-->
+      <!--      </div>-->
+      <!--      <button nz-button style='margin-left:100px' (click)='addVolume()' *ngIf='preview==="0"'>新增组卷</button>-->
+      <!--      <button nz-button style='margin-left:20px' *ngIf='preview==="0"'>试卷调用</button>-->
+    </div>
+  </ng-container>
+</div>
+
+
+<!--<nz-modal [(nzVisible)]="isVisible" [nzMaskClosable]="false" nzTitle="考试设置" (nzOnCancel)="isVisible=false">-->
+<!--  <form nz-form [formGroup]="examSettingForm">-->
+<!--    <nz-form-item>-->
+<!--      <nz-form-label [nzSpan]="5" nzRequired>考试时长</nz-form-label>-->
+<!--      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="不能为空">-->
+<!--        <nz-input-number [nzMin]="1" [nzStep]="1"-->
+<!--                         formControlName="examLength" style='margin-right:10px'></nz-input-number>-->
+<!--        分钟-->
+<!--      </nz-form-control>-->
+<!--    </nz-form-item>-->
+
+<!--    <nz-form-item>-->
+<!--      <nz-form-label [nzSpan]="5" nzRequired>是否机考</nz-form-label>-->
+<!--      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="不能为空">-->
+<!--        <nz-radio-group formControlName='isComputer'>-->
+<!--          <label nz-radio nzValue="1">是</label>-->
+<!--          <label nz-radio nzValue="0">否</label>-->
+<!--        </nz-radio-group>-->
+<!--      </nz-form-control>-->
+<!--    </nz-form-item>-->
+
+
+<!--    <nz-form-item *ngIf='examSettingForm.value.isComputer==="1"'>-->
+<!--      <nz-form-label [nzSpan]="5" nzRequired>机考类型</nz-form-label>-->
+<!--      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="不能为空">-->
+<!--        <nz-select formControlName="computerType">-->
+<!--          <nz-option nzValue="1" nzLabel="初级"></nz-option>-->
+<!--          <nz-option nzValue="2" nzLabel="中级"></nz-option>-->
+<!--          <nz-option nzValue="3" nzLabel="税务师"></nz-option>-->
+<!--        </nz-select>-->
+<!--      </nz-form-control>-->
+<!--    </nz-form-item>-->
+
+<!--    <nz-form-item>-->
+<!--      <nz-form-label [nzSpan]="5" nzRequired>有效时间</nz-form-label>-->
+<!--      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="不能为空">-->
+<!--        <nz-date-picker (ngModelChange)="onChange($event)" formControlName="deadTime"></nz-date-picker>-->
+<!--      </nz-form-control>-->
+<!--    </nz-form-item>-->
+
+<!--    <nz-form-item>-->
+<!--      <nz-form-label [nzSpan]="5" nzRequired>答题次数</nz-form-label>-->
+<!--      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="不能为空">-->
+<!--        <nz-radio-group formControlName='answerTimes' [(ngModel)]='examSettingForm.value.answerTimes'>-->
+<!--          <label nz-radio [nzValue]="0">无限制</label>-->
+<!--          <label nz-radio [nzValue]="1">-->
+<!--            <nz-input-number [(ngModel)]="value" [nzMin]="1" [nzMax]="100" [nzStep]="1"-->
+<!--                             [ngModelOptions]="{standalone: true}"></nz-input-number>-->
+<!--          </label>-->
+<!--        </nz-radio-group>-->
+<!--      </nz-form-control>-->
+<!--    </nz-form-item>-->
+
+
+<!--    <nz-form-item>-->
+<!--      <nz-form-label [nzSpan]="5" nzRequired>出成绩</nz-form-label>-->
+<!--      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="不能为空">-->
+<!--        <nz-radio-group formControlName='resultWay'>-->
+<!--          <label nz-radio nzValue="1">交卷即出</label>-->
+<!--        </nz-radio-group>-->
+<!--      </nz-form-control>-->
+<!--    </nz-form-item>-->
+
+
+<!--  </form>-->
+<!--  <div *nzModalFooter>-->
+<!--    <button nz-button (click)="isVisible = false">取消</button>-->
+<!--    <button nz-button nzType="primary" (click)="saveExamination()">确定</button>-->
+<!--  </div>-->
+<!--</nz-modal>-->
+
+
+<nz-modal [(nzVisible)]="chapterBindingVisible" [nzMaskClosable]="false" nzTitle="章节绑定"
+          (nzOnCancel)="chapterBindingVisible=false;"
+          [nzFooter]='null'
+          nzClassName='self-modal'
+          [nzBodyStyle]='{padding:0,"overflow": "auto"}' [nzWidth]='800'>
+  <nz-spin [nzSpinning]="bindLoading" [nzDelay]="0">
+    <div class='tree-container'>
+      <div class='tree-left'>
+        <span class='tree-title'>课包结构</span>
+        <div class='struct-container'>
+          <app-course-structure-tree
+            style='padding-top: 40px;'
+            type='operate'
+            *ngIf='lessonPackageStructureVisible'
+            [chapterSelectable]="false"
+            [coursePacketId]="coursePacketId"
+            [defaultSection]='defaultSection'
+            [defaultExpandedKeys]='defaultChapter'
+            (nodeChange)="nodeChange($event)">
+          </app-course-structure-tree>
+        </div>
+      </div>
+      <div class='tree-right'>
+        <span class='tree-title'>知识图谱结构</span>
+        <nz-spin [nzSpinning]="knowledgeGraphLoading" [nzDelay]="0" style='padding: 52px 0 0 20px;'>
+          <app-simple-knowledgegraph-tree
+            *ngIf="knowledgeGraphStructureVisible"
+            model="check"
+            [isExpandAll]='false'
+            [professionId]="knowledgeSubjectId"
+            [defaultCheckedKeys]="defaultTreeKey"
+            (nodeChange)="nodeChangeKnowledge($event)"
+            [all]='true'>
+          </app-simple-knowledgegraph-tree>
+        </nz-spin>
+      </div>
+    </div>
+    <div
+      class='bind-button'>
+      <button nz-button (click)="bindKnowledgePoints()" nzType='primary'>绑定</button>
+    </div>
+  </nz-spin>
+</nz-modal>
+
+
+<!--<ng-template #addExam>-->
+<!--  <form nz-form [formGroup]="addExamFrom">-->
+<!--    <nz-form-item>-->
+<!--      <nz-form-label [nzSpan]="5" nzRequired>任务名称</nz-form-label>-->
+<!--      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="任务名称不能为空">-->
+<!--        <input nz-input type="text" formControlName="missionName" placeholder="请输入任务名称"/>-->
+<!--      </nz-form-control>-->
+<!--    </nz-form-item>-->
+<!--    <nz-form-item>-->
+<!--      <nz-form-label [nzSpan]="5" nzRequired>组卷方式</nz-form-label>-->
+<!--      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="组卷方式不能为空">-->
+<!--        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="请选择组卷方式" formControlName="formingMethod">-->
+<!--          <nz-option nzLabel="选题/录题组卷" nzValue="1"></nz-option>-->
+<!--          <nz-option nzLabel="题型难度随机组卷" nzValue="2"></nz-option>-->
+<!--          <nz-option nzLabel="知识点难度抽题组卷" nzValue="3"></nz-option>-->
+<!--        </nz-select>-->
+<!--      </nz-form-control>-->
+<!--    </nz-form-item>-->
+<!--  </form>-->
+<!--</ng-template>-->
+
+
+<!--<nz-modal [(nzVisible)]="examListPreview" (nzOnCancel)="examListPreview=false" nzTitle='选择试卷'-->
+<!--          nzWidth='1000'>-->
+<!--  <div class='header'>-->
+<!--    <div class='header-container'>-->
+<!--      <div class='header-item'>-->
+<!--        <label style='min-width:90px;line-height:32px'>组卷方式: </label>-->
+<!--        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="请选择组卷方式" [(ngModel)]="selectedValue"-->
+<!--                   style='margin-right: 20px;width:calc(100% - 100px);flex:1'>-->
+<!--          <nz-option nzValue="1" nzLabel="选题组卷/录题组卷"></nz-option>-->
+<!--          <nz-option nzValue="2" nzLabel="题型难度随机组卷"></nz-option>-->
+<!--          <nz-option nzValue="3" nzLabel="知识点难度抽题组卷"></nz-option>-->
+<!--        </nz-select>-->
+<!--      </div>-->
+<!--      <button nz-button nzType="primary" (click)="search()">查询</button>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--  <nz-table #basicTable [nzData]="listOfData">-->
+<!--    <thead>-->
+<!--    <tr>-->
+<!--      <th>Name</th>-->
+<!--      <th>Age</th>-->
+<!--      <th>Address</th>-->
+<!--      <th>Action</th>-->
+<!--    </tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    <tr *ngFor="let data of basicTable.data">-->
+<!--      <td>{{ data.name }}</td>-->
+<!--      <td>{{ data.age }}</td>-->
+<!--      <td>{{ data.address }}</td>-->
+<!--      <td>-->
+<!--        <a>Action 一 {{ data.name }}</a>-->
+<!--        <nz-divider nzType="vertical"></nz-divider>-->
+<!--        <a>Delete</a>-->
+<!--      </td>-->
+<!--    </tr>-->
+<!--    </tbody>-->
+<!--  </nz-table>-->
+
+<!--</nz-modal>-->

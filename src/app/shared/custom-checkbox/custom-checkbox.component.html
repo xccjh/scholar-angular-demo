@@ -1,0 +1,4 @@
+<ng-container *ngFor="let item of labelArr">
+    <span [ngClass]="{active: isContain(item)>=0, cusBorder: isBorder}"
+        (click)="selectItem(item)" >{{ item.name }}</span>
+</ng-container>

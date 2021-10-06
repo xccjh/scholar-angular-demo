@@ -1,0 +1,56 @@
+<app-exercises-header></app-exercises-header>
+<nz-spin class="spin" [nzSpinning]="isLoading" nzSimple nzSize='large'
+         [nzTip]="getTips()" style='text-align: center;transform: translateY(300px);'>
+</nz-spin>
+<div class='container'>
+  <ng-container *ngFor='let item of smartQuestion;let i=index'>
+    <ng-container *ngFor='let itemType of item | keyvalue'>
+      <ng-container *ngIf='itemType.key===currenType && currentIndex===(i)'>
+        <app-smart-question
+          (isLast)='getLastStatus($event)'
+          [idx]='i'
+          [currenType]='currenType'
+          [current]='getCurrentNumber()'
+          *ngIf='smartQuestion.length'
+          [submitted]='submitted'
+          [smartQuestion]='smartQuestion'
+          [paramExpand]='paramExpand'
+          [paperId]='paperId'
+          [paperUuid]='paperUuid'
+          [knowledgePointsParam]='knowledgePointsParam'
+          [isPreviewpolyway]='isPreviewpolyway'
+          [videoAnalysis]='videoAnalysis'
+          [markQuestion]='markQuestion'
+          (showModalEmit)='showModalEmit($event)'
+          (updateRecord)='updateRecordChild()'
+        ></app-smart-question>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+  <div class='button-cover' *ngIf='smartQuestion.length>0'>
+    <div class='right'>
+      <div class='button-container'>
+        <button nz-button nzType="primary" nzShape="round" class='button-answer'
+                (click)='nextStep()'
+                *ngIf='submitted.flag'>{{ifLastQuestion() ? '查看成绩' : '下一题'}}
+        </button>
+        <button nz-button nzType="primary" nzShape="round" class='button-answer'
+                (click)='submitAnswer()' *ngIf='!submitted.flag'>提交答案
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+

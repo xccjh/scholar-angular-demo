@@ -1,0 +1,23 @@
+<div class="label-item-content-item" *ngIf="!isShow">
+  <i nz-icon nzType="edit" nzTheme="outline" (click)="edit()"></i>
+  <span>{{ data?.tagName }}</span>
+  <i nz-icon nzType="minus-circle" nzTheme="outline" (click)=del()></i>
+</div>
+
+<ng-container *ngIf="isShow">
+  <div class="label-input-container">
+    <div class="label-input">
+      <input
+        type="text"
+        nz-input
+        (keyup.enter)="confirm()"
+        [(ngModel)]="value" />
+    </div>
+
+    <div class="label-icon">
+      <i nz-icon nzType="check" nzTheme="outline" (click)="confirm()"></i>
+      <i nz-icon nzType="close" nzTheme="outline"
+        (click)="close()"></i>
+    </div>
+  </div>
+</ng-container>

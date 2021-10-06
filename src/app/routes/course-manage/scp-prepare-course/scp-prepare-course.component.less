@@ -1,0 +1,300 @@
+.container {
+  width: 100%;
+  height: 100%;
+
+  .header {
+    box-sizing: border-box;
+    width: 100%;
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+
+    .font-question-fill {
+      font-size: 20px;
+      cursor: pointer;
+      color: white;
+      margin: 0 10px;
+      background-color: #1890ff;
+      border-radius: 50%;
+    }
+
+    .title {
+      font-size: 16px;
+    }
+
+    [nz-button] {
+      margin-right: 10px;
+    }
+  }
+
+  .step {
+    height: 50px;
+    box-sizing: border-box;
+    padding: 10px 15px;
+
+    .font-question {
+      font-size: 20px;
+      margin: 0 10px;
+      cursor: pointer;
+      color: #1890ff;
+      border-radius: 50%;
+      font-weight: 300
+    }
+  }
+
+  .gap {
+    height: 20px;
+    background-color: #F0F2F5;
+  }
+
+  .content {
+    width: 100%;
+    height: calc(100% - 120px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    // 内部tab
+    ::ng-deep .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-tab {
+      padding: 10px 15px;
+    }
+
+    .step-tab {
+      width: 100%;
+      height: 100%;
+
+      ::ng-deep .ant-tabs-content {
+        width: 100%;
+        height: 100%;
+
+        .ant-tabs-tabpane {
+          height: 100% !important;
+        }
+      }
+
+      .course-setting-item {
+        padding: 20px 60px;
+
+        &.pt0 {
+          padding-top: 0
+        }
+
+        .item-label {
+          min-width: 130px;
+          display: inline-block;
+        }
+      }
+
+      .item {
+        &.pb20 {
+          padding-bottom: 40px;
+        }
+
+        .item-left {
+          display: inline-block;
+          width: 130px;
+          text-align: right;
+        }
+
+        .item-label {
+          display: inline-block;
+          width: 130px;
+          text-align: right;
+          &.w142 {
+            width:142px;
+          }
+        }
+      }
+
+      .module-tree {
+        padding: 20px 24px;
+
+        &.pt20 {
+          padding-top: 20px;
+        }
+
+        .list-container {
+          margin: 20px 60px;
+
+          &.pt20 {
+            padding-top: 20px;
+          }
+
+          .list-item {
+            margin-bottom: 20px;
+            overflow: hidden;
+
+            .gk-text {
+              width: 70px;
+              line-height: 42px;
+            }
+          }
+
+          .list {
+            background: #fbfbfb;
+            padding: 10px 20px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            border-radius: 5px;
+            box-shadow: 1px 1px 8px #dfdfdf;
+
+            .icon-pre {
+              display: inline-block;
+              width: 22px;
+              height: 22px;
+              border-radius: 50%;
+              text-align: center;
+              color: white;
+              background-color: #39b097;
+              vertical-align: middle;
+              margin-right: 20px;
+            }
+
+            .icon-text {
+              line-height: 34px;
+
+              &.yellow {
+                background-color: #feca59;
+              }
+            }
+
+
+            &:hover {
+              box-shadow: 2px 2px 6px #dfdfdf;
+            }
+
+            .icon-del {
+              float: right;
+              margin-left: 10px;
+              cursor: pointer;
+              color: red;
+            }
+
+            .lh34 {
+              line-height: 34px;
+            }
+
+            .mr20 {
+              margin-right: 20px;
+            }
+
+            .ml10 {
+              margin-left: 10px;
+            }
+
+            .disable {
+              cursor: not-allowed; //是禁用的样式 一个圆圈中间一个斜杠
+            }
+
+            .icon {
+              cursor: pointer;
+              line-height: 38px;
+            }
+
+            .icon-disable {
+              line-height: 38px;
+              color: #bfb6b6;
+              cursor: not-allowed
+            }
+
+            .text-disbale {
+              color: #bfb6b6;
+              cursor: not-allowed
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// 章节绑定弹框
+.tree-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  padding: 0 0 55px;
+
+  .tree-left {
+    flex: 1;
+    float: left;
+    max-height: 400px;
+    overflow: auto;
+
+    .struct-container {
+      padding-left: 20px;
+      padding-top: 50px;
+    }
+  }
+
+  .tree-right {
+    flex: 1;
+    float: right;
+    max-height: 400px;
+    overflow: auto;
+  }
+
+  .tree-title {
+    font-size: 16px;
+    position: absolute;
+    height: 56px;
+    background: white;
+    width: 50%;
+    z-index: 99999;
+    padding: 20px 0 0 20px;
+  }
+}
+
+.bind-button {
+  text-align: right;
+  border-top: 1px solid #f0f0f0;
+  padding: 10px 20px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: white;
+  z-index: 9999;
+}
+
+//提交审批弹框
+.title-modal {
+  height: 50px;
+  line-height: 50px;
+  font-size: 18px;
+  padding-left: 20px;
+}
+
+//不能下一步
+.body-modal {
+  padding: 0 20px;
+  margin-top: 20px;
+}
+
+.button-modal {
+  text-align: right;
+  padding: 20px;
+}
+
+// 查看更多弹框
+.chapter-list {
+  line-height: 30px;
+
+  &:last-child {
+    padding-bottom: 30px;
+  }
+
+  .chapter-name {
+  }
+
+  .icon-arrow {
+    cursor: pointer;
+    vertical-align: baseline;
+  }
+
+  .festival-list {
+    line-height: 30px;
+    padding-left: 20px;
+  }
+}
+
+

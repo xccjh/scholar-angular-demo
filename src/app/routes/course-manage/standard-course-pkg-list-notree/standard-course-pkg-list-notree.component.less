@@ -1,0 +1,279 @@
+@import 'common';
+
+.offect-btn {
+  margin-right: 10px;
+}
+
+.light-color {
+  color: red!important;;
+}
+
+.gray-color {
+  color: #d9d9d9!important;
+}
+
+.dot {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  vertical-align: middle;
+  border-radius: 50%;
+
+  &.red {
+    background-color: #ff0000;
+  }
+
+  &.green {
+    background-color: #2eba07;
+  }
+}
+
+.package-status {
+  margin-right: 50px;
+}
+
+.manipulator {
+  margin-right: 50px;
+}
+
+.operating-time {
+  margin-right: 50px;
+}
+
+.container {
+  background-color: white;
+  height: 100%;
+
+  .notice-btn {
+    margin-left: 20px;
+    float: right;
+  }
+
+  .header {
+
+    .search-content {
+      margin: 0 0 16px;
+      display: flex;
+
+      .search-container {
+        flex: 1;
+        display: flex;
+      }
+
+      .search-item {
+        flex: 1;
+        width: 33.3%;
+        display: flex;
+
+        .search-label {
+          &.pt5 {
+            padding-top: 5px;
+          }
+        }
+
+        input, .item-select {
+          width: calc(100% - 100px);
+          flex: 1;
+          margin-right: 20px;
+        }
+
+      }
+    }
+
+
+    .title-tree {
+      font-size: 18px;
+      position: relative;
+      padding-left: 20px;
+
+      &:after {
+        content: "";
+        position: absolute;
+        left: 0px;
+        width: 5px;
+        height: 24px;
+        background-color: #2697ff;
+
+      }
+    }
+  }
+
+  .course-header {
+    margin-bottom: 15px;
+  }
+
+}
+
+.t-list {
+  margin-top: 10px;
+  border: 1px solid #eee;
+  min-height: 300px;
+  padding: 30px;
+
+  .t-del {
+    color: red;
+    font-size: 16px;
+    margin-left: 10px;
+  }
+}
+
+.flex-box {
+  margin-left: 10px;
+  padding-top: 5px;
+}
+
+.title-detail, .content-detail {
+  min-height: 32px;
+  padding: 4px 11px;
+  font-size: 14px;
+  line-height: 1.5;
+  border: 1px solid #d9d9d9;
+}
+
+.title-detail {
+  min-height: 32px;
+}
+
+.content-detail {
+  min-height: 90px;
+}
+
+.charge {
+  margin-top: 15px;
+
+  img {
+    width: 48px;
+    margin-right: 3px;
+    margin-top: -5px;
+  }
+}
+
+.resource-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .title {
+    font-size: 18px;
+    padding: 15px 20px 0 20px;
+  }
+
+  .search-content {
+    align-items: center;
+    border-bottom: 20px solid #f0f2f5;
+    padding: 20px 20px 20px;
+
+    .search-label {
+      font-size: 14px;
+      margin-right: 10px;
+      min-width: 74px;
+    }
+
+    input {
+      width: 250px;
+    }
+  }
+
+
+  .table-container {
+    height: calc(100% - 100px);
+  }
+
+}
+
+
+.submit-button {
+  border-top: 1px solid #f0f0f0;
+  height: 60px;
+  line-height: 60px;
+  bottom: 0;
+  right: 0;
+  text-align: center;
+  position: fixed;
+  width: 500px;
+}
+
+:host ::ng-deep .ant-tree-title {
+  max-width: 200px;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list-item {
+  overflow: hidden;
+
+  .item-left {
+    float: left;
+  }
+
+  .operating {
+    float: right;
+  }
+}
+
+.modal-footer {
+  overflow: hidden;
+
+  .modal-footer-button {
+    margin-right: 20px;
+    float: right;
+
+    &.mr0 {
+      margin-right: 0
+    }
+  }
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 5px;
+  border-radius: 50%;
+  &.error {
+    background-color: #fe5500;
+  }
+  &.success {
+    background-color: #2eba07;
+  }
+}
+.icon-select {
+  width: calc(100% - 26px);
+  margin-right:10px;
+}
+
+
+.share-line {
+  line-height: 55px;
+}
+
+.share-button {
+  margin-top: 20px;
+  text-align: right;
+}
+
+
+::ng-deep .more-operating {
+  .ant-tooltip-inner {
+    background-color: white;
+  }
+
+  .ant-tooltip-arrow {
+    width: 20px;
+    height: 20px;
+
+    &::before {
+      background-color: white;
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+}
+
+::ng-deep .table-container .ant-table-column-sorters {
+  padding-left: 0;
+}

@@ -1,0 +1,40 @@
+<nz-layout class="l-main">
+  <nz-header class="tiku-header">
+    <div>
+      <button nz-button nzType="link" nzGhost
+        class="back-action"
+        (click)="goBack()">
+        <i nz-icon nzType="left" nzTheme="outline"></i>返回
+      </button>
+    </div>
+  </nz-header>
+  <nz-layout class="l-main padding gray-bg">
+    <nz-layout class="center-layout">
+      <nz-sider style="background-color: transparent;">
+        <div class="course">
+          <nz-select nzSize="large"
+            class="course-select"
+            nzBorderless
+            [nzLoading]="loading"
+            [(ngModel)]="coursePacketId" 
+            (ngModelChange)="courseChange($event)">
+            <nz-option *ngFor="let course of courseList" [nzValue]="course.coursePacketId" [nzLabel]="course.coursePacketName"></nz-option>
+          </nz-select>
+        </div>
+        <ul class="menu-list">
+          <li *ngFor="let menu of menusNav" 
+            class="menu-item"
+            [class]="{selected: curMenu.id === menu.id}"
+            (click)="selectMenu(menu)">
+            {{ menu.name }}
+          </li>
+        </ul>
+      </nz-sider>
+      <nz-content>
+        <app-tiku-exercise-set *ngIf="curMenu.id === 0" [nodes]="chapters" [selectedCourse]="selectedCourse"></app-tiku-exercise-set>
+        <app-tiku-wrong-exercise-set *ngIf="curMenu.id === 1" [nodes]="chapters" [selectedCourse]="selectedCourse"></app-tiku-wrong-exercise-set>
+        <app-tiku-collection *ngIf="curMenu.id === 2" [nodes]="chapters" [selectedCourse]="selectedCourse"></app-tiku-collection>
+      </nz-content>
+    </nz-layout>
+  </nz-layout>
+</nz-layout>

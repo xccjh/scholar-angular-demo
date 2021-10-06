@@ -1,0 +1,38 @@
+/*默认大小*/
+.hq-header {
+  height: 120px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  margin: auto;
+  background-color: #f0f5f3;
+  background-image: url('src/assets/images/pratice-header.png');
+
+
+
+  .bread-crumbs {
+    width: 1214px;
+    margin: 0 auto;
+    padding-top: 80px;
+    color: white;
+    font-size: 18px;
+    background-image: url('src/assets/images/see-ai.png');
+    background-repeat: no-repeat;
+    background-position: -28px top;
+    background-size: auto 58%;
+
+    .nav {
+      cursor: pointer;
+      padding-left: 60px;
+    }
+
+  }
+}
+
+
+/* 如果设备像素大于等于2，则用2倍图 */
+@media screen and (-webkit-min-device-pixel-ratio: 2), screen and (min--moz-device-pixel-ratio: 2) {
+  .hq-header {
+    background-image: url('src/assets/images/pratice-header@2x.png');
+  }
+}

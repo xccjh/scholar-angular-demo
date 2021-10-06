@@ -1,0 +1,55 @@
+<div class='header'>
+  课包内容研发统计表
+</div>
+<div class='content'>
+  <div class='content-title'>
+    学习设定
+  </div>
+  <nz-table #basicTable [nzData]="listOfData">
+    <thead>
+    <tr>
+      <th>章名称</th>
+      <th>节名称</th>
+      <th *ngIf='teachType!=="22"'>讲义</th>
+      <th *ngIf='teachType==="22"'>录播</th>
+      <th *ngIf='teachType!=="22"'>任务</th>
+      <th>资料</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of basicTable.data">
+      <td>{{ data.courseChapterName }}</td>
+      <td>{{ data.courseSectionName }}</td>
+      <td *ngIf='teachType!=="22"'>{{ data.lectureNum }}</td>
+      <td *ngIf='teachType==="22"'>{{ data.videoNum }}</td>
+      <td *ngIf='teachType!=="22"'>{{ data.taskNum }}</td>
+      <td>{{ data.resourseNum }}</td>
+    </tr>
+    </tbody>
+  </nz-table>
+</div>
+<div class='content'>
+  <div class='content-title'>
+    其他设置
+  </div>
+  <nz-descriptions>
+    <nz-descriptions-item nzTitle="总课次">{{lessonCount}}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="免费题库">{{quebankNum}}个题库</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="教学示范">{{teachDemoNum}}个视频</nz-descriptions-item>
+  </nz-descriptions>
+</div>
+<div class='content'>
+  <div class='content-title'>
+    智适应
+  </div>
+  <nz-descriptions>
+    <nz-descriptions-item nzTitle="指导讲师">{{authorNum}}位</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="章节绑定">共{{sectionNum}}个小节 、{{knowledgeNum}}个知识点</nz-descriptions-item>
+    <!--    <nz-descriptions-item nzTitle="冲刺考试">-->
+    <!--      共2套试卷-->
+    <!--    </nz-descriptions-item>-->
+    <!--    <nz-descriptions-item nzTitle="押题考试">共5套试卷</nz-descriptions-item>-->
+  </nz-descriptions>
+</div>
+
+

@@ -1,0 +1,25 @@
+<div class="batch-upload">
+  <ng-template #batchUploadContent>
+    <div nz-row nzJustify="start">
+      <div nz-col nzSpan="5">
+        <span>讲师模板: </span>
+      </div>
+      <div nz-col nzSpan="10">
+          <div class="upload-container">
+            <button nz-button><i nz-icon nzType="upload"></i>批量上传</button>
+            <input type="file" (change)="handleUploadFile($event)"/>
+          </div>
+      </div>
+      <div nz-col nzSpan="5">
+        <a [href]="environment.OSS_URL + '/template/scholar/指导讲师导入模板.xls'">
+          <button class="" nz-button class="imports" ><i nz-icon nzType="arrow-down" nzTheme="outline"></i>模板下载</button>
+        </a>
+      </div>
+    </div>
+    <div nz-row nzJustify="start" style="margin-top: 20px;">
+      <div nz-col nzSpan="20">
+        {{fileData?.name}}
+      </div>
+    </div>
+  </ng-template>
+</div>

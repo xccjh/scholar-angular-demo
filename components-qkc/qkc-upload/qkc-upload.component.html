@@ -1,0 +1,36 @@
+<div class="clearfix">
+  <nz-upload nzAction="" [nzType]="isDrag ? 'drag' : null" [nzListType]="listType"
+    [(nzFileList)]="imageList"
+    nzShowButton="{{ limit === 0 ? true : imageList.length < limit }}"
+    [nzDisabled]="disabled"
+    [nzShowUploadList]="showUploadList" [nzPreview]="handlePreview"
+    [nzRemove]="remove" [nzBeforeUpload]="beforeUpload"
+    [nzCustomRequest]="customReq" (nzChange)="onChange($event)">
+    <ng-content></ng-content>
+  </nz-upload>
+
+  <!-- <div style="margin-top:10px;">
+    <div *ngFor="let item of imageList" class="upload-list">
+      <i class="close" nz-icon nzType="close" nzTheme="outline" (click)="remove(item)"></i>
+      <p><i style="font-size: 14px;" nz-icon nzType="link" nzTheme="outline"></i>&nbsp;{{ item.name }}</p>
+      <ng-container *ngIf="item.status==='uploading'">
+          <nz-progress nzStrokeWidth="3"  [nzPercent]="item.percent" nzSize="small"></nz-progress>
+      </ng-container>
+    </div>
+  </div> -->
+
+
+  <!-- <nz-modal [nzVisible]="previewVisible" [nzContent]="modalContent"
+    [nzFooter]="null"
+    (nzOnCancel)="previewVisible= false">
+    <ng-template #modalContent>
+      <img [src]="previewPath" [ngStyle]="{ width: '100%' }" />
+    </ng-template>
+  </nz-modal> -->
+
+  <qkc-attachment-show-modal 
+    [(isShow)]="previewVisible"
+    [url]="previewPath">
+</qkc-attachment-show-modal>
+
+</div>

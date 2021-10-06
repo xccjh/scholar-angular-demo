@@ -1,0 +1,317 @@
+<div class="container" *ngIf="vm$ | async as vm">
+  <ng-container *ngIf="packetInfo$ | async as packetInfo">
+    <div class='module-tree pt20'>
+      <div class='item'>
+    <span class='item-label'>
+          考核专用：
+    </span>
+        <span *ngIf='packetInfo.preview==="1"&&!vm.subQuestionBank.length'>无子题库</span>
+        <nz-spin [nzSpinning]="vm.searchLoad" [nzDelay]="0" style='width: calc(100% - 100px);display: inline-block;'>
+          <nz-tree-select
+            *ngIf='!(packetInfo.preview==="1"&&!vm.subQuestionBank.length)'
+            [disabled]='packetInfo.preview==="1"|| (packetInfo.isUsed>0)'
+            [nzMultiple]='true'
+            style="width: 100%"
+            [nzNodes]="vm.exam"
+            nzDefaultExpandAll
+            nzShowSearch
+            [nzAllowClear]='false'
+            nzPlaceHolder="绑定子题库"
+            [(ngModel)]="vm.subQuestionBankCurrent"
+            (ngModelChange)='subQuestionBankChange($event,"subQuestionBank")'
+            [nzDropdownStyle]="{'max-height': '200px'}"
+            [nzTreeTemplate]="nzTreeTemplate"
+            #treeSelect
+          >
+          </nz-tree-select>
+          <ng-template #nzTreeTemplate let-node let-origin="origin">
+            <span class="custom-node">
+              <span *ngIf="!node.isLeaf">
+                <i nz-icon [nzType]="node.isExpanded ? 'folder-open' : 'folder'"></i>
+                <span class="folder-name">{{ node.title }}</span>
+              </span>
+              <span *ngIf="node.isLeaf">
+                <i nz-icon nzType="file"></i>
+                <span class="file-name">{{ node.title }}</span>
+              </span>
+            </span>
+          </ng-template>
+        </nz-spin>
+      </div>
+      <div class='list-container' [style.margin]='vm.subQuestionBank.length?"20px 60px":"0"'
+           cdkDropList
+           (cdkDropListDropped)="listDrop($event,'subQuestionBank')">
+        <div class='list' *ngFor='let item of vm.subQuestionBank' cdkDrag
+             [style.cursor]='(packetInfo.preview==="1"|| packetInfo.isUsed>0)?"not-allowed":"move"'>
+          <div style='float:left' [title]='item.quebankName'>
+            <i nz-icon nzType="file-text" nzTheme="outline"></i>
+            <span style='margin-left:20px;'>{{item.quebankName}}</span>
+          </div>
+          <div style='float:right' *ngIf='!(packetInfo.preview==="1"||packetInfo.isUsed>0)'>
+            <i nz-icon nzType="delete" nzTheme="outline" style='cursor:pointer;'
+               (click)='dellistSublibraryItem(item)'></i>
+            <span class='icon-del' (click)='dellistSublibraryItem(item)'
+                  *ngIf='!(packetInfo.preview==="1"||packetInfo.isUsed>0)'>删除</span>
+          </div>
+        </div>
+      </div>
+      <div class='item'>
+        <span class='item-label'>智适应专用：</span>
+        <span *ngIf='packetInfo.preview==="1"&&!vm.subQuestionBankInt.length'>
+      无子题库
+    </span>
+        <nz-spin [nzSpinning]="vm.searchLoad" [nzDelay]="0" style='width: calc(100% - 100px);display: inline-block;'>
+          <nz-tree-select
+            *ngIf='!(packetInfo.preview==="1"&&!vm.subQuestionBankInt.length)'
+            [disabled]='packetInfo.preview==="1"|| (packetInfo.isUsed>0)'
+            [nzMultiple]='true'
+            [nzAllowClear]='false'
+            style="width: 100%"
+            [nzNodes]="vm.intelligent"
+            nzDefaultExpandAll
+            nzShowSearch
+            nzPlaceHolder="绑定子题库"
+            [(ngModel)]="vm.subQuestionBankIntCurrent"
+            (ngModelChange)='subQuestionBankChange($event,"subQuestionBankInt")'
+            [nzDropdownStyle]="{'max-height': '200px'}"
+            [nzTreeTemplate]="nzTreeTemplateInt"
+            #treeSelectInt
+          >
+          </nz-tree-select>
+          <ng-template #nzTreeTemplateInt let-node let-origin="origin">
+            <span class="custom-node">
+              <span *ngIf="!node.isLeaf">
+                <i nz-icon [nzType]="node.isExpanded ? 'folder-open' : 'folder'"></i>
+                <span class="folder-name">{{ node.title }}</span>
+              </span>
+              <span *ngIf="node.isLeaf">
+                <i nz-icon nzType="file"></i>
+                <span class="file-name">{{ node.title }}</span>
+              </span>
+            </span>
+          </ng-template>
+        </nz-spin>
+      </div>
+      <div class='list-container'
+           [style.margin]='vm.subQuestionBankInt.length?"20px 60px":"0"' cdkDropList
+           (cdkDropListDropped)="listDrop($event,'subQuestionBankInt')">
+        <div class='list' *ngFor='let item of vm.subQuestionBankInt' cdkDrag
+             [style.cursor]='(packetInfo.preview==="1"|| packetInfo.isUsed>0)?"not-allowed":"move"'>
+          <div style='float:left' [title]='item.quebankName'>
+            <i nz-icon nzType="file-text" nzTheme="outline"></i>
+            <span style='margin-left:20px;'>{{item.quebankName}}</span>
+          </div>
+          <div style='float:right' *ngIf='!(packetInfo.preview==="1"||packetInfo.isUsed>0)'>
+            <i nz-icon nzType="delete" nzTheme="outline" style='cursor:pointer;'
+               (click)='dellistSublibraryItem(item)'></i>
+            <span class='icon-del' *ngIf='!(packetInfo.preview==="1"||packetInfo.isUsed>0)'
+                  (click)='dellistSublibraryItem(item)'>删除</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class='module-tree'>
+      <div class='item '>
+     <span class='item-label'>
+    闯关模式：<nz-switch [(ngModel)]="vm.breakthroughMode" nzCheckedChildren="开" nzUnCheckedChildren="关"
+                    (ngModelChange)='otherSettingStoreService.breakthroughModeChange($event)'
+                    [nzDisabled]='packetInfo.preview==="1"||packetInfo.isUsed>0'></nz-switch>
+     </span>
+      </div>
+      <div class='list-container' [hidden]='!vm.breakthroughMode'>
+        <div class='list-item' *ngFor='let item of vm.levelLists;let i=index;'>
+          <div class='gk-text fl'>
+            关卡{{i + 1}}：
+          </div>
+          <div class='list fr' style='width:calc(100% - 70px);'>
+            <div class='fl'>
+              <span class='icon-pre'>试</span>
+              <span class='icon-text'>{{item.name}}</span>
+            </div>
+            <div class='fr'>
+              <button
+                class="other-button"
+                [class.disable-edit]='packetInfo.preview==="1"?true:null'
+                [disabled]='packetInfo.preview==="1"?true:null'
+                nz-button
+                nzType="primary" (click)='rewardSettings(item)'>
+                奖励设置
+              </button>
+              <a nz-button nzType="link" (click)="editLevel(item)" *ngIf='packetInfo.preview!=="1";else editDisable'>
+                <i nz-icon nzType="edit" nzTheme="outline" style='cursor:pointer;line-height:38px;'></i>
+                <span class='icon-del lh34' class='lh34 mr20 ml10'>编辑</span>
+              </a>
+              <ng-container
+                *ngIf='!(packetInfo.preview==="1"||(packetInfo.isUsed>0&&i!== vm.levelLists.length-1));else delDisable'>
+                <i nz-icon nzType="delete" nzTheme="outline" style='cursor:pointer;line-height:38px;'
+                   (click)='deleteLevel(item)'></i>
+                <span class='icon-del lh34' (click)='deleteLevel(item)'>删除</span>
+              </ng-container>
+              <ng-template #editDisable>
+                <a nz-button nzType="link" style='cursor: not-allowed'>
+                  <i nz-icon nzType="edit" nzTheme="outline" class='icon-disable'></i>
+                  <span class='icon-del lh34 text-disbale'>编辑</span>
+                </a>
+              </ng-template>
+              <ng-template #delDisable>
+                <i nz-icon nzType="delete" nzTheme="outline"
+                   style='cursor:pointer;line-height:38px;color:#bfb6b6;cursor: not-allowed'></i>
+                <span class='icon-del lh34' style='color:#bfb6b6;cursor: not-allowed'>删除</span>
+              </ng-template>
+            </div>
+          </div>
+          <div class='list fr' style='width:calc(100% - 130px);'
+               *ngFor='let itemI of item.coursePacketCardRecourseList'>
+            <div class='fl'>
+              <span class='icon-pre yellow'>资</span>
+              <span class='icon-text'>{{itemI.title}}</span>
+            </div>
+            <div class='fr'>
+              <ng-container *ngIf='packetInfo.preview!=="1";else delDisable'>
+                <i nz-icon nzType="delete" nzTheme="outline" style='cursor:pointer;line-height:38px;'
+                   (click)='deleteGift(itemI.id)'></i>
+                <span class='icon-del lh34' (click)='deleteGift(itemI.id)'>删除</span>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class='item pt0' [hidden]='!vm.breakthroughMode'>
+        <button
+          style='margin-left: 70px'
+          class="other-button"
+          [class.disable-edit]='packetInfo.preview==="1"?true:null'
+          [disabled]='packetInfo.preview==="1"?true:null'
+          nz-button
+          nzType="primary" (click)='addLevel()'>
+          <i nz-icon nzType="plus" nzTheme="outline" class='add-member-icon'></i>
+          新增关卡
+        </button>
+      </div>
+    </div>
+
+    <div class='module-tree'>
+      <div class='item '>
+     <span class='item-label'>
+    99实训：<nz-switch [(ngModel)]="vm.practiceOn" nzCheckedChildren="开" nzUnCheckedChildren="关"
+                    (ngModelChange)='otherSettingStoreService.practiceOnChange($event)'
+                    [nzDisabled]='packetInfo.preview==="1"||packetInfo.isUsed>0'></nz-switch>
+     </span>
+      </div>
+      <div class='list-container' [hidden]='!vm.practiceOn'>
+        <div class='list-item' *ngFor='let item of vm.companyLists;let i=index;'>
+          <div class='gk-text fl'>
+            公司{{i + 1}}：
+          </div>
+          <div class='list fr' style='width:calc(100% - 70px);'>
+            <div class='fl'>
+              <span class='icon-pre'>公</span>
+              <span class='icon-text'>{{item.name}}</span>
+            </div>
+            <div class='fr'>
+              <a nz-button nzType="link" (click)="editCompany(item)"
+                 *ngIf='!(packetInfo.preview==="1");else editDisable'>
+                <i nz-icon nzType="edit" nzTheme="outline" class='icon'></i>
+                <span class='lh34 mr20 ml10'>编辑</span>
+              </a>
+              <ng-template #editDisable>
+                <a nz-button nzType="link" style='cursor: not-allowed'>
+                  <i nz-icon nzType="edit" nzTheme="outline" class='icon-disable'></i>
+                  <span class='icon-del lh34 text-disbale'>编辑</span>
+                </a>
+              </ng-template>
+              <ng-container
+                *ngIf='!(packetInfo.preview==="1"||(packetInfo.isUsed>0));else delDisable'>
+                <i nz-icon nzType="delete" nzTheme="outline" class='icon' (click)='deleteCompany(item)'></i>
+                <span class='icon-del lh34' (click)='deleteCompany(item)'>删除</span>
+              </ng-container>
+              <ng-template #delDisable>
+                <i nz-icon nzType="delete" nzTheme="outline" class='icon-disable'></i>
+                <span class='icon-del lh34 text-disbale'>删除</span>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class='item pt0' [hidden]='!vm.practiceOn'>
+        <button
+          style='margin-left: 70px'
+          class="other-button"
+          [class.disable-edit]='(packetInfo.preview==="1" ||packetInfo.isUsed>0) ?true:null'
+          [disabled]='(packetInfo.preview==="1" ||packetInfo.isUsed>0)?true:null'
+          nz-button
+          nzType="primary" (click)='addCompany()'>
+          <i nz-icon nzType="plus" nzTheme="outline" class='add-member-icon'></i>
+          新增公司
+        </button>
+      </div>
+    </div>
+
+    <div class='module-tree' *ngIf='packetInfo.teachType!=="22"'>
+      <div class='item '>
+          <span class='item-label'>
+    押题宝：<nz-switch [(ngModel)]="vm.isBet" nzCheckedChildren="开" nzUnCheckedChildren="关"
+                   (ngModelChange)='otherSettingStoreService.isBetChange($event)'
+                               [nzDisabled]='packetInfo.preview==="1"||packetInfo.isUsed>0 || ((knowledgeNum$ | async) < 100 )'></nz-switch>
+     </span>
+
+        <div style='margin-top: 20px;padding-left:56px;'>提示：知识点数量大于等于100个才可以开启押题宝</div>
+      </div>
+    </div>
+
+    <ng-container *ngIf='packetInfo.teachType!=="22"'>
+      <div class='item'>
+     <span class='item-label'>
+    总课次：
+     </span>
+        <nz-input-number
+          [(ngModel)]="packetInfo.lessonCount"
+          [nzMin]="1" [nzStep]="1" [nzMax]='200'
+          [nzDisabled]='packetInfo.preview==="1"
+                       || (packetInfo.isUsed>0 &&userId!==packetInfo.majorLeaderId)'
+        ></nz-input-number>
+        <button nz-button nzType="primary" (click)="generateLessons()"
+                [disabled]='(
+              (packetInfo.isUsed>0  || packetInfo.preview==="1")?true:null)'
+                style='margin-left:20px' [nzLoading]='vm.isLoading'>
+          生成课次
+        </button>
+        <button nz-button nzType="primary" (click)="newClass()"
+                [nzLoading]='vm.isLoading'
+                [disabled]='((packetInfo.isUsed>0&&userId!==packetInfo.majorLeaderId)  || packetInfo.preview==="1")?true:null'
+                style='margin-left:20px'>
+          新增课次
+        </button>
+      </div>
+      <nz-spin [nzSpinning]="vm.isLoading" [nzDelay]="0">
+        <nz-table #basicTable [nzData]="vm.listOfData" style='margin:0 60px;'
+                  [nzFrontPagination]='true'>
+          <thead>
+          <tr>
+            <th>课次序号</th>
+            <th>名称</th>
+            <th *ngIf='packetInfo.preview!=="1"'>操作</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let data of basicTable.data">
+            <td>{{ data.index }}</td>
+            <td>{{ data.name }}</td>
+            <td *ngIf='packetInfo.preview!=="1"'>
+              <a (click)='edit(data)'>编辑</a>
+              <ng-container *ngIf='!(packetInfo.isUsed>0&&userId!==packetInfo.majorLeaderId)'>
+                <nz-divider nzType="vertical"></nz-divider>
+                <a (click)='delTable(data.id)'>删除</a>
+              </ng-container>
+            </td>
+          </tr>
+          </tbody>
+        </nz-table>
+      </nz-spin>
+    </ng-container>
+  </ng-container>
+</div>
+
+
+
+

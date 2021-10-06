@@ -1,0 +1,47 @@
+ <!-- 题干 -->
+ <div class="question-header">
+  <div class="green-bg" *ngIf="!isComplex">{{ exerciseData.exerciseKindName }}</div>
+  <div class="ques-num" *ngIf="quesNum">{{quesNum}}、</div>
+  <div class="question-title" [innerHTML]="exerciseData.content"></div>
+  <div *ngIf="['finish','selfEvalute'].includes(exerciseData.status)" class="question-score">
+    <div>
+      {{ exerciseData.evaluateExp }}/{{ exerciseData.originalExp }}&nbsp;分
+    </div>
+  </div>
+</div>
+
+<!-- 答题 -->
+<qkc-checkbox
+  [(exerciseData)]="exerciseData">
+</qkc-checkbox>
+
+<!-- 正确答案 -->
+<div class="question-answer" *ngIf="['finish','selfEvalute'].includes(exerciseData.status)">
+  <p>
+    <span *ngIf="exerciseData.mode === 'collection'; else notHideTpl">正确答案是</span>
+    <ng-template #notHideTpl>
+      <span *ngIf="exerciseData.isRight">
+        <i nz-icon nzType="check-circle" nzTheme="fill"></i>&nbsp;&nbsp;
+        你答对了，正确答案是
+      </span>
+      <span *ngIf="!exerciseData.isRight">
+        <i nz-icon nzType="close-circle" nzTheme="fill"></i>&nbsp;&nbsp;
+        {{ exerciseData.isDone ? '你答错了' : '你尚未作答'}}，正确答案是
+      </span>
+    </ng-template>
+    <span class="primary-text">{{exerciseData.answer}}</span>
+  </p>
+</div>
+
+<!-- 解析 -->
+<div class="question-analysis" *ngIf="['finish','selfEvalute'].includes(exerciseData.status)">
+  <p class="analysis-title">解析：</p>
+  <div class="analysis-content" [innerHTML]="exerciseData.analysis"></div>
+
+  <a *ngIf="exerciseData.videoAnalysis"
+    class="analysis-video-title"
+    [href]="exerciseData.videoAnalysis"
+    target="__blank">
+    点击视频观看解答
+  </a>
+</div>

@@ -1,0 +1,33 @@
+.bar-item {
+  text-align: center;
+  cursor: pointer;
+  font-size: 16px;
+  color: #000000;
+  position: relative;
+  .selected-border{
+    display: none;
+  }
+  &:hover {
+    background-color: #DFF0FF;
+    color: #00AB84;
+  }
+  &-selected {
+    color: #00AB84;
+    .selected-border{
+      display: inline-block;
+    }
+    
+  }
+  .selected-border{
+    width: 24px;
+    height: 2px;
+    background: #00AB84;
+    position: absolute;
+    bottom: 0;
+    left: 27px;
+  }
+}
+
+.badge{
+  
+}

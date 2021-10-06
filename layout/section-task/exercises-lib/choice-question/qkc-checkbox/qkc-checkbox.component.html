@@ -1,0 +1,33 @@
+<div class="question-list">
+  <ng-container *ngFor="let item of exerciseData.optionList">
+    <ng-container *ngIf="exerciseData.status === 'init'; else endChoiceContainerTpl;">
+      <ng-container
+        *ngTemplateOutlet="choiceTpl; context: {$implicit: item }">
+      </ng-container>
+    </ng-container>
+
+    <ng-template #endChoiceContainerTpl>
+      <ng-container
+        *ngTemplateOutlet="endChoiceTpl; context:{ $implicit: item }">
+      </ng-container>
+    </ng-template>
+  </ng-container>
+</div>
+
+<ng-template #choiceTpl let-item>
+  <div class="list-content" [ngClass]="{actived: item.isMyAnswer}" (click)="chooseAnswer(item)">
+    <div style="display: flex;">
+      <span> {{item.label}}.</span>&nbsp;&nbsp;      
+      <span class="embed-html" [innerHTML]="item.content | safeHtml"></span>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #endChoiceTpl let-item>
+  <div class="list-content" [ngClass]="{actived: item.isMyAnswer && item.isRight, wrong: item.isMyAnswer && !item.isRight}">
+    <div style="display: flex;">
+      <span>{{item.label}}.</span> &nbsp;&nbsp;
+      <span class="embed-html" [innerHTML]="item.content | safeHtml"></span>
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,32 @@
+<nz-layout style="width: 100%;height:100%;" *ngIf="isShow">
+  <nz-header class="section-header border">
+    <div class="package-name">
+      <span class="section-header-title">{{ data.taskType === '4' ? data.title : data?.taskName }}</span>
+    </div>
+    <div class="section-header-status"  *ngIf="canRead">
+      有效阅读30秒以上（{{readTime}}s）
+    </div>
+    <div class="padding-right">
+      <button nz-button nzType="link" class="gray-text" [nzSize]="'small'" *ngIf="data.downloadType === '2'" (click)="download()">
+        <i nz-icon nzType="download" nzTheme="outline"></i>
+        下载到本地
+      </button>
+      <button *ngIf="data.taskType === '0'" nz-button nz-popover nzType="link" class="gray-text" [nzSize]="'small'" nzPopoverTitle="阅读任务说明" [nzPopoverContent]="contentTemplate" nzPopoverPlacement="leftBottom">
+        <i nz-icon nzType="question-circle" nzTheme="outline"></i>
+        任务说明
+      </button>
+      <ng-template #contentTemplate>
+        <div class="score-explain" style="width: 300px;">
+          <p>多次查看重新计时；</p>
+          <p>结束时间是当天的23:59自动结束</p>
+        </div>
+      </ng-template>
+    </div>
+  </nz-header>
+  <div class="wrapper" style="height: calc(100% - 70px)">
+    <ng-container>
+      <iframe [src]="url" style="width: 100%;height: 100%;border: none;"></iframe>
+    </ng-container>
+  </div>
+</nz-layout>
+

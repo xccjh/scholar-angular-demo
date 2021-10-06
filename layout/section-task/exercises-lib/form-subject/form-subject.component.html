@@ -1,0 +1,76 @@
+<!-- 题干 -->
+<div class="question-header">
+  <div class="green-bg" *ngIf="!isComplex">{{ exerciseData.exerciseKindName }}</div>
+  <div class="ques-num" *ngIf="quesNum">{{quesNum}}、</div>
+  <div class="question-title" [innerHTML]="exerciseData.content | safeHtml"></div>
+  <div *ngIf="['finish','selfEvalute'].includes(exerciseData.status)" class="question-score">
+    <div>
+      {{ exerciseData.evaluateExp }}/{{ exerciseData.originalExp }}&nbsp;分
+    </div>
+  </div>
+</div>
+
+<div class="question-list" *ngIf="exerciseData.mode !== 'collection'">
+  <table border="1" cellspacing="0" cellpadding="0" class="form-table">
+    <caption>{{exerciseData.header}}</caption>
+    <tbody>
+      <tr *ngFor="let row of exerciseData.myAnswer; let idx = index">
+        <td *ngFor="let col of row;let i = index">
+          <span *ngIf="col.inputType === 0">{{col.content}}</span>
+          <ng-container *ngIf="col.inputType === 1 && ['finish','selfEvalute'].includes(exerciseData.status)">
+            <span>{{col.myAnswer}}</span>
+            <!-- <span [ngClass]="col.isRight ? 'right-anwser': 'wrong-answer'">{{col.myAnswer}}</span>
+            <span *ngIf="col.isRight" class="icon right-anwser"><i nz-icon nzType="check" nzTheme="outline"></i></span>
+            <span *ngIf="!col.isRight" class="icon wrong-answer"  nz-tooltip nzTooltipTitle="{{'正确答案：'+ col.content}}">
+              <i nz-icon nzType="close" nzTheme="outline"></i>
+            </span> -->
+          </ng-container>
+          <input
+            *ngIf="col.inputType === 1 && !['finish','selfEvalute'].includes(exerciseData.status)"
+            nz-input 
+            type="text" 
+            style="text-align: center;" 
+            [(ngModel)]="col.myAnswer" [placeholder]="'请输入'"/>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 正确答案 -->
+<div *ngIf="['finish','selfEvalute'].includes(exerciseData.status)">
+  <div class="question-answer">
+    <span>正确答案</span>
+  </div>
+
+  <div class="question-list">
+    <table border="1" cellspacing="0" cellpadding="0" class="form-table">
+      <caption>{{exerciseData.header}}</caption>
+      <tbody>
+        <tr *ngFor="let row of exerciseData.answer; let idx = index">
+          <td *ngFor="let col of row;let i = index">
+            <span *ngIf="col.inputType === 0">{{col.content}}</span>
+            <span *ngIf="col.inputType === 1" class="right-anwser">{{col.content}}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 解析 -->
+<div class="question-analysis" *ngIf="['collection','wrong','finish','selfEvalute'].includes(exerciseData.mode)">
+  <p class="analysis-title">解析：</p>
+  <div class="analysis-content" [innerHTML]="exerciseData.analysis | safeHtml"></div>
+  <a *ngIf="exerciseData.videoAnalysis" 
+    class="analysis-video-title" 
+    [href]="exerciseData.videoAnalysis" 
+    target="__blank">
+    点击视频观看解答
+  </a>
+</div>
+
+<div class="score-description">
+  <p>答题说明：仅支持电脑端作答和查看结果</p>
+  <p>得分说明：按答对数量得分</p>
+</div>

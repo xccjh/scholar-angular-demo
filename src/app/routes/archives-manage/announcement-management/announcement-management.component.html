@@ -1,0 +1,132 @@
+<nz-layout class='container'>
+  <div class='main-header'>
+    公告查询
+  </div>
+  <div class='header'>
+    <label>公告主题：</label>
+    <input nz-input placeholder="支持主题搜索"
+           (ngModelChange)="storingData()"
+           style='margin-right: 20px' (keyup.enter)='searchData("button")'/>
+    <label>更新时间：</label>
+    <nz-range-picker nzFormat='yyyy-MM-dd' [(ngModel)]="dateRangeVal"
+                     (ngModelChange)="storingData()"></nz-range-picker>
+    <button nz-button nzType="primary" style='margin-left:20px;' (click)="searchData('button')">查询</button>
+    <button nz-button nzType="primary" style='margin-left:20px;' (click)="resetData()">重置</button>
+  </div>
+  <nz-content style='padding: 15px 20px 20px;'>
+    <div class="course-header">
+      <button nz-button nzType="primary" (click)="add()"
+              style="margin-bottom:20px;">新增公告
+      </button>
+    </div>
+    <div class='table-container' id='tableScroll' [class.no-scoll]='!data.length'>
+      <nz-table #ajaxTable [nzData]="data" [nzFrontPagination]="false" [nzShowSizeChanger]="true"
+                [nzScroll]='{y : height+"px"}'
+                [nzPageSizeOptions]='[15, 20, 30, 40, 50]'
+                [nzShowTotal]="totalTemplate" [nzLoading]="isLoading" [nzTotal]="total" [(nzPageIndex)]="pageIndex"
+                [(nzPageSize)]="pageSize" (nzPageIndexChange)="searchData()" (nzPageSizeChange)="searchData()">
+        <thead>
+        <tr>
+          <th>主题</th>
+          <th>内容</th>
+          <th>所属课包</th>
+          <th>创建者</th>
+          <th>更新时间</th>
+          <th>状态</th>
+          <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of ajaxTable.data">
+          <td>{{ data?.code }}</td>
+          <td>{{ data?.name }}</td>
+          <td>{{ data?.productLineName }}</td>
+          <td>{{ data?.leaderName }}</td>
+          <td>{{ data?.finalApproverName }}</td>
+          <td>{{ data?.createrName }}</td>
+          <td>
+            <a (click)="edit(data)" style='margin-right:10px;padding:0;'
+               nz-button nzType="link">编辑</a>
+            <a (click)="send(data)" style='margin-right:10px;padding:0;'
+               nz-button nzType="link">发送</a>
+            <a (click)="del(data)" style='color:red;padding:0;' nz-button nzType="link">删除</a>
+          </td>
+        </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </nz-content>
+  <ng-template #totalTemplate let-total>共 {{ total }} 条记录</ng-template>
+</nz-layout>
+<ng-template #modalContent>
+  <nz-spin [nzSpinning]="isModalLoading" [nzDelay]="0">
+    <form nz-form [formGroup]="modalForm">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5" nzRequired>公告主题</nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback [nzErrorTip]="nameTpl" style='max-width: 316px;'>
+          <input nz-input formControlName="name" placeholder="请输入公告主题"
+                 (keyup.enter)='confirm()'/>
+        </nz-form-control>
+        <span style="margin-left: 10px;" [style.color]='modalForm.controls.name.hasError("maxlength")?"red":"inherit"'>
+          {{modalForm.value.name.length}}/25</span>
+        <ng-template #nameTpl let-control>
+          <div
+            *ngIf="control.hasError('required')">公告主题不能为空
+          </div>
+          <div
+            *ngIf="control.hasError('maxlength')">公告主题不能超过25个字符
+          </div>
+        </ng-template>
+      </nz-form-item>
+
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5" nzRequired>所属课包</nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="所属课包不能为空">
+          <nz-spin [nzSpinning]="isOwnedLessonPackageLoading" [nzDelay]="0">
+            <nz-tree-select
+              style="width: 316px"
+              formControlName="ownedLessonPackage"
+              [nzNodes]="nodes"
+              (ngModelChange)="onPacketChange($event)"
+              nzShowSearch
+              nzCheckable
+              nzAllowClear
+              nzPlaceHolder="请选择在所属课包"
+            >
+            </nz-tree-select>
+          </nz-spin>
+        </nz-form-control>
+      </nz-form-item>
+
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5">公告内容</nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback [nzErrorTip]="announcementContentTpl" style='max-width: 316px;'>
+          <textarea
+            nz-input
+            formControlName="announcementContent" placeholder="请输入公告内容"
+            (keyup.enter)='confirm()'
+            [nzAutosize]="{ minRows: 2, maxRows: 6 }"
+          ></textarea>
+        </nz-form-control>
+        <span style="margin-left: 10px;" [style.color]='modalForm.controls.announcementContent.hasError("maxlength")?"red":"inherit"'>
+          {{modalForm.value.name.length}}/200</span>
+        <ng-template #announcementContentTpl let-control>
+          <div
+            *ngIf="control.hasError('required')">公告内容不能为空
+          </div>
+          <div
+            *ngIf="control.hasError('maxlength')">公告内容不能超过200个字符
+          </div>
+        </ng-template>
+      </nz-form-item>
+
+
+    </form>
+  </nz-spin>
+</ng-template>
+
+
+
+

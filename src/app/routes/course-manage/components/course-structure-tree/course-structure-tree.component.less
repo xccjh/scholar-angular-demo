@@ -1,0 +1,21 @@
+.node-row{
+  display: flex;
+  justify-content: space-between;
+  min-width: 300px;
+}
+.circle{
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid #1890ff;
+}
+
+:host ::ng-deep {
+  .ant-tree .ant-tree-node-content-wrapper {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-all;
+    white-space: nowrap;
+  }
+}

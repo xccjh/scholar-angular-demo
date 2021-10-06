@@ -1,0 +1,7 @@
+<nz-spin [nzSpinning]="roleLoading" [nzDelay]="0">
+  <nz-select [(ngModel)]="userId" (ngModelChange)="roleChange($event)" [nzPlaceHolder]="placeholder" [ngStyle]="{width:'100%'}"  nzShowSearch nzAllowClear >
+    <nz-option *ngFor="let option of roleArr" [nzValue]="option.id" [nzLabel]="option.nickName+'('+ option.telphone +')'">
+    </nz-option>
+  </nz-select>
+</nz-spin>
+

@@ -1,0 +1,40 @@
+@import '../../component/resource-manage-style.less';
+@import 'common';
+
+:host ::ng-deep .table-container {
+  height: calc(100% - 116px) !important;
+}
+
+.resource-container {
+  .right-resource {
+    .search-container {
+      display: flex;
+      align-items: baseline;
+      .list {
+        flex: 1;
+        display: flex;
+
+        .list-title {
+          min-width: 85px;
+        }
+
+        .list-input {
+          flex: 1;
+
+          input {
+            width: 100%;
+            max-width: 300px;
+          }
+        }
+      }
+    }
+  }
+}
+
+:host ::ng-deep .ant-tree-title {
+  max-width: 200px;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

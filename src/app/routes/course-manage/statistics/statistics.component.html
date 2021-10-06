@@ -1,0 +1,103 @@
+<nz-layout>
+  <div class='main-header'>
+    数据统计
+    <button nz-button class="back-btn" nzType="default" (click)="goback()">返回</button>
+  </div>
+  <div class='header'>
+    <div class='header-container'>
+      <div class='header-item'>
+        <div class='num'>{{knowledgePoints}}</div>
+        <div class='text'>知识点数</div>
+      </div>
+      <div class='header-item'>
+        <div class='num'>{{numberOfExercises}}</div>
+        <div class='text'>习题数</div>
+      </div>
+      <div class='header-item'>
+        <div class='num'>{{moreEasy}}</div>
+        <div class='text'>较易</div>
+      </div>
+      <div class='header-item'>
+        <div class='num'>{{easy}}</div>
+        <div class='text'>易</div>
+      </div>
+      <div class='header-item'>
+        <div class='num'>{{medium}}</div>
+        <div class='text'>中</div>
+      </div>
+      <div class='header-item'>
+        <div class='num'>{{difficult}}</div>
+        <div class='text'>难</div>
+      </div>
+      <div class='header-item'>
+        <div class='num'>{{moreDifficult}}</div>
+        <div class='text'>较难</div>
+    </div>
+    </div>
+  </div>
+  <nz-content style='padding: 15px 20px 20px;'>
+    <div class="course-header">
+      <div class='header-item fl2'>
+        <label class='header-label'>关键词搜索: </label>
+        <div class='input-container'>
+          <input nz-input [placeholder]="'支持知识点编码/知识点名称'" [(ngModel)]="searchWordVal" (ngModelChange)='storingData()'
+                 (keyup.enter)='searchData("button")'
+                 style='margin-right: 20px;'/>
+        </div>
+      </div>
+      <div class='header-item ml40 fl1'>
+        <label class='header-label'>习题数量: </label>
+        <div class='input-container'>
+          <nz-select nzShowSearch nzPlaceHolder="请选择习题数量" [(ngModel)]="selectedVal"
+                     (ngModelChange)='storingData()'
+                     style='margin-right: 20px;width:100%;'>
+            <nz-option nzValue="全部" nzLabel="全部"></nz-option>
+            <nz-option nzValue="<3" nzLabel="<3"></nz-option>
+            <nz-option nzValue="≥3" nzLabel="≥3"></nz-option>
+          </nz-select>
+        </div>
+      </div>
+      <button nz-button nzType="primary" (click)="searchData('button')" class='ml40'>查询</button>
+      <button nz-button nzType="primary" style='margin-left:20px;' (click)="resetData()">重置</button>
+      <button nz-button nzType="primary" style='margin-left:20px;' (click)="export()" [nzLoading]='exportLoading'>导出</button>
+    </div>
+    <div class="table-container" id='tableScroll' [class.no-scoll]='!data?.length'>
+      <nz-table #basicTable [nzData]="data" [nzFrontPagination]="false"
+                [nzPageSizeOptions]='[15, 20, 30, 40, 50]'
+                [nzShowSizeChanger]="true"
+                [nzScroll]='{x:"1240px",y : height+"px"}'
+                [nzShowTotal]="totalTemplate" [nzLoading]="isLoading" [nzTotal]="total"
+                [(nzPageIndex)]="pageIndex"
+                [(nzPageSize)]="pageSize" (nzPageIndexChange)="searchData()"
+                (nzPageSizeChange)="searchData()">
+        <thead>
+        <tr>
+          <th nzWidth='120px'>知识点编码</th>
+          <th nzWidth='200px'>知识点名称</th>
+          <th nzWidth='120px'>习题数</th>
+          <th nzWidth='120px'>较易</th>
+          <th nzWidth='120px'>易</th>
+          <th nzWidth='120px'>中</th>
+          <th nzWidth='120px'>难</th>
+          <th nzWidth='120px'>较难</th>
+          <th nzWidth='200px'>讲解视频</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of basicTable.data;let idx=index;">
+          <td><span class='synopsis-text'>{{ data.knowledgePointCode }}</span></td>
+          <td><span class='synopsis-text'>{{ data.knowledgePointName }}</span></td>
+          <td><span class='synopsis-text'>{{ data.questionNum }}</span></td>
+          <td><span class='synopsis-text'>{{ data.moreEasyNum }}</span></td>
+          <td><span class='synopsis-text'>{{ data.easyNum }}</span></td>
+          <td><span class='synopsis-text'>{{ data.middleNum }}</span></td>
+          <td><span class='synopsis-text'>{{ data.hardNum }}</span></td>
+          <td><span class='synopsis-text'>{{ data.moreHardNum }}</span></td>
+          <td><span class='synopsis-text'>{{ data.fileType1 }}</span></td>
+        </tr>
+        </tbody>
+      </nz-table>
+    </div>
+    <ng-template #totalTemplate let-total>共 {{ total }} 条记录</ng-template>
+  </nz-content>
+</nz-layout>

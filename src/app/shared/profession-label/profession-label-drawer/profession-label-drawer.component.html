@@ -1,0 +1,19 @@
+<nz-drawer
+[nzClosable]="true"
+[nzVisible]="visible"
+[nzTitle]="title"
+[nzMaskClosable]="false"
+nzPlacement="right"
+nzTitle="Basic Drawer"
+[nzWidth]="drawerWidth"
+(nzOnClose)="close()"
+>
+  <p *ngIf="knowledgePointArr.length>0" style="font-size: 18px;">知识标签</p>
+  <qkc-custom-checkbox  [isBorder]="true" output="obj" [labelArr]="knowledgePointArr" [(ngModel)]="selectedKnowledgePointArr" (ngModelChange)="labelChange($event)"></qkc-custom-checkbox>
+
+<div class="item" *ngFor="let item of professionLabelArr">
+    <p style="font-size: 18px;">{{ item?.tagName }}</p>
+    <qkc-custom-checkbox [isBorder]="true" output="obj" [labelArr]="item.child" [(ngModel)]="item.selectedItems" (ngModelChange)="labelChange($event)"></qkc-custom-checkbox>
+</div>
+
+</nz-drawer>

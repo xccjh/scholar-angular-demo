@@ -1,0 +1,23 @@
+.container{
+  background-color: white;
+  padding:10px;
+  height: 100%;
+  width: 100%;
+  overflow: scroll;
+
+  @headerHeight: 40px;
+  .header{
+    display: flex;
+    justify-content: space-between;
+    height: @headerHeight;
+    line-height: @headerHeight;
+  }
+
+  .body{
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    height: calc(100% - @headerHeight);
+  }
+
+}

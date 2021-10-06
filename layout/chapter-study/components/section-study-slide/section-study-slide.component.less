@@ -1,0 +1,104 @@
+@well-series-color: rgb(0, 171, 132);
+
+nz-button-group {
+  box-shadow: 0px 3px 18px rgba(58, 60, 66, 0.09);
+  padding: 18px 12px;
+  width: 100%;
+  text-align: center;
+  .continue{
+    display: inline-block;
+    margin: 18px auto 0;
+    font-size: 14px;
+    line-height: 19px;
+    color: #00AB84;
+  }
+}
+
+i {
+  margin-right: .5rem;
+  font-size: 16px;
+}
+.card-header:nth-of-type(n+2){
+  border-top:1px #EDEDED dashed;
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 0 18px;
+  margin: 0 12px;
+  &>span:first-child {
+    display: flex;
+    align-items: center;
+  }
+  .tick {
+    height: 14px;
+    width: 3px;
+    border-radius: 2px;
+    background-color: @well-series-color;
+    margin-right: .5rem;
+    display: inline-flex;
+  }
+
+  .label {
+    color: #3A3C42;
+    font-weight: bold;
+  }
+}
+
+.exchange {
+  span, i {
+    margin-left: .5rem;
+    color: @well-series-color;
+    cursor: pointer;
+  }
+}
+
+button {
+  border-radius: 9999rem !important;
+  height: 28px;
+  line-height: 28px;
+  padding:0 15px;
+}
+
+.card-list-item {
+  border-radius: 9999rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  padding:11px 15px;
+  margin: 0 12px 18px;
+  background: #FAFAFA;
+  line-height:20px;
+  .difficulty{
+    display: flex;
+    align-items: center;
+    img{
+      margin-right: 5px;
+    }
+  }
+}
+.current{
+  background:rgba(0,171,132, 0.1)
+}
+.document-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px 24px;
+  span{
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.anticon-folder {
+  color: #F7D254;
+  font-size: 23px;
+}
+
+.anticon-star {
+  color: #FAA700;
+  font-size: 17px;
+}

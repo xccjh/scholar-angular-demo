@@ -1,0 +1,35 @@
+<ng-template #addEditModalContent>
+  <form nz-form [formGroup]="modalForm">
+
+    <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>指导讲师</nz-form-label>
+        <nz-form-control  [nzSpan]="18"  nzHasFeedback nzErrorTip="指导讲师不能为空并且不能超过30个字符">
+          <input nz-input type="text" formControlName="formTeacherName" placeholder="请输入指导讲师姓名" />
+        </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSm]="6" [nzXs]="24" >保利威视频</nz-form-label>
+      <nz-form-control   [nzSpan]="18"  nzHasFeedback nzErrorTip="视频ID不能超过50个字符">
+        <input nz-input type="text" formControlName="formVideoId" placeholder="请输入视频ID" />
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSm]="6" [nzXs]="24" >视频名字</nz-form-label>
+      <nz-form-control   [nzSpan]="18"  nzHasFeedback nzErrorTip="视频名字不能超过100个字符">
+        <input nz-input type="text" formControlName="formVideoName" placeholder="请输视频名字" />
+      </nz-form-control>
+    </nz-form-item>
+
+
+    <nz-form-item>
+      <nz-form-label  [nzSm]="6" [nzXs]="24" nzRequired>讲师简介</nz-form-label>
+      <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="讲师简介不能为空,且不能超过200个字符">
+        <!-- <input nz-input type="text" formControlName="formTeacherSynopsis" placeholder="请输入老师简介" /> -->
+        <textarea rows="2" nz-input formControlName="formTeacherSynopsis" placeholder="请输入讲师简介"></textarea>
+      </nz-form-control>
+    </nz-form-item>
+
+  </form>
+</ng-template>

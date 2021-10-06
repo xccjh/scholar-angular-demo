@@ -1,0 +1,30 @@
+<nz-tree
+#treeVar
+nzBlockNode
+nzAsyncData
+[nzData]="nodes"
+[nzExpandedKeys]="expandedKeys"
+[nzSelectedKeys]="selectedKeys"
+(nzClick)="nzEvent($event)"
+[nzTreeTemplate]="type=='display'?nzTreeTemplate:null"
+(nzExpandChange)="nzEvent($event)"
+[nzShowIcon]="type=='display'"
+[nzExpandedIcon]="multiExpandedIconTpl"
+[nzShowLine]="type=='display'">
+</nz-tree>
+
+<ng-template #nzTreeTemplate let-node>
+    <div class="node-row">
+        <span>
+            {{node.origin.title}}
+        </span>
+        <span style="font-size:12px;color:#999;"  *ngIf="!node.isLeaf">
+            共{{node.origin.sectionCount||0}}个小节
+        </span>
+    </div>
+</ng-template>
+
+<ng-template #multiExpandedIconTpl let-node let-origin="origin">
+    <i *ngIf="!origin.isLeaf" nz-icon [nzType]="node.isExpanded ? 'caret-down' : 'caret-right'" class="ant-tree-switcher-line-icon"></i>
+    <i *ngIf="origin.isLeaf&&type=='display'" class="circle"></i>
+  </ng-template>

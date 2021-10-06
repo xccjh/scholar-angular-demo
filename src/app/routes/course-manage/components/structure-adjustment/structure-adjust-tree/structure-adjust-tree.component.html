@@ -1,0 +1,90 @@
+<div style="margin-bottom: 15px;" *ngIf="emptyChapter.length!==0">
+  <ng-container *ngFor="let item of emptyChapter;let i=index;">
+    <nz-alert
+      nzType="warning"
+      nzMessage="{{ item + '没有节,请立即添加!' }}">
+    </nz-alert>
+  </ng-container>
+</div>
+
+<nz-spin [nzSpinning]="isLoading" [nzDelay]="0">
+  <nz-tree
+    #treeVar
+    class="has-bg-tree"
+    [nzData]="nodes"
+    nzAsyncData
+    [nzExpandedKeys]="expandedKeys"
+    [nzTreeTemplate]="nzTreeTemplate"
+    [nzDraggable]="isDraggable"
+    [nzBeforeDrop]="beforeDrop"
+    (nzExpandChange)="nzEvent($event)"
+    (nzOnDragEnd)="nzEvent($event)"
+    (nzClick)="nzEvent($event)">
+  </nz-tree>
+  <br />
+  <qkc-profession-label-add
+    *ngIf="!isStandard"
+    title="+新增"
+    [notPermitedShow]="isAddModel"
+    [placeholder]="'请输入章名称'"
+    (showChange)="prefessionLabelShowChange($event)"
+    (addChange)="addChapter($event)">
+  </qkc-profession-label-add>
+
+</nz-spin>
+
+<ng-template #nzTreeTemplate let-node>
+  <span class="custom-node" draggable>
+    <span class="title">
+      <ng-container
+        *ngTemplateOutlet="inputTpl; context: { $implicit:node }">
+      </ng-container>
+    </span>
+
+    <span class="icon-container">
+      <span class="icon-row"
+        *ngIf="!node.origin.isEdit && !isStandard">
+        <ng-container
+          *ngTemplateOutlet="iconTpl; context: { $implicit: node }">
+        </ng-container>
+      </span>
+
+      <span class="icon-row"
+        *ngIf="node.origin.isEdit">
+        <ng-container
+          *ngTemplateOutlet="editTpl; context: { $implicit:node }">
+        </ng-container>
+      </span>
+    </span>
+  </span>
+</ng-template>
+
+<ng-template #inputTpl let-node>
+  <span *ngIf="!node.origin.isEdit">{{ node.title }}</span>
+  <input
+    *ngIf="node.origin.isEdit"
+    nz-input
+    nzSize="small"
+    class="input-edit"
+    placeholder="请输入节名称"
+    [(ngModel)]="node.origin.editTitle"
+    (keyup.enter)="confirmEdit(node)" />
+</ng-template>
+
+<ng-template #iconTpl let-node>
+  <i nz-icon nzType="edit" nzTheme="outline" (click)="edit(node)"></i>
+  <i nz-icon nzType="minus-circle" nzTheme="outline" nz-popconfirm
+    nzPopconfirmTitle="确定删除?"
+    (nzOnConfirm)="delete(node)"
+    nzPopconfirmPlacement="topLeft"></i>
+  <ng-container *ngIf="!node.isLeaf">
+    <i nz-icon nzType="plus-circle" nzTheme="outline" (click)="add(node)"></i>
+  </ng-container>
+  <i nz-icon nzType="drag" nzTheme="outline"  title="拖动调整结构"></i>
+</ng-template>
+
+<ng-template #editTpl let-node>
+  <i nz-icon nzType="check" nzTheme="outline" (click)="confirmEdit(node)"></i>
+  <i nz-icon nzType="close" nzTheme="outline" (click)="cancelEdit(node)"></i>
+  <i nz-icon nzType="drag" nzTheme="outline" title="拖动调整结构"></i>
+</ng-template>

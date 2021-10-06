@@ -1,0 +1,22 @@
+<div class="container">
+  <div class="wrap">
+    <div class="top">
+      <div class="head">
+        <div class="head-logo" >
+          <div class="logo-content" [style]="logoStyle">
+
+          </div>
+        </div>  
+        <div class="head-title">
+          <!-- {{schoolName}}管理端 -->
+          <p style="margin: 15px 0 10px 0;">{{schoolName}}</p>
+          <p>教研工作台</p>
+        </div>
+        <!-- <img [src]="logoUrl" class="logo"/>
+        <span class="title">{{config.title}}</span> -->
+      </div>
+      <div class="desc"></div>
+    </div>
+    <router-outlet></router-outlet>
+  </div>
+</div>

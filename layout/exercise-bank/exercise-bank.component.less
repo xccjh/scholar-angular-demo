@@ -1,0 +1,98 @@
+
+:host {
+  height: 100%;
+  width: 100%;
+}
+
+.container {
+  height: calc(100% - 120px);
+  overflow: hidden;
+}
+
+.button-cover {
+  margin: auto;
+  max-width: 1208px;
+
+  .right {
+    width: calc(100% - 756px);
+    height: 80px;
+    float: right;
+
+
+    .button-container {
+      position: relative;
+      top: -100px;
+      margin: auto;
+      text-align: center;
+      border-top: 1px solid #ebebed;
+      height:70px;
+      background:white;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      .button-answer {
+        cursor: pointer;
+        padding: 0 73px;
+        font-size: 16px;
+        margin-top: 12px;
+        height: 42px;
+        line-height: 42px;
+      }
+    }
+  }
+}
+
+
+///* 如果设备像素大于等于3，则用3倍图 */
+//@media screen and (-webkit-min-device-pixel-ratio: 3),
+//screen and (min--moz-device-pixel-ratio: 3) {
+//  .hq-header {
+//    background-image: url('../../../assets/images/4728.png@3x.png');
+//  }
+//}
+
+
+.header {
+  background-image: url('src/assets/images/succes.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 100% 100%;
+  height: 250px;
+}
+
+.float-pane {
+  width: 472px;
+  height: 219px;
+  border-radius: 12px;
+  margin: auto;
+  text-align: center;
+  background: white;
+  margin-top: -92px;
+
+  .pane-title {
+    padding-top: 42px;
+    margin-bottom: 23px;
+
+    font-size: 18px;
+    font-family: Microsoft YaHei;
+    font-weight: 400;
+    line-height: 24px;
+    color: #3A3C42;
+  }
+
+  .tips {
+    font-size: 18px;
+    font-family: Microsoft YaHei;
+    font-weight: 400;
+    line-height: 24px;
+    color: #00AB84;
+    margin-bottom: 50px;
+  }
+
+  .continue-study {
+    font-size: 16px;
+    font-family: Microsoft YaHei;
+    font-weight: 400;
+    line-height: 21px;
+    color: #FFFFFF;
+  }
+}

@@ -1,0 +1,7 @@
+<ul nz-menu nzMode="inline">
+  <ng-container *ngFor="let item of menus">
+    <li nz-menu-item (click)="selectItem(item)" [nzSelected]="defaultSelect==item.id">
+      <span class="c_name">{{ item.name }}</span>
+    </li>
+  </ng-container>
+</ul>

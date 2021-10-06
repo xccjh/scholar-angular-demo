@@ -1,0 +1,56 @@
+<nz-layout style="width: 100%;height:100%;">
+  <nz-header class="section-header border">
+    <div class="package-name">
+      <span class="section-header-title">{{ data?.taskName }}</span>
+    </div>
+
+    <div class="padding-right">
+      <button nz-button nz-popover nzType="link" class="gray-text" [nzSize]="'small'" nzPopoverTitle="实训任务说明" [nzPopoverContent]="contentTemplate" nzPopoverPlacement="leftBottom">
+        <i nz-icon nzType="question-circle" nzTheme="outline"></i>
+        任务说明
+      </button>
+      <ng-template #contentTemplate>
+        <div class="score-explain" style="width: 300px;">
+          <p>实训任务的经验值按照总经验*实训评价分/100计算</p>
+          <p>结束时间是当天的23:59自动结束，逾期不能获得经验值</p>
+        </div>
+      </ng-template>
+    </div>
+
+  </nz-header>
+
+  <div class="wrapper">
+    <!-- 任务未结束 && 任务未完成 -->
+    <div>
+      <div id="container" style="width: 500px;margin: 0 auto;"></div>
+      <div class="remarks">
+        *每天14:00数据更新，最近更新{{ today | date:'MM月dd日' }}14:00
+      </div>
+    </div>
+    <!-- 任务已结束 && 任务未完成 -->
+<!--    <ng-container *ngIf="data.taskFinish === '1' && data.status === '0'">-->
+<!--      <div class="background fail">-->
+<!--        <div class="company-name">{{data.trainStatistic.companyName}}</div>-->
+<!--      </div>-->
+<!--    </ng-container>-->
+<!--    <ng-container *ngIf="data.status === '1'">-->
+<!--      <div class="background success">-->
+<!--        <div class="score">{{data.trainStatistic.exp}}</div>-->
+<!--        <div class="company-name">{{data.trainStatistic.companyName}}</div>-->
+<!--      </div>-->
+<!--      <div class="statistics">-->
+<!--        <div>-->
+<!--          <p>{{data.trainStatistic.usedTime}}<span>天</span></p>-->
+<!--          <p>总用时</p>-->
+<!--        </div>-->
+<!--        <div class="border-left">-->
+<!--          <p>{{data.trainStatistic.rank}}</p>-->
+<!--          <p>击败班级同学</p>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </ng-container>-->
+    <div class="wrapper-btn">
+      <button nz-button nzType="primary" nzShape="round" nzBlock (click)="goToTrain()" >前往实训</button>
+    </div>
+  </div>
+</nz-layout>

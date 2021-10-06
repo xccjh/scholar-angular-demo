@@ -1,0 +1,59 @@
+<div class="clearfix inline w100">
+  <nz-upload
+    *ngIf='cancel'
+    nzAction=""
+    [nzType]="isDrag ? 'drag' : null"
+    [nzListType]="listType"
+    [(nzFileList)]="imageList"
+    nzShowButton="{{ limit === 0 ? true : imageList.length < limit }}"
+    [nzShowUploadList]="showUploadList"
+    [nzPreview]="handlePreview"
+    [nzRemove]="remove"
+    [nzBeforeUpload]="beforeUpload"
+    [nzLimit]="limit"
+    [nzMultiple]="multiple"
+    [nzCustomRequest]="customReq"
+    (nzChange)="onChange($event)">
+    <ng-content></ng-content>
+  </nz-upload>
+
+  <div style="margin-top:10px;" *ngIf="type==='other-add'">
+    <div *ngFor="let item of imageList" class="upload-list">
+      <i class="close" nz-icon nzType="close" nzTheme="outline" (click)="remove(item)"></i>
+      <p nz-tooltip [nzTooltipTitle]='item.name' class='description'><i style="font-size: 14px;" nz-icon nzType="link" nzTheme="outline" ></i>&nbsp;{{ item.name }}</p>
+      <ng-container *ngIf="item.status==='uploading'">
+        <nz-progress nzStrokeWidth="3" [nzPercent]="item.percent | number :'1.0-0'" nzSize="small"></nz-progress>
+      </ng-container>
+      <div>
+        <input style="width:calc(100% - 50px);"
+               nz-input
+               placeholder="请输入标题..."
+               required
+               [maxlength]="30"
+               [(ngModel)]="item.title"
+               (ngModelChange)="titleChange($event)"
+        />
+        <span style="margin-left:10px;">{{ item.title ? item.title.length : 0 }}/30</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<qkc-attachment-show-modal
+  [(isShow)]="previewVisible"
+  [url]="previewPath" [hidden]='!previewVisible'>
+</qkc-attachment-show-modal>
+
+
+<nz-modal [(nzVisible)]="isPreviewpolyway" (nzOnCancel)="isPreviewpolyway=false" [nzFooter]='null' [nzTitle]='null'
+          nzWidth='600' [nzBodyStyle]='{padding:0,height:"500px"}' *ngIf='isPreviewpolyway'>
+  <iframe
+    allowfullscreen='true'
+    [src]="resourceUrl"
+    style="width: 100%;border: none;height: 100%">
+  </iframe>
+</nz-modal>
+
+<app-resource-preview-modal [isPreviewpolyway]='isPreviewpolyway' [previewTitle]='previewTitle'
+                            [resourceUrl]='resourceUrl' *ngIf='previewStart'
+                            (closePreview)='closePreview()'></app-resource-preview-modal>

@@ -1,0 +1,80 @@
+<div class="container" id="fullContainer">
+  <nz-spin [nzSpinning]="isLoading" [nzDelay]="0" class="full-height">
+    <div class="header">
+      <div class="header-title">{{data?.title}}</div>
+      <div>
+        <button nz-button nzType="link" qkcFullscreen fullId="fullContainer" (fullScreenChange)="fullChange($event)"
+                style='float:right;'>
+          <i nz-icon [nzType]="isFullScreen ? 'fullscreen-exit' : 'fullscreen'" nzTheme="outline"></i>
+        </button>
+        <button nz-button (click)='backtolist()' style='float:right;margin-top: 3px;'>返回</button>
+      </div>
+    </div>
+    <nz-divider style='margin: 12px 0 24px;'></nz-divider>
+
+    <div class="body">
+      <div class="left">
+        <qkc-menu [menus]="typeList" (menuChange)="menuChange($event)" [ngStyle]="{width:'150px'}"></qkc-menu>
+      </div>
+
+      <div class="middle">
+        <div id="materialSection1">
+          <h2>案例背景</h2>
+          <ckeditor [editor]="Editor" class='edit-content' [disabled]=true
+                    [config]="config" [ngModel]='data?.background'></ckeditor>
+<!--          <span-->
+<!--            style='float:right'>{{getContentLength(data?.background)}}/5000</span>-->
+<!--          <div [innerHtml]="data?.background | safeHtml" style='wordBreak:break-all;'></div>-->
+        </div>
+        <div id="materialSection2">
+          <h2>案例解析</h2>
+<!--          <div [innerHtml]="data?.analysis | safeHtml" style='wordBreak:break-all;'></div>-->
+          <ckeditor [editor]="Editor" class='edit-content' [disabled]=true
+                    [config]="config" [ngModel]='data?.analysis'></ckeditor>
+        </div>
+
+        <div id="materialSection3">
+          <h2>教学指导</h2>
+          <ckeditor [editor]="Editor" class='edit-content' [disabled]=true
+                    [config]="config" [ngModel]='data?.guide'></ckeditor>
+<!--          <div [innerHtml]="data?.guide | safeHtml" style='wordBreak:break-all;'></div>-->
+        </div>
+      </div>
+
+      <div class="right">
+        <div>
+
+          <div *ngIf="data?.audioInfo">
+            <qkc-media-audio [title]="data?.audioInfo?.attachmentName"
+                             [url]="data?.audioInfo?.attachmentPath"></qkc-media-audio>
+          </div>
+
+          <div>
+            <nz-divider nzText="附件列表"></nz-divider>
+            <ng-container *ngFor="let item of data?.caseAttch">
+              <a class="attach-block" (click)="previewAttachment(item)">
+                <img *ngIf="item?.isPic" [src]="item?.attachmentPath" alt="thumbnail">
+                <img *ngIf="!item?.isPic&&item?.thumbnail" [src]="item?.thumbnail" alt="thumbnail">
+                <span>{{ item.attachmentName }}</span>
+              </a>
+              <!--              <i nz-icon nzType="arrow-down" nzTheme="outline"></i>-->
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nz-spin>
+</div>
+
+
+<!--<qkc-attachment-show-modal-->
+<!--  [(isShow)]="isShow"-->
+<!--  [filePreviewName]="data?.title"-->
+<!--  [url]="curShowItem?.attachmentPath">-->
+<!--</qkc-attachment-show-modal>-->
+
+
+
+<app-resource-preview-modal [isPreviewpolyway]='isPreviewpolyway' [previewTitle]='previewTitle'
+                            [resourceUrl]='resourceUrl' *ngIf='previewStart'
+                            (closePreview)='closePreview()'></app-resource-preview-modal>

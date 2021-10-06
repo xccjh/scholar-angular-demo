@@ -1,0 +1,10 @@
+<nz-tabset [nzTabBarStyle]="{display:'none'}" [nzSelectedIndex]="tabIdx">
+  <nz-tab nzTitle="案例">
+    <app-case-task [data]="data" [id]="data.id"  (pageChange)="tabIdx=$event" (finishTaskCallBack)="finishTask()"></app-case-task>
+  </nz-tab>
+  <nz-tab nzTitle="发言墙">
+    <ng-template nz-tab>
+      <app-speak-wall [id]="data.id" (pageChange)="tabIdx=$event"></app-speak-wall>
+    </ng-template>
+  </nz-tab>
+</nz-tabset>

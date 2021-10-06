@@ -1,0 +1,32 @@
+<nz-spin [nzSpinning]="isLoading" [nzDelay]="0" class="full-height">
+<ng-container *ngIf="nodes[0]; else other">
+    <div class="tree-container" style="padding-left: 30px;">
+    <nz-tree
+        #nzTreeComponent
+        [nzData]="nodes"
+        [nzTreeTemplate]="null" 
+        [nzDraggable]="isDraggable"
+        [nzCheckable]="isCheckable"
+        [nzShowExpand]="false"
+        [nzExpandAll]="isExpandAll" 
+        [nzCheckedKeys]="defaultCheckedKeys" 
+        [nzSelectedKeys]="defaultCheckedKeys"
+        [nzExpandedKeys]="defaultExpandedKeys"
+        (nzCheckBoxChange)="nzEvent($event)"
+        [nzTreeTemplate]="model==='click'?null:treeNode"
+        (nzClick)="nzEvent($event)">
+    </nz-tree>
+    </div>
+</ng-container>
+<ng-template #other>
+    <nz-empty style="margin-top: 50px;"></nz-empty>
+</ng-template>
+</nz-spin>
+
+<ng-template #treeNode let-origin="origin">
+    <span [ngClass]="{'ant-checkbox': true, 'ant-checkbox-checked': origin.id===activeId}">
+        <span class="ant-checkbox-inner"></span>
+    </span>
+    <span>{{origin.title}}</span>
+    <!-- <label nz-checkbox [ngModel]="origin.id===activeId" disabled></label> {{origin.title}} -->
+</ng-template>

@@ -1,0 +1,93 @@
+<nz-layout>
+  <nz-content style='padding: 15px 20px 20px;'>
+    <div class="course-header">
+      <div>
+        <button nz-button nzType="primary" (click)="questionConfiguration('题型配置')">题型配置</button>
+        <i nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip
+           nzTooltipTitle="显示题型是面向用户显示，可以按照官方要求自定义题型名称，本质题型是题型本质上的题型，由题型本身字段决定" nzTooltipTrigger='click'
+           class='font-question' [nzTooltipOverlayStyle]='{"max-width": "750px"}'></i>
+      </div>
+    </div>
+    <div class="table-container" id='tableScroll' [class.no-scoll]='!data.length'>
+      <nz-table #basicTable [nzData]="data" [nzFrontPagination]="false"
+                [nzPageSizeOptions]='[15, 20, 30, 40, 50]'
+                [nzShowSizeChanger]="true"
+                [nzScroll]='{y : height+"px"}'
+                [nzShowTotal]="totalTemplate" [nzLoading]="isLoading" [nzTotal]="total"
+                [(nzPageIndex)]="pageIndex"
+                [(nzPageSize)]="pageSize" (nzPageIndexChange)="searchData()"
+                (nzPageSizeChange)="searchData()">
+        <thead>
+        <tr>
+          <th>显示题型</th>
+            <th>本质题型</th>
+            <th>状态</th>
+            <th>所属学科</th>
+            <th>更新时间</th>
+            <th nzWidth='170px'>操作</th>
+          </tr>
+          </thead>
+        <tbody>
+        <tr *ngFor="let data of basicTable.data;let idx=index;">
+          <td>{{ data.code }}</td>
+          <td>{{ data.name }}</td>
+          <td>{{ data.leaderName }}</td>
+          <td>{{ data.statusName}}</td>
+          <td>{{ data.auditStatusName}}</td>
+          <td>
+            <a class='operating' (click)="edit(data)">编辑</a>
+            <a class="light-color operating" (click)="
+            (data)">启用</a>
+          </td>
+        </tr>
+        </tbody>
+      </nz-table>
+    </div>
+    <ng-template #totalTemplate let-total>共 {{ total }} 条记录</ng-template>
+  </nz-content>
+</nz-layout>
+
+
+<ng-template #modalContent>
+  <nz-spin [nzSpinning]="isModalLoading" [nzDelay]="0">
+    <form nz-form [formGroup]="modalForm">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5" nzRequired>显示题型</nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback [nzErrorTip]="nameTpl" style='max-width: 316px;'>
+          <input nz-input type="text" formControlName="showQuestionType" placeholder="请输入显示题型" (keyup.enter)='confirm()'/>
+        </nz-form-control>
+        <span style="margin-left: 10px;" [style.color]='modalForm.controls.showQuestionType.hasError("maxlength")?"red":"inherit"'>
+          {{modalForm.value.showQuestionType.length}}/25</span>
+        <ng-template #nameTpl let-control>
+          <div *ngIf="control.hasError('required')">
+            显示题型不能为空
+          </div>
+          <div *ngIf="control.hasError('maxlength')">{{'显示题型不能超过25个字符'}}</div>
+        </ng-template>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5" nzRequired>本质题型</nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="本质题型不能为空">
+          <nz-select formControlName="essentialQuestion" placeholder="请选择本质题型">
+            <nz-option nzValue="" nzLabel="请选择">
+            </nz-option>
+            <nz-option nzValue="1" nzLabel="专业课">
+            </nz-option>
+            <nz-option nzValue="2" nzLabel="公共课">
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="5">是否启用</nz-form-label>
+        <nz-form-control [nzSpan]="18" >
+          <nz-switch formControlName="whetherToEnable" nzCheckedChildren="开" nzUnCheckedChildren="关"></nz-switch>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </nz-spin>
+</ng-template>
+
+

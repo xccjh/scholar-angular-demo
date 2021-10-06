@@ -1,0 +1,19 @@
+<div class="label-item-content">
+  <ng-container *ngFor="let item of labelArr">
+    <qkc-profession-label-input
+      [data]="item"
+      [tagType]="tagType"
+      [tagLevel]="tagLevel"
+      (delChange)="inputDelChange($event)"
+      style="margin:8px 0;">
+    </qkc-profession-label-input>
+  </ng-container>
+
+  <div style="width: 150px; margin:8px 0">
+    <qkc-profession-label-add
+      [title]="'+'"
+      [level]="tagLevel"
+      (addChange)="addTagChange($event)">
+    </qkc-profession-label-add>
+  </div>
+</div>

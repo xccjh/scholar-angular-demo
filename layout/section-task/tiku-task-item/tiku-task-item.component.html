@@ -1,0 +1,21 @@
+<div class="box">
+  <div class="title flex-title">
+    <p class="task-name" [title]="qcData?.taskName || qcData?.name">
+      {{ qcData?.taskName || qcData?.name}} 
+    </p>
+    <!-- <p class="end-time" [class]="{'end-bg': qcData?.status === '1', 'self-evalute': qcData?.status === '3'}">
+      <span>{{ statusName[qcData?.status] }}</span>
+    </p> -->
+  </div>
+ 
+  <div class="desc" >
+    <div [class]="{'orange-text': qcData?.status !== '1'}">
+      <p style="padding-right: 24px;">
+        <span class="gray-text">{{ taskTypeName[qcData?.taskType] }} • </span>
+        <span *ngIf="qcData?.status !== '2'">{{ getDaysDiffBetweenDates(qcData?.planEndTime, qcData?.taskFinish) }}</span>
+        <span *ngIf="qcData?.status === '2'">{{ statusName[qcData?.status] }} {{ getDaysDiffBetweenDates(qcData?.endTime) }}</span>
+        <span style="float: right;font-size: 20px; color: red;" *ngIf="qcData?.unreadCount > 0">•</span>
+      </p>
+    </div>
+  </div>
+</div>

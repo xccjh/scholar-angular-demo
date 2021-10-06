@@ -1,0 +1,36 @@
+@primary-color: #00AB84;
+@gray-bg: #F0F1F3;
+@border-color: #F0F1F3;
+@gray-text-color: #818EA5;
+@font-bold-color: #101010;
+@red-text-color:#FF685F;
+@gutter:20px;
+@orange-text-color: #F6612F;
+@green-text-color: #00AB84;
+@green-back-color: #EBF9F5FF;
+@gray-back-color: #f0f2f5;
+.red-icon{
+  position: absolute;
+  right: 10px;
+  background: red;
+  top: 22px;
+  width: 5px;
+  border-radius: 50%;
+  height: 5px;
+}
+.btn {
+  cursor: pointer;
+  margin-right: 5px;
+  margin-left: 5px;
+}
+
+.btn:hover {
+  color: @green-text-color;
+}
+
+.green-border-left {
+  border-left: 4px solid @green-text-color;
+}
+::ng-deep .ant-btn-link:focus, .ant-btn-link:hover {
+  color: #00AB84;
+}

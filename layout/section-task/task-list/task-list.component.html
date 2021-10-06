@@ -1,0 +1,26 @@
+
+<nz-layout style="height: 100%;" [style]="{'display': hideBtn ? 'none' : 'flex'}">
+  <nz-content style="overflow: auto;border-radius: 6px;padding: 13px 0;" class="white-bg">
+    <nz-tabset nzSize="small"
+    [nzShowPagination]="false"
+    [nzSelectedIndex]="tabIdx"
+    [nzTabBarStyle]="{display:'none'}">
+      <nz-tab  *ngFor="let item of typeList" [nzTitle]="item">
+        <div *ngIf="onTaskList.length == 0" class="load-spin">
+          <nz-empty [nzNotFoundContent]="'暂未创建任务'" style="margin-top: 100px;"></nz-empty>
+        </div>
+        <div class="task-list" *ngIf="onTaskList.length > 0">
+          <ng-container *ngFor="let item of onTaskList">
+            <app-section-task-item
+              [qcData]="item"
+              [selectedId]="selectedId"
+              (selectChange)="taskItemChange($event)">
+            </app-section-task-item>
+          </ng-container>
+        </div>
+      </nz-tab>
+    </nz-tabset>
+  </nz-content>
+</nz-layout>
+<div class="hide-btn left-show" (click)="btnChange(true)" *ngIf="!hideBtn"><i nz-icon nzType="left" nzTheme="outline"></i></div>
+<div class="hide-btn left-hide" *ngIf="hideBtn" (click)="btnChange(false)"><i nz-icon nzType="right"></i></div>

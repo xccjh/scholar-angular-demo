@@ -1,0 +1,118 @@
+<div class="container">
+  <section class="header">
+    <div class="title">
+      {{ selectedProfesson?.name }}
+      <qkc-change-profession (professionChange)="professionChange($event)" [select]='selected'
+                             *ngIf='changeProfession' [hidden]='from==="scp"'></qkc-change-profession>
+    </div>
+    <div>
+      <button nz-button nzType="primary" class="margin-btn" (click)="goback()" *ngIf="from==='scp'">完成调用</button>
+      <button nz-button nzType="primary" class="margin-btn" (click)="goAddCase()" *ngIf="from===''">新增案例</button>
+    </div>
+  </section>
+
+  <section class="resource-container" nz-row>
+    <section class="left-tree" nz-resizable
+             [style.width.px]="width"
+             (nzResize)="onResize($event)">
+      <div #treeContainer style='display:inline-block;overflow:hidden;margin-right: 30px;'>
+        <qkc-tree-knowledgegraph model="click" [professionId]="selectedProfesson?.id" *ngIf='knowledgegraphTree'
+                                 (nodeChange)="nodeChange($event)" [allNodes]='true'></qkc-tree-knowledgegraph>
+      </div>
+      <nz-resize-handle nzDirection="right">
+        <div class="right-wrap">
+          <i class="right" nz-icon nzType="more" nzTheme="outline"></i>
+        </div>
+      </nz-resize-handle>
+    </section>
+    <section class="right-resource">
+      <section class="search-container">
+        <div class="list">
+          <div class="list-title">关键词搜索：</div>
+          <div class="list-input">
+            <input nz-input placeholder="支持标题"
+                   [(ngModel)]="condition" (ngModelChange)='storingData();' (keyup.enter)='resetSearch()'/>
+          </div>
+        </div>
+        <div class="list">
+          <div class="list-title" style='margin-left:20px'>学习目标：</div>
+          <div class="list-input">
+            <nz-select [(ngModel)]="learningGoalCode" (ngModelChange)='storingData();' class="list-input"
+                       nzMode="multiple" style='width: 100%;max-width: 300px;'>
+              nzShowSearch
+              [nzMaxTagPlaceholder]="tagPlaceHolder"
+              <nz-option nzValue="1" nzLabel="了解"></nz-option>
+              <nz-option nzValue="2" nzLabel="理解"></nz-option>
+              <nz-option nzValue="3" nzLabel="掌握"></nz-option>
+              <nz-option nzValue="4" nzLabel="应用"></nz-option>
+              <nz-option nzValue="5" nzLabel="分析"></nz-option>
+              <nz-option nzValue="6" nzLabel="创新"></nz-option>
+            </nz-select>
+          </div>
+        </div>
+        <button nz-button nzType="primary" class="margin-btn"
+                (click)="resetSearch()">查询
+        </button>
+        <button nz-button nzType="primary" style='margin-left:20px;' (click)="resetData()">重置</button>
+      </section>
+      <section class="table-container" id='tableScroll' [class.no-scoll]='!data.length'>
+        <nz-table #ajaxTable [nzData]="data" [nzFrontPagination]="false"
+                  [nzShowSizeChanger]="true"
+                  [nzPageSizeOptions]='[15, 20, 30, 40, 50]'
+                  [nzScroll]='{x:"1260px",y : height+"px"}'
+                  [nzShowTotal]="totalTemplate" [nzLoading]="isLoading" [nzTotal]="total"
+                  [(nzPageIndex)]="pageIndex"
+                  [(nzPageSize)]="pageSize" (nzPageIndexChange)="searchData()"
+                  (nzPageSizeChange)="searchData()">
+          <thead class="source-header">
+          <tr>
+            <th nzWidth='220px'>标题</th>
+            <th nzWidth='120px'>学习目标</th>
+            <th nzWidth='220px'>知识点</th>
+            <!--            <th>资源类型</th>-->
+            <th nzWidth='120px'>创建者</th>
+            <th nzWidth='120px'>作者</th>
+            <!--            <th>单位</th>-->
+            <th nzWidth='120px'>更新时间</th>
+            <th (nzSortOrderChange)='nzSortOtrderChange($event)' [nzShowSort]='true' [nzSortOrder]='order'
+                nzWidth='100px'>使用次数
+            </th>
+            <th nzWidth='120px' nzRight>操作</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let data of ajaxTable.data;let i = index;">
+            <!--            <td><span style="color: red;">{{ data?.newRes ? 'new' : '' }}</span></td>-->
+            <td><span class='synopsis-text'>{{ data?.title }}</span></td>
+            <td>{{ getName(data?.learningGoalCode, 'LEARNING_TARGET') }}</td>
+            <td style='cursor:pointer;' nzTooltipTrigger='click' nz-tooltip [nzTooltipTitle]="data?.pointName"><span
+              class='synopsis-text'>{{data?.pointName}}</span></td>
+            <!--            <td>{{ getName(data?.type, 'MATERIAL_TYPE') }}</td>-->
+            <td>{{ data?.createrName }}</td>
+            <td>{{ data?.authorName }}</td>
+            <!--            <td>{{ data?.authorUnit }}</td>-->
+            <td>{{ getDate(data?.lastModifiedTime)}}</td>
+            <td>{{ data?.useTime}}</td>
+            <td *ngIf="from==''" nzRight>
+              <a (click)="copy(data)">复制 </a>
+              <a (click)="preview(data)">预览 </a>
+              <a (click)="edit(data)">编辑 </a>
+              <a class="light-color" (click)="del(data)" *ngIf='delIF(data)'>删除</a>
+            </td>
+            <td *ngIf="from=='scp'" nzRight>
+              <a (click)="preview(data)">预览 </a>
+              <a (click)="callResource(data, i)" *ngIf="!data.isCall&&permitedCall">调用</a>
+              <a class="light-color"
+                 (click)="cancelCallResource(data, i)"
+                 *ngIf="data.isCall && !callResourceData.isStandard"
+              >取消调用</a>
+              <a *ngIf="data.isCall && callResourceData.isStandard" style="color: #999;">已调用</a>
+            </td>
+          </tr>
+          </tbody>
+        </nz-table>
+      </section>
+      <ng-template #totalTemplate let-total>共 {{ total }} 条记录</ng-template>
+    </section>
+  </section>
+</div>

@@ -1,0 +1,160 @@
+<div class="container">
+  <section class="header">
+    <div class="title">
+      {{ selectedProfesson?.name }}
+      <qkc-change-profession (professionChange)="professionChange($event)" *ngIf='changeProfession'
+                             [select]='selected' [hidden]='from==="scp"'></qkc-change-profession>
+    </div>
+    <div>
+      <button nz-button nzType="primary" class="margin-btn" (click)="goback()" *ngIf="from==='scp'">完成调用</button>
+      <button nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu" nz-button *ngIf="from===''"
+              nzType="primary" class="margin-btn">新增阅读
+      </button>
+      <nz-dropdown-menu #menu="nzDropdownMenu">
+        <ul nz-menu>
+          <ng-container *ngFor="let item of materialMenus">
+            <li nz-menu-item (click)="selectMenu(item)">{{ item?.name }}</li>
+          </ng-container>
+        </ul>
+      </nz-dropdown-menu>
+    </div>
+  </section>
+
+  <section class="resource-container" nz-row>
+    <section class="left-tree"
+             nz-resizable
+             [style.width.px]="width"
+             (nzResize)="onResize($event)"
+    >
+      <div #treeContainer style='display:inline-block;overflow:hidden;margin-right: 30px;'>
+        <qkc-tree-knowledgegraph model="click" [professionId]="selectedProfesson?.id"
+                                 (nodeChange)="nodeChange($event)" *ngIf='knowledgegraphTree'
+                                 [allNodes]='true'></qkc-tree-knowledgegraph>
+      </div>
+
+      <nz-resize-handle nzDirection="right">
+        <div class="right-wrap">
+          <i class="right" nz-icon nzType="more" nzTheme="outline"></i>
+        </div>
+      </nz-resize-handle>
+    </section>
+    <section class="right-resource">
+      <section class="search-container">
+        <div class="list">
+          <div class="list-title">关键词搜索：</div>
+          <input nz-input placeholder="支持标题"
+                 style='width: 200px'
+                 [(ngModel)]="condition" (keyup.enter)='searchData("button")' (ngModelChange)='storingData()'/>
+          <div class="list-title" style='margin-left: 40px;'>资源类型：</div>
+          <nz-select nzShowSearch nzAllowClear nzPlaceHolder="请选择资源类型" [(ngModel)]='coursewareType'
+                     (ngModelChange)='storingData()' style='width:200px;'
+                     nzMode="multiple" style='width: 200px'>
+            <nz-option nzValue="101" nzLabel="讲义"></nz-option>
+            <nz-option nzValue="102" nzLabel="资料"></nz-option>
+            <nz-option nzValue="103" nzLabel="视频"></nz-option>
+          </nz-select>
+          <div class="list-title" style='margin-left: 40px;'>学习目标：</div>
+          <nz-select [(ngModel)]="learningGoalCode" class="list-input" nzMode="multiple" nzShowSearch
+                     (ngModelChange)='storingData()' style='width:200px;'>
+            <nz-option nzValue="1" nzLabel="了解"></nz-option>
+            <nz-option nzValue="2" nzLabel="理解"></nz-option>
+            <nz-option nzValue="3" nzLabel="掌握"></nz-option>
+            <nz-option nzValue="4" nzLabel="应用"></nz-option>
+            <nz-option nzValue="5" nzLabel="分析"></nz-option>
+            <nz-option nzValue="6" nzLabel="创新"></nz-option>
+          </nz-select>
+          <button nz-button nzType="primary" style='margin-left: 40px;' (click)='searchData("button")'>查询</button>
+          <button nz-button nzType="primary" style='margin-left: 20px;' (click)="resetData()" *ngIf='from !== "scp"'>
+            重置
+          </button>
+        </div>
+      </section>
+      <section class="table-container" id='tableScroll' [class.no-scoll]='!data.length'>
+        <nz-table #ajaxTable [nzData]="data" [nzFrontPagination]="false"
+                  [nzScroll]='{x:"1300px",y : height+"px"}'
+                  [nzShowSizeChanger]="true"
+                  [nzShowTotal]="totalTemplate" [nzLoading]="isLoading" [nzTotal]="total"
+                  [(nzPageIndex)]="pageIndex"
+                  [nzPageSizeOptions]='[15, 20, 30, 40, 50]'
+                  [(nzPageSize)]="pageSize" (nzPageIndexChange)="searchData()"
+                  (nzPageSizeChange)="searchData()">
+          <thead class="source-header">
+          <tr>
+            <th nzWidth='220px'>标题</th>
+            <th nzWidth='120px'>资源类型</th>
+            <th nzWidth='220px'>知识点</th>
+            <th nzWidth='120px'>学习目标</th>
+            <th nzWidth='120px'>创建者</th>
+            <th nzWidth='120px'>作者</th>
+            <!--            <th>单位</th>-->
+            <th nzWidth='120px'>更新时间</th>
+            <th [nzShowSort]='true' [nzSortOrder]='order' nzWidth='100px'
+                (nzSortOrderChange)='nzSortOtrderChange($event)'>使用次数
+            </th>
+            <th nzWidth='160px' nzRight>操作</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let data of ajaxTable.data;let i = index">
+            <td><span class='synopsis-text'>{{ data?.title }}</span></td>
+            <td>{{ getName(data?.type, 'MATERIAL_TYPE') }}</td>
+            <td style='cursor:pointer;'><span class='synopsis-text' nz-tooltip
+                                              [nzTooltipTitle]="data?.pointName">{{data?.pointName}}</span></td>
+            <td>{{ getName(data?.learningGoalCode, 'LEARNING_TARGET') }}</td>
+            <td>{{ data?.createrName }}</td>
+            <td>{{ data?.authorName }}</td>
+            <!--            <td>{{ data?.authorUnit }}</td>-->
+            <td>{{ getDate(data?.lastModifiedTime)}}</td>
+            <td>{{ data?.useTime}}</td>
+            <td *ngIf="from==''" nzRight>
+              <a (click)="preview(data)">预览 </a>
+              <a (click)="edit(data)">编辑 </a>
+              <a (click)="qcode(data)">二维码 </a>
+              <a class="light-color" (click)="del(data)" *ngIf='delIF(data)'>删除</a>
+            </td>
+            <td *ngIf="from=='scp'" nzRight>
+              <a (click)="preview(data)">预览 </a>
+              <a (click)="callResource(data, i)" *ngIf="!data.isCall && data.supportType && permitedCall">调用</a>
+              <a
+                class="light-color"
+                (click)="cancelCallResource(data, i)"
+                *ngIf="data.isCall && !callResourceData.isStandard">
+                取消调用
+              </a>
+              <a
+                class="light-color"
+                (click)="cancelCallResource(data, i)"
+                *ngIf="data.isCall && callResourceData.isStandard && data.taskType === '4'">
+                取消调用
+              </a>
+              <a
+                *ngIf="data.isCall && callResourceData.isStandard && data.taskType !== '4'"
+                style="color: #999;">
+                已调用
+              </a>
+            </td>
+          </tr>
+          </tbody>
+        </nz-table>
+      </section>
+      <ng-template #totalTemplate let-total>共 {{ total }} 条记录</ng-template>
+    </section>
+  </section>
+</div>
+
+<nz-modal [(nzVisible)]="qrcodeVisible" nzTitle="生成二维码" (nzOnCancel)="qrcodeVisible=false" [nzFooter]='null'>
+  <div style='display:flex;justify-content:center;margin-bottom:10px;font-size:18px;'>
+      {{qrName}}
+  </div>
+  <div style='display:flex;justify-content:center;'>
+    <qr-code [value]='qrcode' [size]='size' *ngIf='qrcode' id='qr-code'></qr-code>
+  </div>
+  <div style='display:flex;justify-content:center;'>
+    <button nz-button [nzType]="'primary'" (click)="downloadQrcode()" style='margin: 20px 0;'>下载二维码图片</button>
+  </div>
+</nz-modal>
+
+
+<app-resource-preview-modal [isPreviewpolyway]='isPreviewpolyway' [previewTitle]='previewTitle'
+                            [resourceUrl]='resourceUrl' *ngIf='previewStart'
+                            (closePreview)='closePreview()'></app-resource-preview-modal>

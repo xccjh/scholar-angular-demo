@@ -1,0 +1,17 @@
+<div class="radio-box">
+  <ng-container *ngFor="let exerciseItem of qcData;let idx=index;">
+    <nz-spin [nzSize]="'small'" [nzSpinning]="exerciseItem.exerciseLoading">
+      <div class="radio-box-item"
+        [ngClass]="raidoClass(exerciseItem)"
+        (click)="selectRadio(exerciseItem, idx)">
+        <div class="dot" *ngIf="exerciseItem.mode !== 'collection' && !exerciseItem.isEvalute"></div>
+        <div class="serial-num">{{ (idx+1) + '.' }}</div>
+        <div class="title-wrapper">
+          <div>{{ '【' + exerciseItem.exerciseKindName + '】' }}</div>
+          <div class="title" [innerHTML]="exerciseItem.title"></div>
+        </div>
+        <div class="exp">{{ exerciseItem.originalExp }}分</div>
+      </div>
+    </nz-spin>
+  </ng-container>
+</div>

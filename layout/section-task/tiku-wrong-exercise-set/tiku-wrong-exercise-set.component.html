@@ -1,0 +1,40 @@
+<div class="container">
+  <nz-collapse 
+    [style]="{ border: 'none', 'background-color': '#f0f1f3'}">
+    <nz-collapse-panel
+      *ngFor="let node of nodes;let idx=index;"
+      class="collapse-panel"
+      [(nzActive)]="node.active"
+      [nzShowArrow]="false"
+      [nzHeader]="panelHeaderTpl"
+      [nzExtra]="extraTpl"
+      (nzActiveChange)="sectionChange(node)">
+      <ng-template #panelHeaderTpl>
+        <span style="margin-right: 20px;">第{{ idx + 1}}章</span><span>{{ node.chapterName}}</span>
+      </ng-template>
+      <ng-template #extraTpl>
+        <img *ngIf="!node.loading" [class]="{'arrow-direction': node.active }" src="assets/images/up.png" atl="up" />
+        <i nz-icon *ngIf="node.loading" [nzType]="'loading'"></i>
+      </ng-template>
+      <div *ngIf="node.children && node.children.length === 0 && !node.loading">
+        <nz-empty></nz-empty>
+      </div>
+      <div class="list">
+        <div class="list-item" *ngFor="let item of node.children;let sectionIdx=index;" cdkDrag>
+          <div>
+            <span class="section-name">{{ item.sectionIdxName}}</span>
+            <span class="task-name">{{ item.name}}</span>
+          </div>
+          <div class="action-group">
+            <ng-container>
+              <span class="exe-num">{{ item?.errorExeNum || 0}}题</span>
+              <button nz-button nzType="default" class="action-btn" (click)="redoExecrise(item)">
+                重做
+              </button>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </nz-collapse-panel>
+  </nz-collapse>
+</div>

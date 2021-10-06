@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head id='head'>
+  <meta charset="utf-8">
+  <title>教研工作台</title>
+  <meta name="google" content="notranslate"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <base target="_blank" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <!--  <base href="/" id='base'>-->
+  <!--  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">-->
+<!--  <script src='//player.polyv.net/script/polyvplayer.min.js'></script>-->
+  <script src='assets/js/web-office-sdk-v1.1.8.umd.js'></script>
+  <script>
+
+    function isWeiXin() {
+      var ua = window.navigator.userAgent.toLowerCase();
+      if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    function checkAgent() {
+      const userAgent = navigator.userAgent; //取得浏览器的userAgent字符串
+      if (window.navigator.userAgent.indexOf("MSIE") >= 1 || (userAgent.indexOf('Trident') > -1 && userAgent.indexOf("rv:11.0") > -1)) {
+        alert("系统不支持IE浏览器，建议使用最新版的chrome。");
+        window.location.href = "http://support.dmeng.net/upgrade-your-browser.html?referrer=" + encodeURIComponent(window.location.href);
+      } else if (userAgent.indexOf('Chrome') > -1) {
+        const result = userAgent.match(/(Chrome\/(.+?)\ )/g);
+        if (result[0].split('/')[1].split('.')[0] < 65) {
+          if (isWeiXin()) {
+            alert('请用电脑安装的浏览器打开,点击导航栏的小窗格试试')
+          } else {
+            alert("您系统的浏览器版本过旧，建议使用较新版本chrome内核的浏览器。");
+            window.location.href = "http://support.dmeng.net/upgrade-your-browser.html?referrer=" + encodeURIComponent(window.location.href);
+          }
+        } else {
+        }
+      }
+    }
+
+    function getOrgCodeFromQuestionMark() {
+      const hrefs = window.location.href.split('?');
+      if (hrefs.length >= 2) {
+        const paramStr = hrefs[1];
+        // 参数字符串里有没带 =?/#
+        let orgCode = paramStr.split('=')[0];
+        orgCode = orgCode.split('?')[0];
+        orgCode = orgCode.split('/')[0];
+        orgCode = orgCode.split('#')[0];
+        orgCode = orgCode.split('/')[0];
+        return orgCode;
+      } else {
+        return '';
+      }
+    }
+
+    function getdate(date) {
+      const year = date.getFullYear();
+      const month =
+        date.getMonth() + 1 < 10 ?
+          '0' + (date.getMonth() + 1) :
+          date.getMonth() + 1;
+      const day =
+        date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+      const hours =
+        date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
+      const minutes =
+        date.getMinutes() < 10 ?
+          '0' + date.getMinutes() :
+          date.getMinutes();
+      const seconds =
+        date.getSeconds() < 10 ?
+          '0' + date.getSeconds() :
+          date.getSeconds();
+      const time =
+        '' +
+        year +
+        month +
+        day +
+        hours +
+        minutes +
+        seconds;
+      return time;
+    }
+
+    function redirectClearCached() {
+      const orgCode = getOrgCodeFromQuestionMark() || 'cjsd';
+      const url = window.location.href;
+      const result = url.split('#');
+      const orgCodeReg = new RegExp('\((\\?|&)' + (orgCode) + '\)');
+      const versonEqualReg = new RegExp('\((\\?|&)' + (orgCode) + '=\)');
+      const versonVReg = new RegExp('\((\\?|&)' + (orgCode) + '=v\)');
+      const versonReg = new RegExp('\((\\?|&)' + (orgCode) + '=v\\.[0-9]*\)');
+      let finalUrl;
+      if (orgCodeReg.test(url)) { // 有?cjsd或&cjsd或&cjsd*,
+        const orgCodeResult = orgCodeReg.exec(url);
+        const versonResult = versonReg.exec(url);
+        const versonEqualResult = versonEqualReg.exec(url);
+        const versonVResult = versonVReg.exec(url);
+        if (versonReg.test(url)) { // 有 ?cjsd=v.或?cjsd=v.12132asdasd 或 ?cjsd=v.asdasd12132
+          var versonResultEnter = versonResult[0].split(orgCodeResult[0]); //  // ?cjsd=v.12132 => =v.12132
+          if (versonResultEnter && versonResultEnter[1]) {
+            // if (versonResultEnter[1].length < 16) {
+            finalUrl = url.replace(versonResult[0], versonResult[0][0] + orgCode + '=v.' + getdate(new Date()));
+            // }
+          }
+        } else if (versonVReg.test(url)) { // cjsd=v
+          finalUrl = url.replace(versonVResult[0], versonVResult[0][0] + orgCode + '=v.' + getdate(new Date()));
+        } else if (versonEqualReg.test(url)) { // cjsd=
+          finalUrl = url.replace(versonEqualResult[0], versonEqualResult[0][0] + orgCode + '=v.' + getdate(new Date()));
+        } else {  // cjsd
+          finalUrl = url.replace(orgCodeResult[0], orgCodeResult[0] + '=v.' + getdate(new Date()));
+        }
+      } else {
+        if (result[0].indexOf('?') > 0) {
+          if (url.indexOf('?#') > 0) {  //只有?
+            finalUrl = result[0] + orgCode + '=v.' + getdate(new Date()) + '#' + (result[1] || '');
+          } else {
+            finalUrl = result[0] + '&' + orgCode + '=v.' + getdate(new Date()) + '#' + (result[1] || '');
+          }
+        } else {
+          finalUrl = result[0] + '?' + orgCode + '=v.' + getdate(new Date()) + '#' + (result[1] || '');
+        }
+      }
+      lockFresh(finalUrl);
+    }
+
+    function lockFresh(url) {
+      if (localStorage.getItem('SCHOLAR_REFRESH_FLAG')) {
+        localStorage.removeItem('SCHOLAR_REFRESH_FLAG');
+      } else {
+        localStorage.setItem('SCHOLAR_REFRESH_FLAG', '1')
+        window.location.href = url;
+      }
+    }
+
+    if (window.location.href.indexOf('https') > -1) {
+      redirectClearCached();
+    }
+    // function getAjax(url) {
+    //   // XMLHttpRequest对象用于在后台与服务器交换数据
+    //   const xhr = new XMLHttpRequest();
+    //   xhr.onreadystatechange = () => {
+    //     // readyState == 4说明请求已完成
+    //     if (xhr.readyState === 4) {
+    //       if (xhr.status === 200 || xhr.status === 304) {
+    //         localStorage.removeItem('SCHOLAR_REFRESH_FLAG');
+    //       } else {
+    //         if (!localStorage.getItem('SCHOLAR_REFRESH_FLAG')) {
+    //           localStorage.setItem('SCHOLAR_REFRESH_FLAG', '1');
+    //           redirectClearCached();
+    //         }
+    //       }
+    //     }
+    //   };
+    //   xhr.open('GET', url, true);
+    //   xhr.send();
+    // }
+
+    //getAjax(&&)
+
+    checkAgent();
+
+
+    document.onkeydown = function (e) {
+      console.log(e.keyCode);
+      if (e.keyCode == 122) {
+        fullOrExist();
+        event.returnValue = false;
+      }
+      if (e.keyCode == 27) {
+        exitFullscreen();
+        event.returnValue = false;
+      }
+    };
+
+    function fullOrExist() {
+      isFullScreen() ? exitFullscreen() : fullScreens();
+    }
+
+    function fullScreens() {
+      if (isFullScreen()) {
+        return;
+      }
+      const elem = document.body;
+      if (elem.webkitRequestFullScreen) {
+        elem.webkitRequestFullScreen();
+      } else if (elem.mozRequestFullScreen) {
+        elem.mozRequestFullScreen();
+      } else if (elem.requestFullScreen) {
+        elem.requestFullscreen();
+      } else {
+        //浏览器不支持全屏API或已被禁用
+      }
+    }
+
+    function exitFullscreen() {
+      if (!isFullScreen()) {
+        return;
+      }
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      }
+    }
+
+    function isFullScreen() {
+      return !!(
+        document.fullscreen ||
+        document.mozFullScreen ||
+        document.webkitIsFullScreen ||
+        document.webkitFullScreen ||
+        document.msFullScreen
+      );
+    }
+
+  </script>
+</head>
+<body>
+<app-root></app-root>
+</body>
+</html>

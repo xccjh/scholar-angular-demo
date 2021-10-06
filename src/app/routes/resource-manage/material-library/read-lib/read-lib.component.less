@@ -1,0 +1,35 @@
+@import '../../component/resource-manage-style.less';
+@import 'common';
+
+:host ::ng-deep .table-container {
+  height: calc(100% - 110px) !important;
+}
+
+.resource-container {
+
+  .right-resource {
+    .search-container {
+      .list {
+        .list-title {
+          width: 100px;
+        }
+
+        .list-input {
+          input {
+            width: 200px;
+          }
+        }
+      }
+    }
+  }
+}
+
+:host ::ng-deep .ant-tree-title {
+  max-width: 200px;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+

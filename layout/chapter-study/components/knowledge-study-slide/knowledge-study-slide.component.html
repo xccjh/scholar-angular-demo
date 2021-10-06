@@ -1,0 +1,88 @@
+<div class="top">
+  <h2>{{knowledge?.detail?.name}}</h2>
+  <div class="skill-status well">
+    <span class="point" [class]="expPipe(knowledge?.detail?.experienceValue)"></span>
+    <span class="status" [class]="expPipe(knowledge?.detail?.experienceValue)">{{knowledge?.detail?.experienceLabel}}</span>
+    <span class="split"></span>
+    <span class="key-level">重要度：</span>
+    <span>
+      <i nz-icon
+        nzType="star"
+        nzTheme="fill"
+        *ngFor="let star of keyLevel(knowledge?.detail?.keyLevel)">
+      </i>
+    </span>
+  </div>
+  <nz-button-group>
+    <button nz-button
+      *ngIf="knowledge?.detail"
+      type="button"
+      [nzType]="'primary'"
+      [nzBlock]="true"
+      [nzSize]="'large'"
+      style="height: 42px"
+      (click)="gotoExerciseBank()">
+      针对训练
+    </button>
+
+  </nz-button-group>
+</div>
+<div class="card-header" *ngIf="knowledge?.detail?.content">
+  <span>
+    <span class="tick"></span>
+    <span class="label">讲解</span>
+  </span>
+</div>
+<div class="explain-content" [innerHTML]="knowledge?.detail?.content" *ngIf="knowledge?.detail?.content"></div>
+<div class="card-header" *ngIf="knowledge?.relatedList?.length > 0">
+  <span>
+    <span class="tick"></span>
+    <span class="label">相关</span>
+  </span>
+</div>
+<div *ngFor="let related of knowledge?.relatedList"
+  class="card-list-item" [ngClass]="{'current':related.id == studyVideo.id}"
+  (click)="gotoKnowledgeStudy(related)">
+  <span>
+    <i nz-icon nzType="play-circle" nzTheme="outline"></i>
+    <span>{{related.name}}</span>
+  </span>
+  <span>
+    <img src="assets/images/sprint.png"
+        class="special-type"
+        *ngIf="related.isSprint==='1'">
+    <img src="assets/images/stable.png"
+        class="special-type"
+        *ngIf="related.isStable==='1'">
+    <img src="assets/images/knowledge-point-final-2x.png"
+        class="special-type"
+        *ngIf="related.isFinal==='1'">
+    <i nz-icon
+      nzType="star"
+      nzTheme="fill"
+      *ngFor="let star of [].constructor(related.keyLevel)">
+    </i>
+  </span>
+</div>
+<nz-spin class="spin training-spin" *ngIf="click" [nzSpinning]="click" nzSimple nzTip="加载中..."></nz-spin>
+<!-- 训练答题开始弹窗 -->
+<nz-modal [(nzVisible)]="isVisible" [nzWidth]="'520px'" [nzWrapClassName]="'test-modal-lsf'" nzTitle=""
+          (nzOnOk)="handleOk()" [nzClosable]="true"  (nzOnCancel)="isVisible=false" [nzFooter]="null">
+  <div class="test-modal-container">
+
+    <img src="assets/images/custom-plan-header.png" alt="">
+    <p class="modal-title">针对训练</p>
+    <div class="test-modal-m">
+      <div class="modal-cont">
+        <p><span>知识点数量：</span>1个</p>
+        <p><span>题目数量：</span>{{selectQuestionData.quesNums==0?selectQuestionData.quesNums:selectQuestionData.quesNums + '-' + selectQuestionData.quesNums * 2}}题</p>
+        <p><span>预估耗时：</span>{{selectQuestionData.quesNums * 3}}分钟</p>
+      </div>
+      <div class="modal-tip">每次答题完成都会更新你的知识图谱</div>
+      <div class="button">
+        <button (click)="handleOk()" nz-button class="modal-btn" nzType="primary" [nzSize]="'large'"
+                nzShape="round">开始</button>
+      </div>
+    </div>
+  </div>
+</nz-modal>

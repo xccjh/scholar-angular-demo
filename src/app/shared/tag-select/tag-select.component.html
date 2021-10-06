@@ -1,0 +1,4 @@
+<nz-select [nzMode]="model" [nzPlaceHolder]="placeholder" [nzShowArrow]="isShowArrow" [nzDropdownStyle]="dropdownStyle"
+    [(ngModel)]="listOfTagOptions" (ngModelChange)="selectChange($event)" [disabled]="true" class="chg-disabled-color">
+    <nz-option *ngFor="let option of listOfOption" [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
+</nz-select>

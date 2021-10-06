@@ -1,0 +1,7 @@
+<div class="teacher-preview">
+  <nz-descriptions nzTitle="指导老师详情" [nzColumn]="desColumn">
+    <nz-descriptions-item nzTitle="指导讲师姓名: ">{{ data?.name }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="简介: ">{{ data?.introduction }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="创建时间: ">{{  data?.createTime | date:'yyyy-MM-dd HH:mm:ss':'GMT+08:00'}}</nz-descriptions-item>
+  </nz-descriptions>
+</div>

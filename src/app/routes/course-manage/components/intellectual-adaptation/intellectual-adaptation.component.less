@@ -1,0 +1,194 @@
+.container {
+  .item {
+    padding: 20px 60px;
+
+    .list-container {
+      background-color: #f5f5f5;
+      overflow: hidden;
+      padding: 10px 20px;
+      margin: 20px 60px;
+
+      .list {
+        .icon-del {
+          float: right;
+          margin-left: 10px;
+          cursor: pointer;
+          color: red
+        }
+      }
+    }
+
+    .item-left {
+      display: inline-block;
+      width: 130px;
+      text-align: right;
+    }
+
+
+    .instructor-teach {
+      cursor: pointer;
+      width: 200px;
+      height: 80px;
+      border: 1px solid gray;
+      text-align: center;
+      display: inline-block;
+      position: relative;
+      border-radius: 2px;
+      overflow: hidden;
+      vertical-align: middle;
+      margin-left: 20px;
+
+      &.active {
+        background-color: #1890ff;
+        color: white;
+        border: none;
+
+        .sub-title {
+          color: white;
+        }
+
+        .icon-teacher {
+          border-color: #1890ff;
+
+        }
+
+      }
+
+      .title {
+        margin-top: 10px;
+        font-size: 16px;
+      }
+
+      .sub-title {
+        margin-top: 10px;
+        color: gray;
+      }
+
+      .icon-teacher {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 0;
+        height: 0;
+        border-right: 10px solid gray;
+        border-bottom: 10px solid gray;
+        border-top: 10px solid transparent;
+        border-left: 10px solid transparent;
+
+        i {
+          transform: translate(-27%, -23%);
+          color: white;
+          position: absolute;
+          font-size: 14px;
+          font-weight: 700;
+        }
+      }
+    }
+  }
+}
+
+.list-container {
+  background-color: #f5f5f5;
+  overflow: hidden;
+  padding: 10px 20px;
+  margin: 20px 60px;
+  cursor: pointer;
+
+  .list {
+    .operat {
+      float: right;
+      margin-left: 15px;
+      visibility: hidden;
+
+      i:hover + span {
+        visibility: visible;
+      }
+
+      .icon-del {
+        margin-left: 5px;
+        visibility: hidden;
+        cursor: pointer;
+        color: red;
+      }
+    }
+  }
+
+  &:hover .operat {
+    visibility: visible !important;
+  }
+}
+
+.bind-button {
+  text-align: right;
+  border-top: 1px solid #f0f0f0;
+  padding: 10px 20px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: white;
+  z-index: 9999;
+}
+
+.tree-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  padding: 0 0 55px;
+
+  .tree-left {
+    flex: 1;
+    float: left;
+    max-height: 400px;
+    overflow: auto;
+  }
+
+  .tree-right {
+    flex: 1;
+    float: right;
+    max-height: 400px;
+    overflow: auto;
+  }
+
+  .tree-title {
+    font-size: 16px;
+    position: absolute;
+    height: 56px;
+    background: white;
+    width: 50%;
+    z-index: 99999;
+    padding: 20px 0 0 20px;
+  }
+
+  .struct-container {
+    padding-left: 20px;
+    padding-top: 50px;
+  }
+}
+
+.question-circle {
+  font-size: 20px;
+  vertical-align: middle;
+  cursor: pointer;
+  color: #1890ff;
+  border-radius: 50%;
+  font-weight: 300
+}
+
+app-chapter-structure-tree ::ng-deep .ant-tree-title {
+  word-break: break-all;
+  min-width: 0;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+::ng-deep .self-modal .ant-spin-container {
+  position: static;
+}
+
+::ng-deep .self-modal .ant-spin-nested-loading {
+  position: static;
+}
